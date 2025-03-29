@@ -13,7 +13,7 @@ assignment and has its `Sphinx documentation`_.
 
 > Version: **v1.0.0**
 
-> Deadline: Friday, May 23, 2025 at 23:00
+> Deadline: **Friday, May 23, 2025 at 23:00**
 
 .. |license| image:: https://img.shields.io/badge/License-LGPL_v3-orange.svg
 	:alt: License: LGPL v3
