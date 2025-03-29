@@ -18,9 +18,9 @@ assignment and has its `Sphinx documentation`_.
 .. |license| image:: https://img.shields.io/badge/License-LGPL_v3-orange.svg
 	:alt: License: LGPL v3
 	:target: https://www.gnu.org/licenses/lgpl-3.0.md
-.. _`Constraint Satisfaction Problems (CSPs)`:
+.. _`Imperative Programming - Avancé`:
 	https://moodle.univ-lr.fr/2024/course/view.php?id=3202
-.. _`Wikipedia page (Triominoes)`:
+.. _`Constraint Satisfaction Problems (CSPs)`:
 	https://en.wikipedia.org/wiki/Constraint_satisfaction_problem
 .. _`Sudoku`:
 	https://en.wikipedia.org/wiki/Sudoku
@@ -37,6 +37,8 @@ Documentation
 
 .. _`Project guidelines`: Content/Document/PIA-Project_2024-2025.pdf
 .. _`GitHub repository`: https://github.com/Xibitol/csp-fork
+.. _`Sphinx documentation`: #
+.. _`Project report`: #
 
 -----------------------------
 Technician installation guide
