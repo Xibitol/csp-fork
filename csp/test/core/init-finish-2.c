@@ -15,7 +15,7 @@
 
 #include "csp.h"
 
-int test_core_init_finish_2(void){
+int main(void){
 	assert(csp_init());
 	assert(csp_init());
 	assert(csp_init());

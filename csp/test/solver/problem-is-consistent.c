@@ -14,6 +14,7 @@
 #include <assert.h>
 
 #include "csp.h"
+#include "solver/csp-solver.h"
 
 bool different(const CSPConstraint *constraint,
 	const size_t *values, const void *data
@@ -24,7 +25,7 @@ bool different(const CSPConstraint *constraint,
 	return values[v0] != values[v1];
 }
 
-int test_solver_problem_is_consistent(void){
+int main(void){
 	// Initialise the library
 	csp_init();
 	{

@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 #include "csp.h"
 
@@ -22,7 +23,7 @@ bool dummy_check(const CSPConstraint *constraint,
 	return true;
 }
 
-int test_solver_constraint_to_check(void){
+int main(void){
 	// Initialise the library
 	csp_init();
 	{

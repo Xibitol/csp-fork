@@ -22,7 +22,7 @@ bool dummy_check(const CSPConstraint *constraint,
 	return true;
 }
 
-int test_core_constraint(void){
+int main(void){
 	// Initialise the library
 	csp_init();
 	{
