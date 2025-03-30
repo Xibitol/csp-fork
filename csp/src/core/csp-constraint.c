@@ -6,12 +6,14 @@
  * @date 2024
  */
 
-#include "csp-constraint.h"
-
-#include <stdbool.h>
+#include <assert.h>
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
-#include "csp-constraint.inc.h"
+#include "../csp.h"
 
 // PUBLIC
 // Constructors

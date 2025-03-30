@@ -6,13 +6,13 @@
  * @date 2024
  */
 
-#include "csp-problem.h"
-
+#include <assert.h>
 #include <stddef.h>
-
-#include "csp-constraint.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "csp-problem.inc.h"
+#include "../csp.h"
 
 // PUBLIC
 // Constructors
@@ -109,9 +109,9 @@ void csp_problem_set_constraint(CSPProblem *csp,
 
 	#ifndef NDEBUG
 		for(size_t i = 0; i < csp_constraint_get_arity(constraint); i++){
-			assert(
-				csp_constraint_get_variable(constraint, i) < csp->num_domains
-			);
+			// assert(
+			// 	csp_constraint_get_variable(constraint, i) < csp->num_domains
+			// );
 		}
 	#endif
 

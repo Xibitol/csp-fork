@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 
-#include "csp-constraint.h"
+#include "../csp.h"
 
 /**
  * @brief The CSP problem.
