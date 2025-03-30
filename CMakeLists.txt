@@ -3,13 +3,22 @@ enable_testing()
 
 project(CSP)
 
+set(SOURCE_DIR src)
+set(TEST_DIR test)
+set(BTEST_DIR btest)
+
 # OPTIONS
 file(GLOB SUBPROJECT_SOURCE_DIRS
 	LIST_DIRECTORIES true
 	RELATIVE ${CMAKE_SOURCE_DIR}
-	${CMAKE_SOURCE_DIR}/*/src/
+	${CMAKE_SOURCE_DIR}/*/${SOURCE_DIR}/
 )
-include_directories(${SUBPROJECT_SOURCE_DIRS})
+file(GLOB SUBPROJECT_BTEST_DIRS
+	LIST_DIRECTORIES true
+	RELATIVE ${CMAKE_SOURCE_DIR}
+	${CMAKE_SOURCE_DIR}/*/${BTEST_DIR}/
+)
+include_directories(${SUBPROJECT_SOURCE_DIRS} ${SUBPROJECT_BTEST_DIRS})
 
 add_compile_options(-Wall -Wextra -Wpedantic)
 
@@ -61,8 +70,4 @@ macro(add_valgrind_test SUBPROJECT_NAME NAME EXECUTABLE)
 endmacro()
 
 # PROJECTS
-set(SOURCE_DIR src)
-set(TEST_DIR test)
-set(BTEST_DIR btest)
-
 add_subdirectory(csp)

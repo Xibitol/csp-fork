@@ -2,9 +2,12 @@
 #include <stdlib.h>
 
 #include "./csp.h"
+#include "util/unused.h"
 
 // Check if the queens are compatible
-bool queen_compatibles(CSPConstraint *constraint, const size_t *values, unsigned int *data) {
+bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
+	unsigned int *UNUSED_VAR(data)
+){
   // Get the variables
   size_t x0 = csp_constraint_get_variable(constraint, 0);
   size_t x1 = csp_constraint_get_variable(constraint, 1);
@@ -46,7 +49,7 @@ void print_solution(unsigned int number, size_t *queens) {
   printf("───┘\n");
 }
 
-int main(int argc, char *argv[]) {
+int solve_queens(int argc, char *argv[]) {
   if (argc != 2) {
     fprintf(stderr, "Usage: %s <number>\n", argv[0]);
     return EXIT_FAILURE;
