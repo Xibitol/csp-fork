@@ -27,15 +27,13 @@ create_test_sourcelist(tests "${TEST_EXECUTABLE_NAME}.c" ${TEST_FILES})
 
 add_executable(testLib ${tests})
 add_dependencies(testLib lib)
-target_link_libraries(testLib PRIVATE lib ${MATH_LIBRARY})
+target_link_libraries(testLib PRIVATE lib)
 set_target_properties(testLib PROPERTIES
 	OUTPUT_NAME ${TEST_EXECUTABLE_NAME}
 	RUNTIME_OUTPUT_DIRECTORY ${TEST_DIR}
 )
 
-get_target_property(EXECUTABLE_OUTPUT_PATH testLib
-	RUNTIME_OUTPUT_DIRECTORY
-)
+get_target_property(EXECUTABLE_OUTPUT_PATH testLib RUNTIME_OUTPUT_DIRECTORY)
 foreach(FILENAME ${TEST_FILES})
 	string(REPLACE ".c" "" NAME ${FILENAME})
 	string(REPLACE "${TEST_DIR}/" "" SHORT_NAME ${NAME})
@@ -44,3 +42,21 @@ foreach(FILENAME ${TEST_FILES})
 		"${EXECUTABLE_OUTPUT_PATH}/${TEST_EXECUTABLE_NAME}" ${NAME}
 	)
 endforeach()
+
+# BENCHMARK TEST
+set(BTEST_EXECUTABLE_NAME btestCSP)
+
+file(GLOB_RECURSE BTEST_FILES CONFIGURE_DEPENDS "${BTEST_DIR}/*.*")
+add_executable(btestLib ${BTEST_FILES})
+target_link_libraries(btestLib PRIVATE lib)
+set_target_properties(btestLib PROPERTIES
+	OUTPUT_NAME ${BTEST_EXECUTABLE_NAME}
+	RUNTIME_OUTPUT_DIRECTORY ${BTEST_DIR}
+)
+
+get_target_property(EXECUTABLE_OUTPUT_PATH btestLib RUNTIME_OUTPUT_DIRECTORY)
+add_custom_target(btest
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_OUTPUT_PATH}/${BTEST_EXECUTABLE_NAME}"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
+	COMMENT "Running benchmarking test"
+)

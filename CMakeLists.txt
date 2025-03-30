@@ -63,5 +63,6 @@ endmacro()
 # PROJECTS
 set(SOURCE_DIR src)
 set(TEST_DIR test)
+set(BTEST_DIR btest)
 
 add_subdirectory(csp)
