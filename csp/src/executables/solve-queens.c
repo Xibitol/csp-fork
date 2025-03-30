@@ -1,7 +1,10 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-#include "./csp.h"
+#include "csp.h"
+#include "../solver/csp-solver.h"
 
 // Check if the queens are compatible
 bool queen_compatibles(CSPConstraint *constraint, const size_t *values, unsigned int *data) {
@@ -16,7 +19,7 @@ bool queen_compatibles(CSPConstraint *constraint, const size_t *values, unsigned
 }
 
 // Print the solution
-void print_solution(unsigned int number, size_t *queens) {
+void print_solution(unsigned int number, const size_t *queens) {
   printf("┌");
   for (size_t i = 0; i < number - 1; i++) {
     printf("───┬");
@@ -62,16 +65,28 @@ int main(int argc, char *argv[]) {
   {
     // Create the queens array
     size_t *queens = calloc(number, sizeof(size_t));
+    if (queens == NULL) {
+      perror("calloc failed");
+      return EXIT_FAILURE;
+    }
 
     // Create the CSP problem
     size_t index;
+
+    // num_domains is the number of queens here, also the number of columns since each queen is in a different column
+    // Each constraint corresponds to a pair of queens that need to be checked for compatibility.
+    // The number of constraints corresponds to the number of pairs of queens that need to be checked
+    // This is equal to the combination C(n, 2) = n * (n - 1) / 2
     CSPProblem *problem = csp_problem_create(number, number * (number - 1) / 2);
     for (size_t i = 0; i < number; i++) {
-      csp_problem_set_domain(problem, i, number);
+      csp_problem_set_domain(problem, i, number); // Domain = number of possible row positions for a queen
     }
     index = 0;
+    // This way of creating the constraints ensures that each pair of queens is always from different columns
+    // Otherwise we would need n * n constraints to check all pairs of queens
     for (size_t i = 0; i < number - 1; i++) {
       for (size_t j = i + 1; j < number; j++) {
+        // arity is 2 because we are checking compatibility between two queens
         csp_problem_set_constraint(problem, index, csp_constraint_create(2, (CSPChecker *)queen_compatibles));
         csp_constraint_set_variable(csp_problem_get_constraint(problem, index), 0, i);
         csp_constraint_set_variable(csp_problem_get_constraint(problem, index), 1, j);
@@ -79,8 +94,23 @@ int main(int argc, char *argv[]) {
       }
     }
 
+    FILE* file = fopen("n_queens_benchmark.txt", "a");
+
+    // Start the timer
+    clock_t start_time = clock();
+
     // Solve the CSP problem
     bool result = csp_problem_solve(problem, queens, NULL);
+
+    // Stop the timer
+    clock_t end_time = clock();
+    double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    fprintf(file, "%f %zu\n", time_spent, get_backtrack_counter());
+
+    fclose(file);
+
+    // Reset the nodes explored counter
+    reset_backtrack_counter();
 
     // Destroy the CSP problem
     while (index--) {
