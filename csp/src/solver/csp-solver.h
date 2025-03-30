@@ -15,8 +15,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "core/csp-problem.h"
-#include "core/csp-constraint.h"
+#include "../core/csp-problem.h"
+#include "../core/csp-constraint.h"
 
 // GETTERS
 /**
