@@ -8,7 +8,9 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <assert.h>
 
+#include "core/csp-lib.h"
 #include "core/csp-problem.h"
 #include "core/csp-constraint.h"
 
@@ -20,7 +22,7 @@ bool csp_constraint_to_check(const CSPConstraint *constraint, size_t index){
     assert(csp_initialised());
 
     for(size_t i = 0; i < csp_constraint_get_arity(constraint); i++){
-		if(csp_constraint_get_variable(constraint, index) >= index){
+		if(csp_constraint_get_variable(constraint, i) >= index){
 			return false;
 		}
     }
@@ -35,7 +37,7 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 
 	// Check all constraints
 	for(size_t i = 0; i < csp_problem_get_num_constraints(csp); i++){
-		CSPConstraint *constraint = csp_problem_get_constraint(csp, index);
+		CSPConstraint *constraint = csp_problem_get_constraint(csp, i);
 
 		// Verify if the constraint has to be checked and check it
 		if(csp_constraint_to_check(constraint, index)
@@ -48,12 +50,6 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 }
 
 // Functions
-bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data){
-	assert(csp_initialised());
-
-	return csp_problem_backtrack(csp, values, data, 0);
-}
-
 bool csp_problem_backtrack(const CSPProblem *csp,
 	size_t *values, const void *data, size_t index
 ){
@@ -77,4 +73,10 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 		}
 	}
 	return false;
+}
+
+bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data){
+	assert(csp_initialised());
+
+	return csp_problem_backtrack(csp, values, data, 0);
 }

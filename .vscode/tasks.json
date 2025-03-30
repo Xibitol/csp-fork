@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Setup CMake building system.",
+            "icon": {
+                "id": "settings"
+            },
+            "type": "shell",
+            "group": "build",
+            "command": "source bin/setupCMake.sh",
+            "presentation": {
+                "reveal": "silent",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        }
+    ]
+}

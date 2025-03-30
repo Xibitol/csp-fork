@@ -10,6 +10,12 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+
+#include "csp-lib.h"
 
 #include "csp-constraint.inc.h"
 

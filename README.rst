@@ -1,8 +1,16 @@
-########################
+.. role::  raw-html(raw)
+    :format: html
+
+========================
 CSP Fork (PIA) |license|
-########################
+========================
+CSP is a library containing an implementation of a CSP solver whose content has
+been partially generated using copilot. The latter is a backtracking algorithm
+that solves a CSP by assigning values to variables from their domains and
+checking if the assignment is consistent.
+
 For the course `Imperative Programming - Avancé`_, after all lessons and exams,
-we're assigned to fork a library made by our teacher that solves `Constraint
+we're assigned to fork this library made by our teacher that solves `Constraint
 Satisfaction Problems (CSPs)`_. The goal of this project, in teams of up to 6
 students, is to upgrade the backtracking algorithm with a forward checking and
 to implement heuristics to order variables and values. We also have to benchmark
@@ -27,34 +35,32 @@ assignment and has its `Sphinx documentation`_.
 .. _`N-Queens`:
 	https://en.wikipedia.org/wiki/Eight_queens_puzzle
 
-=============
+*************
 Documentation
-=============
+*************
 - `Project guidelines`_ given for this assignment.
 - `GitHub repository`_ hosting the source code.
-- *(Soon ...) `Sphinx documentation`_ hosting project's documentation.*
-- *(Soon ...) `Project report`_ describing what we did.*
+- *(Soon ...)* `Sphinx documentation`_ hosting library's documentation.
+- *(Soon ...)* `Project report`_ describing what we did.
 
 .. _`Project guidelines`: Content/Document/PIA-Project_2024-2025.pdf
 .. _`GitHub repository`: https://github.com/Xibitol/csp-fork
-.. _`Sphinx documentation`: #
-.. _`Project report`: #
+.. _`Sphinx documentation`: /#
+.. _`Project report`: /#
 
------------------------------
 Technician installation guide
------------------------------
+=============================
 *Soon ...*
 
----------------------------
 Developer preparation guide
----------------------------
+===========================
 *Soon ...*
 
-=======
+*******
 License
-=======
+*******
 | PIA CSP (Library and benchmarking program)
-| Copyright &copy; 2025 - **G team**
+Copyright :raw-html:`&copy;` 2025 - **G team**
 
 These programs is free software: you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the Free
@@ -72,9 +78,9 @@ Lesser General Public License along with the programs (Links: `GNU GPL v3`_ &
 .. _`GNU GPL v3`: COPYING
 .. _`GNU LGPL v3`: COPYING.LESSER
 
-==========
+**********
 Developers
-==========
+**********
 > `χristoφe Демко`_ (Former Developer & Our Teacher)
 
 > `Xibitol`_ (Project Leader & DevOps Engineer & Developer)

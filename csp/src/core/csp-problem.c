@@ -9,7 +9,11 @@
 #include "csp-problem.h"
 
 #include <stddef.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 
+#include "csp-lib.h"
 #include "csp-constraint.h"
 
 #include "csp-problem.inc.h"

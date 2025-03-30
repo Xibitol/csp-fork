@@ -15,7 +15,7 @@
 
 #include "csp.h"
 
-int test_solver_problem(void){
+int test_core_problem(void){
 	// Initialise the library
 	csp_init();
 	{

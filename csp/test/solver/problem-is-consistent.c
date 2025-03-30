@@ -14,9 +14,12 @@
 #include <assert.h>
 
 #include "csp.h"
+#include "util/unused.h"
 
-bool different(const CSPConstraint *constraint,
-	const size_t *values, const void *data
+bool test_solver_problem_is_consistent__different(
+	const CSPConstraint *constraint,
+	const size_t *values,
+	const void *UNUSED_VAR(data)
 ){
 	size_t v0 = csp_constraint_get_variable(constraint, 0);
 	size_t v1 = csp_constraint_get_variable(constraint, 1);
@@ -25,6 +28,8 @@ bool different(const CSPConstraint *constraint,
 }
 
 int test_solver_problem_is_consistent(void){
+	CSPChecker *different = &test_solver_problem_is_consistent__different;
+
 	// Initialise the library
 	csp_init();
 	{

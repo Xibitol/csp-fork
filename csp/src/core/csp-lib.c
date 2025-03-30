@@ -9,6 +9,9 @@
 #include "csp-lib.h"
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 
 // PRIVATE
 static int counter = 0;
