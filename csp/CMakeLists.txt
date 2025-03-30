@@ -12,42 +12,28 @@ if(POLICY CMP0110)
   cmake_policy(SET CMP0110 NEW)
 endif()
 
-# Add the executable
-add_executable(solve-queens solve-queens.c)
-
-# Add the library
-add_library(csp SHARED csp.c csp.h csp.inc)
-
-# Link the library to the executable
-target_link_libraries(solve-queens csp)
-
-# Find test files
-file(GLOB FILES "${CMAKE_CURRENT_SOURCE_DIR}/test-*.c")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 enable_testing()
 
-find_program(VALGRIND valgrind)
+find_package(CppCheck)
+enable_cppcheck()
 
-# Add tests
-foreach(FILENAME ${FILES})
-  get_filename_component(SRC ${FILENAME} NAME)
-  get_filename_component(TEST ${FILENAME} NAME_WE)
-  add_executable(${TEST} ${SRC} csp.h csp.inc)
-  add_dependencies(${TEST} csp)
-  target_link_libraries(${TEST} csp)
-#  target_link_libraries(${TEST} efence)
-  # Add the test
-  add_test(${TEST} ./${TEST})
-  if(VALGRIND)
-    # Add the valgrind test
-    add_test(
-      "${TEST}[valgrind]" ${VALGRIND} --leak-check=full --quiet --error-exitcode=1 ./${TEST}
-    )
-  endif()
-endforeach()
+find_package(CcLint)
+enable_cclint()
+
+find_package(ClangFormat)
+enable_clang_format()
+
+find_package(FlawFinder)
+enable_flaw_finder()
+
+add_subdirectory(src)
+add_subdirectory(test)
 
 # Add CPack
 set(CPACK_SOURCE_GENERATOR "ZIP")
+set(CPACK_SOURCE_IGNORE_FILES "/build/;/.vscode/;/.venv/;/.git/;/.idea/;~$;${CPACK_SOURCE_IGNORE_FILES}")
 set(CPACK_PACKAGE_NAME "CSP")
 set(CPACK_PACKAGE_VERSION "1.0.0")
 set(CPACK_PACKAGE_VERSION_MAJOR "1")
