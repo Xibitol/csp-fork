@@ -24,7 +24,7 @@ CSPConstraint *csp_constraint_create(size_t arity, CSPChecker *check){
 	assert(csp_initialised());
 	assert(arity > 0);
 	assert(check != NULL);
-	assert(printf("Creating constraint with arity %lu\n", arity));
+	// assert(printf("Creating constraint with arity %lu\n", arity));
 
 	// Allocate memory for the constraint
 	CSPConstraint *constraint = malloc(
@@ -43,7 +43,7 @@ CSPConstraint *csp_constraint_create(size_t arity, CSPChecker *check){
 // Destructors
 void csp_constraint_destroy(CSPConstraint *constraint){
 	assert(csp_initialised());
-	assert(printf("Destroying constraint with arity %lu\n", constraint->arity));
+	// assert(printf("Destroying constraint with arity %lu\n", constraint->arity));
 
 	free(constraint);
 }

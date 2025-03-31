@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     clock_t start_time = clock();
 
     // Solve the CSP problem
-    bool result = csp_problem_solve(problem, queens, NULL);
+    bool result = csp_problem_solve(problem, queens, NULL, false);
 
     // Stop the timer
     clock_t end_time = clock();

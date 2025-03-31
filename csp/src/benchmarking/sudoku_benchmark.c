@@ -21,13 +21,6 @@ int main(int argc, char *argv[]){
     }
     fclose(file1);
 
-    FILE *file2 = fopen("sudoku_benchmark_v2.txt", "w");
-    if (file2 == NULL) {
-        perror("fopen");
-        return EXIT_FAILURE;
-    }
-    fclose(file2);
-
     for (int i = 5; i < 81; i+=5) {
         pid_t pid = fork();
         switch (pid){
@@ -66,23 +59,11 @@ int main(int argc, char *argv[]){
                     perror("fork failed");
                     return EXIT_FAILURE;
                 case 0:
-                    execl("./src/executables/solve-sudoku-v1", "./src/executables/solve-sudoku-v2", sudoku, (char *)NULL);
+                    execl("./src/executables/solve-sudoku", "./src/executables/solve-sudoku", sudoku, (char *)NULL);
                     perror("execl");
                     return EXIT_FAILURE;
                 default:
             }
-            pid_t pid3 = fork();
-            switch (pid3){
-                case -1:
-                    perror("fork failed");
-                    return EXIT_FAILURE;
-                case 0:
-                    execl("./src/executables/solve-sudoku-v2", "./src/executables/solve-sudoku-v2", sudoku, (char *)NULL);
-                    perror("execl");
-                    return EXIT_FAILURE;
-                default:
-            }
-            wait(NULL);
             wait(NULL);
         }
     }

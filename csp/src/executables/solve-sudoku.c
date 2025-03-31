@@ -8,7 +8,6 @@
 #include <time.h>
 
 #include "../csp.h"
-#include "../solver/sudoku-basic-solve-2.h"
 
 void merge_sudoku_values(size_t *output, const size_t *values, const size_t *data) {
   int value_index = 0;
@@ -176,13 +175,13 @@ int main(int argc, char *argv[]) {
       csp_problem_set_constraint(problem, constraint_index, constraint);
     }
 
-    FILE* file = fopen("sudoku_benchmark_v2.txt", "a");
+    FILE* file = fopen("sudoku_benchmark.txt", "a");
 
     // Start the timer
     clock_t start_time = clock();
 
     // Solve the CSP problem
-    bool result = sudoku_basic_solve(problem, unknowns, starter_grid);
+    bool result = csp_problem_solve(problem, unknowns, starter_grid, true);
 
     // Stop the timer
     clock_t end_time = clock();

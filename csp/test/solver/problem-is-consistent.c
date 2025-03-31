@@ -54,13 +54,13 @@ int main(void){
 		csp_problem_set_domain(problem, 1, 2);
 
 		// Check the consistency of the problem
-		assert(csp_problem_is_consistent(problem, values, NULL, 0));
+		assert(csp_problem_is_consistent(problem, values, NULL, 0, false));
 
 		// Backtrack the problem
-		csp_problem_backtrack(problem, values, NULL, 0);
+		csp_problem_backtrack(problem, values, NULL, 0, false);
 
 		// Check the consistency of the problem
-		assert(csp_problem_is_consistent(problem, values, NULL, 2));
+		assert(csp_problem_is_consistent(problem, values, NULL, 2, false));
 
 		// Verify that the problem has been solved
 		assert(values[0] != values[1]);
