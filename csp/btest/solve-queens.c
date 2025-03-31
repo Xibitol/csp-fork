@@ -56,7 +56,7 @@ void print_queens_solution(unsigned int number, const size_t *queens) {
   printf("───┘\n");
 }
 
-int solve_queens(int queen_count) {
+int solve_queens(size_t queen_count) {
 
   // Initialise the library
   csp_init();

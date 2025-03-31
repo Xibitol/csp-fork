@@ -8,16 +8,16 @@
 
 #define N 9
 
-int is_safe(size_t grid[N][N], int row, int col, int num) {
-    for (int x = 0; x < N; x++) {
+int is_safe(size_t grid[N][N], size_t row, size_t col, size_t num) {
+    for (size_t x = 0; x < N; x++) {
         if (grid[row][x] == num || grid[x][col] == num) {
             return 0;
         }
     }
 
-    int startRow = row - row % 3, startCol = col - col % 3;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    size_t startRow = row - row % 3, startCol = col - col % 3;
+    for (size_t i = 0; i < 3; i++) {
+        for (size_t j = 0; j < 3; j++) {
             if (grid[i + startRow][j + startCol] == num) {
                 return 0;
             }
@@ -26,7 +26,7 @@ int is_safe(size_t grid[N][N], int row, int col, int num) {
     return 1;
 }
 
-int generator_solve_sudoku(size_t grid[N][N], int row, int col) {
+int generator_solve_sudoku(size_t grid[N][N], size_t row, size_t col) {
     if (row == N - 1 && col == N) {
         return 1;
     }
@@ -37,7 +37,7 @@ int generator_solve_sudoku(size_t grid[N][N], int row, int col) {
     if (grid[row][col] != 0) {
         return generator_solve_sudoku(grid, row, col + 1);
     }
-    for (int num = 1; num <= N; num++) {
+    for (size_t num = 1; num <= N; num++) {
         if (is_safe(grid, row, col, num)) {
             grid[row][col] = num;
             if (generator_solve_sudoku(grid, row, col + 1)) {
@@ -51,9 +51,9 @@ int generator_solve_sudoku(size_t grid[N][N], int row, int col) {
 
 void fill_diagonal(size_t grid[N][N]) {
     for (size_t i = 0; i < N; i += 3) {
-        for (int j = 0; j < 3; j++) {
-            for (int k = 0; k < 3; k++) {
-                int num;
+        for (size_t j = 0; j < 3; j++) {
+            for (size_t k = 0; k < 3; k++) {
+                size_t num;
                 do {
                     num = rand() % 9 + 1;
                 } while (!is_safe(grid, i + j, i + k, num));
@@ -69,11 +69,11 @@ void generate_sudoku(size_t grid[N][N]) {
     generator_solve_sudoku(grid, 0, 0);
 }
 
-void remove_numbers(size_t grid[N][N], int amount) {
-    int count = 0;
+void remove_numbers(size_t grid[N][N], size_t amount) {
+    size_t count = 0;
     while (count < amount) {
-        int row = rand() % N;
-        int col = rand() % N;
+        size_t row = rand() % N;
+        size_t col = rand() % N;
         if (grid[row][col] != 0) {
             grid[row][col] = 0;
             count++;
@@ -81,13 +81,13 @@ void remove_numbers(size_t grid[N][N], int amount) {
     }
 }
 
-size_t** load_new_sudoku(const int unknown_count, const int sudoku_count) {
+size_t** load_new_sudoku(const size_t unknown_count, const size_t sudoku_count) {
     size_t** sudoku_list = malloc(sudoku_count * sizeof(size_t*));
     if (sudoku_list == NULL) {
         perror("malloc failed");
         return NULL;
     }
-    for (int i = 0; i < sudoku_count; i++) {
+    for (size_t i = 0; i < sudoku_count; i++) {
         size_t* sudoku = calloc(81, sizeof(size_t));
         if (sudoku == NULL) {
             perror("calloc failed");

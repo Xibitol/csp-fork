@@ -77,7 +77,7 @@ bool checker(const CSPConstraint *constraint, const size_t *values, const void *
   return true;
 }
 
-void load_sudoku(const char* str_sudoku, size_t* grid, int *unknown_count) {
+void load_sudoku(const char* str_sudoku, size_t* grid, size_t *unknown_count) {
   if (str_sudoku == NULL || grid == NULL || unknown_count == NULL) {
     fprintf(stderr, "Invalid arguments\n");
     return;
@@ -101,7 +101,7 @@ int solve_sudoku(size_t* starter_grid) {
 
   // amount of unknowns in the grid
   print_sudoku_solution(starter_grid);
-  int unknown_count = 0;
+  size_t unknown_count = 0;
   for (size_t i = 0; i < 81; i++) {
       if (starter_grid[i] == 9) {
           unknown_count++;
@@ -134,16 +134,16 @@ int solve_sudoku(size_t* starter_grid) {
     }
 
     // one constraint per unknown cell, each constraint checks unknown value is unique in row, column and box
-    for (int constraint_index = 0; constraint_index < unknown_count; constraint_index++) {
+    for (size_t constraint_index = 0; constraint_index < unknown_count; constraint_index++) {
       // arity = 9 from box + 6 from row + 6 from column
       CSPConstraint *constraint = csp_constraint_create(21, checker);
 
       // coords of the unknown cell corresponding to the constraint
       size_t x = unknown_positions[constraint_index] % 9;
       size_t y = unknown_positions[constraint_index] / 9;
-      int row_cell_counter = 0;
-      int column_cell_counter = 0;
-      for (int i = 0; i < 9; i++) {
+      size_t row_cell_counter = 0;
+      size_t column_cell_counter = 0;
+      for (size_t i = 0; i < 9; i++) {
         if (i != y) {
           csp_constraint_set_variable(constraint, column_cell_counter + 8, i*9 + x); // column
           column_cell_counter++;
@@ -153,9 +153,9 @@ int solve_sudoku(size_t* starter_grid) {
           row_cell_counter++;
         }
       }
-      int box_cell_counter = 0;
-      for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+      size_t box_cell_counter = 0;
+      for (size_t i = 0; i < 3; i++) {
+        for (size_t j = 0; j < 3; j++) {
           // set the variable in the constraint
           if (x%3 == i || y%3 == j) { //variable already set in either row or column
             continue;
