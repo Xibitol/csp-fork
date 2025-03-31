@@ -20,7 +20,7 @@
 
 // GETTERS
 /**
- * @brief Verify if the contraint can be checked.
+ * @brief Verify if the constraint can be checked.
  * @param constraint The constraint to verify.
  * @param index The index of the last variable.
  * @return true if the constraint can be checked, false otherwise.
@@ -37,11 +37,12 @@ extern bool csp_constraint_to_check(const CSPConstraint *constraint,
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
  * @param index The index of the current variable.
+ * @param sudoku true if the problem is a sudoku problem, false otherwise.
  * @return true if the CSP problem is consistent, false otherwise.
  * @pre The csp library is initialised.
  */
 extern bool csp_problem_is_consistent(const CSPProblem *csp,
-	const size_t *values, const void *data, size_t index
+	const size_t *values, const void *data, size_t index, bool sudoku
 );
 
 // FUNCTIONS
@@ -51,12 +52,13 @@ extern bool csp_problem_is_consistent(const CSPProblem *csp,
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
  * @param index The index of the variable to set.
+ * @param sudoku true if the problem is a sudoku problem, false otherwise.
  * @return true if the CSP problem is solved, false otherwise.
  * @pre The csp library is initialised.
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_backtrack(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index
+	size_t *values, const void *data, size_t index, bool sudoku
 );
 
 /**
@@ -64,10 +66,24 @@ extern bool csp_problem_backtrack(const CSPProblem *csp,
  * @param csp The CSP problem to solve.
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
+ * @param sudoku true if the problem is a sudoku problem, false otherwise.
  * @return true if the CSP problem is solved, false otherwise.
  * @pre The csp library is initialised.
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_solve(const CSPProblem *csp,
-	size_t *values, const void *data
+	size_t *values, const void *data, bool sudoku
 );
+
+/**
+ * @brief Get the number of backtracks.
+ * @return The number of backtracks.
+ * @pre The csp library is initialised.
+ */
+extern size_t get_backtrack_counter(void);
+
+/**
+ * @brief Reset the number of backtracks.
+ * @pre The csp library is initialised.
+ */
+extern void reset_backtrack_counter(void);
