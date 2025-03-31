@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <time.h>
 
-<<<<<<<< HEAD:csp/src/executables/solve-queens.c
+
 #include "csp.h"
-#include "../solver/csp-solver.h"
-========
+#include "../src/solver/csp-solver.h"
+
 #include "./csp.h"
 #include "util/unused.h"
->>>>>>>> develop:csp/btest/solve-queens.c
+
 
 // Check if the queens are compatible
 bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
@@ -26,7 +26,7 @@ bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
 }
 
 // Print the solution
-void print_solution(unsigned int number, const size_t *queens) {
+void print_queens_solution(unsigned int number, const size_t *queens) {
   printf("┌");
   for (size_t i = 0; i < number - 1; i++) {
     printf("───┬");
@@ -56,22 +56,13 @@ void print_solution(unsigned int number, const size_t *queens) {
   printf("───┘\n");
 }
 
-int solve_queens(int argc, char *argv[]) {
-  if (argc != 2) {
-    fprintf(stderr, "Usage: %s <number>\n", argv[0]);
-    return EXIT_FAILURE;
-  }
-  unsigned int number;
-  if (sscanf(argv[1], "%u", &number) != 1) {
-    fprintf(stderr, "Invalid number: %s\n", argv[1]);
-    return EXIT_FAILURE;
-  }
+int solve_queens(int queen_count) {
 
   // Initialise the library
   csp_init();
   {
     // Create the queens array
-    size_t *queens = calloc(number, sizeof(size_t));
+    size_t *queens = calloc(queen_count, sizeof(size_t));
     if (queens == NULL) {
       perror("calloc failed");
       return EXIT_FAILURE;
@@ -84,15 +75,15 @@ int solve_queens(int argc, char *argv[]) {
     // Each constraint corresponds to a pair of queens that need to be checked for compatibility.
     // The number of constraints corresponds to the number of pairs of queens that need to be checked
     // This is equal to the combination C(n, 2) = n * (n - 1) / 2
-    CSPProblem *problem = csp_problem_create(number, number * (number - 1) / 2);
-    for (size_t i = 0; i < number; i++) {
-      csp_problem_set_domain(problem, i, number); // Domain = number of possible row positions for a queen
+    CSPProblem *problem = csp_problem_create(queen_count, queen_count * (queen_count - 1) / 2);
+    for (size_t i = 0; i < queen_count; i++) {
+      csp_problem_set_domain(problem, i, queen_count); // Domain = number of possible row positions for a queen
     }
     index = 0;
     // This way of creating the constraints ensures that each pair of queens is always from different columns
     // Otherwise we would need n * n constraints to check all pairs of queens
-    for (size_t i = 0; i < number - 1; i++) {
-      for (size_t j = i + 1; j < number; j++) {
+    for (size_t i = 0; i < queen_count - 1; i++) {
+      for (size_t j = i + 1; j < queen_count; j++) {
         // arity is 2 because we are checking compatibility between two queens
         csp_problem_set_constraint(problem, index, csp_constraint_create(2, (CSPChecker *)queen_compatibles));
         csp_constraint_set_variable(csp_problem_get_constraint(problem, index), 0, i);
@@ -127,7 +118,7 @@ int solve_queens(int argc, char *argv[]) {
 
     // Print the solution
     if (result) {
-      print_solution(number, queens);
+      print_queens_solution(queen_count, queens);
     } else {
       printf("No solution found\n");
     }

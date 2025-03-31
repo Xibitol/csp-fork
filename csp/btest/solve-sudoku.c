@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#include "../csp.h"
+#include "../src/csp.h"
 
 void merge_sudoku_values(size_t *output, const size_t *values, const size_t *data) {
   int value_index = 0;
@@ -31,7 +31,7 @@ void get_unknown_positions(const size_t *grid, size_t *unknown_positions) {
   }
 }
 
-void print_solution(const size_t *sudoku_grid) {
+void print_sudoku_solution(const size_t *sudoku_grid) {
   printf("┌─────────┬─────────┬─────────┐\n");
   for (size_t row = 0; row < 9; row++) {
     printf( "│");
@@ -97,22 +97,16 @@ void load_sudoku(const char* str_sudoku, size_t* grid, int *unknown_count) {
   }
 }
 
-int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    fprintf(stderr, "Usage: %s <sudoku>\n", argv[0]);
-    return EXIT_FAILURE;
-  }
-
-  int unknown_count = 0;
-  size_t *starter_grid = calloc(81, sizeof(size_t));
-  if (starter_grid == NULL) {
-    perror("calloc failed");
-    return EXIT_FAILURE;
-  }
-  load_sudoku(argv[1], starter_grid ,&unknown_count);
+int solve_sudoku(size_t* starter_grid) {
 
   // amount of unknowns in the grid
-  print_solution(starter_grid);
+  print_sudoku_solution(starter_grid);
+  int unknown_count = 0;
+  for (size_t i = 0; i < 81; i++) {
+      if (starter_grid[i] == 9) {
+          unknown_count++;
+      }
+  }
 
   // Initialise the library
   csp_init();
@@ -208,7 +202,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
       }
       merge_sudoku_values(solution, unknowns, starter_grid);
-      print_solution(solution);
+      print_sudoku_solution(solution);
       free(solution);
     } else {
       printf("No solution found\n");

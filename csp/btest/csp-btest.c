@@ -10,8 +10,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int main(void){
-	printf("Hello from the benchmarking program!\n");
+#include "./sudoku-benchmark.h"
+#include "./n-queens-benchmark.h"
 
+int main(void){
+	sudoku_benchmark(5, 5);
+	n_queens_benchmark(16);
 	return EXIT_SUCCESS;
 }
