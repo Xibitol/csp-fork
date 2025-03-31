@@ -1,42 +1,62 @@
-cmake_minimum_required(VERSION 3.5)
+set(SUBPROJECT_NAME csp)
+message(STATUS "Configuring ${SUBPROJECT_NAME} sub-project...")
 
-# Set the project name
-project(CSP)
+# OUTPUTS
+file(GLOB_RECURSE LIBRARY_FILES CONFIGURE_DEPENDS "${SOURCE_DIR}/*.*")
+add_library(lib SHARED ${LIBRARY_FILES})
+set_target_properties(lib PROPERTIES
+	COMPILE_FLAGS "-D CSP_COMPILATION"
+	OUTPUT_NAME csp
+	LIBRARY_OUTPUT_DIRECTORY ${SOURCE_DIR}/prod
+)
 
-# Set the C standard
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED True)
-
-# Support for test names
-if(POLICY CMP0110)
-  cmake_policy(SET CMP0110 NEW)
+if(CMAKE_BUILD_TYPE MATCHES "DEBUG")
+	target_link_libraries(lib ${EFENCE_LIBRARY})
 endif()
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+# TESTS
+set(TEST_EXECUTABLE_NAME testCSP)
 
-enable_testing()
+file(GLOB ABSOLUTE_TEST_DIR "${TEST_DIR}")
+file(GLOB_RECURSE TEST_FILES
+	RELATIVE "${ABSOLUTE_TEST_DIR}/.."
+	CONFIGURE_DEPENDS
+	"${TEST_DIR}/*.c"
+)
+create_test_sourcelist(tests "${TEST_EXECUTABLE_NAME}.c" ${TEST_FILES})
 
-find_package(CppCheck)
-enable_cppcheck()
+add_executable(testLib ${tests})
+add_dependencies(testLib lib)
+target_link_libraries(testLib PRIVATE lib)
+set_target_properties(testLib PROPERTIES
+	OUTPUT_NAME ${TEST_EXECUTABLE_NAME}
+	RUNTIME_OUTPUT_DIRECTORY ${TEST_DIR}
+)
 
-find_package(CcLint)
-enable_cclint()
+get_target_property(EXECUTABLE_OUTPUT_PATH testLib RUNTIME_OUTPUT_DIRECTORY)
+foreach(FILENAME ${TEST_FILES})
+	string(REPLACE ".c" "" NAME ${FILENAME})
+	string(REPLACE "${TEST_DIR}/" "" SHORT_NAME ${NAME})
 
-find_package(ClangFormat)
-enable_clang_format()
+	add_valgrind_test(${SUBPROJECT_NAME} ${SHORT_NAME}
+		"${EXECUTABLE_OUTPUT_PATH}/${TEST_EXECUTABLE_NAME}" ${NAME}
+	)
+endforeach()
 
-find_package(FlawFinder)
-enable_flaw_finder()
+# BENCHMARK TEST
+set(BTEST_EXECUTABLE_NAME btestCSP)
 
-add_subdirectory(src)
-add_subdirectory(test)
+file(GLOB_RECURSE BTEST_FILES CONFIGURE_DEPENDS "${BTEST_DIR}/*.*")
+add_executable(btestLib ${BTEST_FILES})
+target_link_libraries(btestLib PRIVATE lib)
+set_target_properties(btestLib PROPERTIES
+	OUTPUT_NAME ${BTEST_EXECUTABLE_NAME}
+	RUNTIME_OUTPUT_DIRECTORY ${BTEST_DIR}
+)
 
-# Add CPack
-set(CPACK_SOURCE_GENERATOR "ZIP")
-set(CPACK_SOURCE_IGNORE_FILES "/build/;/.vscode/;/.venv/;/.git/;/.idea/;~$;${CPACK_SOURCE_IGNORE_FILES}")
-set(CPACK_PACKAGE_NAME "CSP")
-set(CPACK_PACKAGE_VERSION "1.0.0")
-set(CPACK_PACKAGE_VERSION_MAJOR "1")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-include(CPack)
+get_target_property(EXECUTABLE_OUTPUT_PATH btestLib RUNTIME_OUTPUT_DIRECTORY)
+add_custom_target(btest
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_OUTPUT_PATH}/${BTEST_EXECUTABLE_NAME}"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
+	COMMENT "Running benchmarking test"
+)

@@ -6,17 +6,18 @@
  * @date 2024
  */
 
-// #include "csp-constraint.h"
+#include "csp-constraint.h"
 
-#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+
+#include "csp-lib.h"
 
 #include "csp-constraint.inc.h"
-#include "../csp.h"
 
 // PUBLIC
 // Constructors
@@ -24,7 +25,7 @@ CSPConstraint *csp_constraint_create(size_t arity, CSPChecker *check){
 	assert(csp_initialised());
 	assert(arity > 0);
 	assert(check != NULL);
-	// assert(printf("Creating constraint with arity %lu\n", arity));
+	assert(printf("Creating constraint with arity %lu\n", arity));
 
 	// Allocate memory for the constraint
 	CSPConstraint *constraint = malloc(
@@ -43,7 +44,7 @@ CSPConstraint *csp_constraint_create(size_t arity, CSPChecker *check){
 // Destructors
 void csp_constraint_destroy(CSPConstraint *constraint){
 	assert(csp_initialised());
-	// assert(printf("Destroying constraint with arity %lu\n", constraint->arity));
+	assert(printf("Destroying constraint with arity %lu\n", constraint->arity));
 
 	free(constraint);
 }

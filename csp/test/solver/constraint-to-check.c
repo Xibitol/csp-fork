@@ -11,19 +11,24 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "csp.h"
+#include "util/unused.h"
 
 // Dummy check function
-bool dummy_check(const CSPConstraint *constraint,
-	const size_t *values, const void *data
+bool test_solver_constraint_to_check__dummy_check(
+	const CSPConstraint *UNUSED_VAR(constraint),
+	const size_t *UNUSED_VAR(values),
+	const void *UNUSED_VAR(data)
 ){
 	return true;
 }
 
-int main(void){
+int test_solver_constraint_to_check(void){
+	CSPChecker *dummy_check = &test_solver_constraint_to_check__dummy_check;
+
 	// Initialise the library
 	csp_init();
 	{

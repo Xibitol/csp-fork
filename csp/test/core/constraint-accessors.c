@@ -14,15 +14,20 @@
 #include <assert.h>
 
 #include "csp.h"
+#include "util/unused.h"
 
 // Dummy check function
-bool dummy_check(const CSPConstraint *constraint,
-	const size_t *values, const void *data
+bool test_core_constraint_accessors__dummy_check(
+	const CSPConstraint *UNUSED_VAR(constraint),
+	const size_t *UNUSED_VAR(values),
+	const void *UNUSED_VAR(data)
 ){
 	return true;
 }
 
-int main(void){
+int test_core_constraint_accessors(void){
+	CSPChecker *dummy_check = &test_core_constraint_accessors__dummy_check;
+
 	// Initialise the library
 	csp_init();
 	{

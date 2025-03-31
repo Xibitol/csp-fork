@@ -8,7 +8,7 @@
 
 #pragma once
 
-#if !defined (_CSP_H_INSIDE)
+#if !defined (_CSP_H_INSIDE) && !defined (CSP_COMPILATION)
 #error "Only <csp/csp.h> can be included directly."
 #endif
 

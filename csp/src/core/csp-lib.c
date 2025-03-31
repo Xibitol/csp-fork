@@ -6,12 +6,12 @@
  * @date 2024
  */
 
-#include "../csp.h"
+#include "csp-lib.h"
 
-#include <assert.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 
 // PRIVATE
 static int counter = 0;
