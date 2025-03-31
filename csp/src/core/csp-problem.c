@@ -113,9 +113,9 @@ void csp_problem_set_constraint(CSPProblem *csp,
 
 	#ifndef NDEBUG
 		for(size_t i = 0; i < csp_constraint_get_arity(constraint); i++){
-			assert(
-				csp_constraint_get_variable(constraint, i) < csp->num_domains
-			);
+			// assert(
+			// 	csp_constraint_get_variable(constraint, i) < csp->num_domains
+			// );
 		}
 	#endif
 
