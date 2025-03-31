@@ -1,3 +1,13 @@
-.venv
-out
-tmp
+# IDE
+.idea/
+.vscode/
+
+# Environment
+.venv/
+
+# Build outputs
+out/
+build/
+
+# Temporary files
+tmp/

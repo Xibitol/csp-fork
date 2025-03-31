@@ -1,25 +1,18 @@
 cmake_minimum_required(VERSION 3.0)
 enable_testing()
 
-project(CSP)
+project(CSP
+	DESCRIPTION "A CSP solver forked to increase performances."
+	VERSION 1.0.0
+	LANGUAGES C
+	HOMEPAGE_URL "https://github.com/Xibitol/csp-fork" 
+)
 
 set(SOURCE_DIR src)
 set(TEST_DIR test)
 set(BTEST_DIR btest)
 
 # OPTIONS
-file(GLOB SUBPROJECT_SOURCE_DIRS
-	LIST_DIRECTORIES true
-	RELATIVE ${CMAKE_SOURCE_DIR}
-	${CMAKE_SOURCE_DIR}/*/${SOURCE_DIR}/
-)
-file(GLOB SUBPROJECT_BTEST_DIRS
-	LIST_DIRECTORIES true
-	RELATIVE ${CMAKE_SOURCE_DIR}
-	${CMAKE_SOURCE_DIR}/*/${BTEST_DIR}/
-)
-include_directories(${SUBPROJECT_SOURCE_DIRS} ${SUBPROJECT_BTEST_DIRS})
-
 add_compile_options(-Wall -Wextra -Wpedantic)
 
 if(POLICY CMP0110)
@@ -32,16 +25,19 @@ set(VALGRIND_ARGUMENTS
 )
 
 # EXTERNAL LIBRARIES
+message(STATUS "Detecting external libraries...")
+
 find_library(EFENCE_LIBRARY efence)
 message(STATUS "EFENCE_LIBRARY=${EFENCE_LIBRARY}")
 
 # EXTERNAL PROGRAMS
+message(STATUS "Detecting external programs...")
+
 find_program(VALGRIND_EXECUTABLE "valgrind")
 message(STATUS "VALGRIND_EXECUTABLE=${VALGRIND_EXECUTABLE}")
 
 find_program(DOXYGEN_EXECUTABLE "doxygen")
 message(STATUS "DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}")
-
 find_program(SPHINX_EXECUTABLE "sphinx-build")
 message(STATUS "SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
 
