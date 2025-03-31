@@ -1,5 +1,7 @@
 #!/bin/bash
 
+outputDir=${1:-"out/"}
+
 # if [[ ! -d .venv/ ]]; then
 # 	echo "You need to setup a Python Virtual Environment at .venv with \
 # 		required packages specified in requirements.txt."
@@ -9,5 +11,5 @@
 # #shellcheck source=../.venv/bin/activate
 # source .venv/bin/activate
 
-if [[ -d out/ ]]; then rm -r out/; fi
-cmake -S . -B out/
+if [[ -d $outputDir ]]; then rm -r "$outputDir"; fi
+cmake -S . -B "$outputDir"

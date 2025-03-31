@@ -1,8 +1,11 @@
 set(SUBPROJECT_NAME csp)
 message(STATUS "Configuring ${SUBPROJECT_NAME} sub-project...")
 
+# INPUTS
+include_directories(AFTER ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_DIR})
+
 # OUTPUTS
-file(GLOB_RECURSE LIBRARY_FILES CONFIGURE_DEPENDS "${SOURCE_DIR}/*.*")
+file(GLOB_RECURSE LIBRARY_FILES CONFIGURE_DEPENDS "${SOURCE_DIR}/*.c")
 add_library(lib SHARED ${LIBRARY_FILES})
 set_target_properties(lib PROPERTIES
 	COMPILE_FLAGS "-D CSP_COMPILATION"
@@ -46,7 +49,7 @@ endforeach()
 # BENCHMARK TEST
 set(BTEST_EXECUTABLE_NAME btestCSP)
 
-file(GLOB_RECURSE BTEST_FILES CONFIGURE_DEPENDS "${BTEST_DIR}/*.*")
+file(GLOB_RECURSE BTEST_FILES CONFIGURE_DEPENDS "${BTEST_DIR}/*.c")
 add_executable(btestLib ${BTEST_FILES})
 target_link_libraries(btestLib PRIVATE lib)
 set_target_properties(btestLib PROPERTIES
