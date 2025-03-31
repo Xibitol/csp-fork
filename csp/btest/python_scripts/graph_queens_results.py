@@ -8,7 +8,7 @@ times_odd = []
 backtracks_pair = []
 backtracks_odd = []
 
-with open('build/n_queens_benchmark.txt', 'r') as file:
+with open('build/csp/btest/n_queens_benchmark.txt', 'r') as file:
     for i, line in enumerate(file):
         time, backtrack = map(float, line.split())
         if i % 2 == 0:

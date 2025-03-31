@@ -7,7 +7,7 @@ unknown_count = [i for i in range(5, 81, 5)]
 nodes = []
 times = []
 
-with open('build/sudoku_benchmark.txt', 'r') as file:
+with open('build/csp/btest/sudoku_benchmark.txt', 'r') as file:
     temp_time = []
     temp_nodes = []
     for i, line in enumerate(file):
