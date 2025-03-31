@@ -1,3 +1,0 @@
-add_executable(n_queens_benchmark n_queens_benchmark.c)
-
-add_executable(sudoku_benchmark sudoku_benchmark.c)
