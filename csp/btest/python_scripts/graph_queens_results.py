@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import matplotlib.pyplot as plt
 
 # Read the data from the file
@@ -8,7 +10,7 @@ times_odd = []
 backtracks_pair = []
 backtracks_odd = []
 
-with open('build/csp/btest/n_queens_benchmark.txt', 'r') as file:
+with open('n_queens_benchmark.txt', 'r') as file:
     for i, line in enumerate(file):
         time, backtrack = map(float, line.split())
         if i % 2 == 0:
@@ -59,4 +61,4 @@ plt.grid(True)
 
 # Show the plots
 plt.tight_layout()
-plt.show()
+plt.savefig('n_queens_benchmark_plot.png')
