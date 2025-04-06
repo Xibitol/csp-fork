@@ -8,10 +8,9 @@
  */
 
 #include <stdlib.h>
-#include <stdio.h>
 
-#include "./sudoku-benchmark.h"
-#include "./n-queens-benchmark.h"
+#include "sudoku-benchmark.h"
+#include "n-queens-benchmark.h"
 
 int main(void){
 	sudoku_benchmark(5, 5);

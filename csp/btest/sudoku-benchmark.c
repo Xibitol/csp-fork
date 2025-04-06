@@ -6,11 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <time.h>
-#include <sys/wait.h>
 
-#include "./load-new-sudoku.h"
-#include "./solve-sudoku.h"
+#include "load-new-sudoku.h"
+#include "solve-sudoku.h"
 
 int sudoku_benchmark(int average_amount, int unknown_increment) {
     FILE *file1 = fopen("sudoku_benchmark.txt", "w");
@@ -20,7 +18,7 @@ int sudoku_benchmark(int average_amount, int unknown_increment) {
     }
     fclose(file1);
 
-    size_t** sudokus;
+    size_t** sudokus = 0;
     for (int i = 5; i < 81; i+=unknown_increment) {
         sudokus = load_new_sudoku(i, average_amount);
         for (int j = 0; j < average_amount; j++) {

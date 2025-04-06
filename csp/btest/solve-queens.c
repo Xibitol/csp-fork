@@ -5,11 +5,8 @@
 
 
 #include "csp.h"
-#include "../src/solver/csp-solver.h"
 
-#include "./csp.h"
 #include "util/unused.h"
-
 
 // Check if the queens are compatible
 bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
@@ -43,7 +40,7 @@ void print_queens_solution(unsigned int number, const size_t *queens) {
     }
     if (i != number - 1) {
       printf("\n├");
-      for (size_t i = 0; i < number - 1; i++) {
+      for (size_t k = 0; k < number - 1; k++) {
         printf("───┼");
       }
       printf("───┤\n");

@@ -5,9 +5,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-#include <sys/wait.h>
 
-#include "./solve-queens.h"
+#include "solve-queens.h"
 
 int n_queens_benchmark(int test_count){
 

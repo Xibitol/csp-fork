@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#include "../src/csp.h"
+#include "csp.h"
 
 void merge_sudoku_values(size_t *output, const size_t *values, const size_t *data) {
   int value_index = 0;
