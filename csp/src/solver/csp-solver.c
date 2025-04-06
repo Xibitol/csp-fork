@@ -10,11 +10,7 @@
 #include <stddef.h>
 #include <assert.h>
 
-#include "core/csp-lib.h"
-#include "core/csp-problem.h"
-#include "core/csp-constraint.h"
-
-#include "core/csp-constraint.inc.h" // TODO: Remove this header and fix code.
+#include "csp.h"
 
 static int backtrack_counter = 0;
 
@@ -48,7 +44,7 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 
 		// Verify if the constraint has to be checked and check it
 		if(csp_constraint_to_check(constraint, index)
-			&& !constraint->check(constraint, values, data)
+			&& !csp_constraint_get_check(constraint)(constraint, values, data)
 		){
 			return false;
 		}
