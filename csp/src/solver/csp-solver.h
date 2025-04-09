@@ -12,7 +12,11 @@
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
+#include <stdbool.h>
 #include <stddef.h>
+
+#include "core/csp-problem.h"
+#include "core/csp-constraint.h"
 
 // GETTERS
 /**
