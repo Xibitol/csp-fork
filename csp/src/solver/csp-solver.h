@@ -12,15 +12,11 @@
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
-#include <stdbool.h>
 #include <stddef.h>
-
-#include "core/csp-problem.h"
-#include "core/csp-constraint.h"
 
 // GETTERS
 /**
- * @brief Verify if the contraint can be checked.
+ * @brief Verify if the constraint can be checked.
  * @param constraint The constraint to verify.
  * @param index The index of the last variable.
  * @return true if the constraint can be checked, false otherwise.
