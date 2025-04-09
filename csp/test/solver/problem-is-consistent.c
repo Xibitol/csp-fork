@@ -61,7 +61,7 @@ int test_solver_problem_is_consistent(void){
 		assert(csp_problem_is_consistent(problem, values, NULL, 0));
 
 		// Backtrack the problem
-		csp_problem_backtrack(problem, values, NULL, 0);
+		csp_problem_backtrack(problem, values, NULL, 0, NULL);
 
 		// Check the consistency of the problem
 		assert(csp_problem_is_consistent(problem, values, NULL, 2));
