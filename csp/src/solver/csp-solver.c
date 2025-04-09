@@ -47,9 +47,11 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 
 // Functions
 bool csp_problem_backtrack(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index
+	size_t *values, const void *data, size_t index,
+	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index)
 ) {
 	assert(csp_initialised());
+	is_consistent = is_consistent == NULL ? &csp_problem_is_consistent : is_consistent;
 
 	// If all variables are assigned, the CSP is solved
 	if(index == csp_problem_get_num_domains(csp)){
@@ -62,11 +64,21 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 		values[index] = i;
 
 		// Check if the assignment is consistent with the constraints
-		if(csp_problem_is_consistent(csp, values, data, index + 1)
-			&& csp_problem_backtrack(csp, values, data, index + 1)
+		if(is_consistent(csp, values, data, index + 1)
+			&& csp_problem_backtrack(csp, values, data, index + 1, is_consistent)
 		){
 			return true;
 		}
 	}
 	return false;
+}
+
+bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data,
+	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index))
+{
+	assert(csp_initialised());
+	is_consistent = is_consistent == NULL ? &csp_problem_is_consistent : is_consistent;
+
+	// Start the backtracking algorithm
+	return csp_problem_backtrack(csp, values, data, 0, is_consistent);
 }
