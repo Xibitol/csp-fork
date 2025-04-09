@@ -10,11 +10,7 @@
 #include <stddef.h>
 #include <assert.h>
 
-#include "core/csp-lib.h"
-#include "core/csp-problem.h"
-#include "core/csp-constraint.h"
-
-#include "core/csp-constraint.inc.h" // TODO: Remove this header and fix code.
+#include "csp.h"
 
 // PUBLIC
 // Getters
@@ -31,9 +27,14 @@ bool csp_constraint_to_check(const CSPConstraint *constraint, size_t index){
 }
 
 bool csp_problem_is_consistent(const CSPProblem *csp,
-	const size_t *values, const void *data, size_t index
+	const size_t *values, const void *data, size_t index, bool sudoku
 ){
 	assert(csp_initialised());
+
+	if (sudoku) {
+		CSPConstraint *constraint = csp_problem_get_constraint(csp, index-1);
+		return csp_constraint_get_check(constraint)(constraint, values, data);
+	}
 
 	// Check all constraints
 	for(size_t i = 0; i < csp_problem_get_num_constraints(csp); i++){
@@ -41,7 +42,7 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 
 		// Verify if the constraint has to be checked and check it
 		if(csp_constraint_to_check(constraint, index)
-			&& !constraint->check(constraint, values, data)
+			&& !csp_constraint_get_check(constraint)(constraint, values, data)
 		){
 			return false;
 		}
@@ -51,9 +52,10 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 
 // Functions
 bool csp_problem_backtrack(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index
+	size_t *values, const void *data, size_t index, bool sudoku
 ){
 	assert(csp_initialised());
+	backtrack_counter++;
 
 	// If all variables are assigned, the CSP is solved
 	if(index == csp_problem_get_num_domains(csp)){
@@ -66,17 +68,21 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 		values[index] = i;
 
 		// Check if the assignment is consistent with the constraints
-		if(csp_problem_is_consistent(csp, values, data, index + 1)
-			&& csp_problem_backtrack(csp, values, data, index + 1)
+		if(csp_problem_is_consistent(csp, values, data, index + 1, sudoku)
+			&& csp_problem_backtrack(csp, values, data, index + 1, sudoku)
 		){
 			return true;
+		}
+		if (sudoku) {
+			// Reset the value in the sudoku grid
+			values[index] = 9;
 		}
 	}
 	return false;
 }
 
-bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data){
+bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, bool sudoku){
 	assert(csp_initialised());
 
-	return csp_problem_backtrack(csp, values, data, 0);
+	return csp_problem_backtrack(csp, values, data, 0, sudoku);
 }
