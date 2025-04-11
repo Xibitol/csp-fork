@@ -79,7 +79,6 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, CSPConsistent *is_consistent)
 {
 	assert(csp_initialised());
-	is_consistent = is_consistent == NULL ? &csp_problem_is_consistent : is_consistent;
 
 	// Start the backtracking algorithm
 	return csp_problem_backtrack(csp, values, data, 0, is_consistent);
