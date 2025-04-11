@@ -31,7 +31,7 @@ bool csp_constraint_to_check(const CSPConstraint *constraint, size_t index){
 }
 
 bool csp_problem_is_consistent(const CSPProblem *csp,
-	const size_t *values, const void *data, size_t index
+	size_t *values, const void *data, size_t index
 ){
 	assert(csp_initialised());
 

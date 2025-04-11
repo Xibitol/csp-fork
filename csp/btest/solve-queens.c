@@ -65,7 +65,7 @@ bool constraint_to_check(const CSPConstraint *constraint, size_t index){
 }
 
 bool is_consistent(const CSPProblem *csp,
-  const size_t *values, const void *data, size_t index
+  size_t *values, const void *data, size_t index
 ){
   if (values[index-1] == 0) {
     backtrack_counter++;

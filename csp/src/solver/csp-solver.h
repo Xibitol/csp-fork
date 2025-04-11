@@ -21,7 +21,7 @@
 /**
  *
  */
-typedef bool CSPConsistent(const CSPProblem *csp, const size_t *values, const void *data, size_t index);
+typedef bool CSPConsistent(const CSPProblem *csp, size_t *values, const void *data, size_t index);
 
 // GETTERS
 /** Verify if the constraint can be checked.
@@ -45,7 +45,7 @@ extern bool csp_constraint_to_check(const CSPConstraint *constraint,
  * @pre The csp library is initialised.
  */
 extern bool csp_problem_is_consistent(const CSPProblem *csp,
-	const size_t *values, const void *data, size_t index
+	size_t *values, const void *data, size_t index
 );
 
 // FUNCTIONS
@@ -61,7 +61,7 @@ extern bool csp_problem_is_consistent(const CSPProblem *csp,
  */
 extern bool csp_problem_backtrack(const CSPProblem *csp,
 	size_t *values, const void *data, size_t index,
-	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index)
+	CSPConsistent *is_consistent
 );
 
 /** Solve the CSP problem using backtracking.
@@ -74,6 +74,4 @@ extern bool csp_problem_backtrack(const CSPProblem *csp,
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_solve(const CSPProblem *csp,
-	size_t *values, const void *data,
-	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index)
-);
+	size_t *values, const void *data, CSPConsistent *is_consistent);
