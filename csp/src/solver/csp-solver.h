@@ -8,11 +8,17 @@
 
 #pragma once
 
-#if !defined (_CSP_H_INSIDE)
+#if !defined (_CSP_H_INSIDE) && !defined (CSP_COMPILATION)
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
+#include <stdbool.h>
 #include <stddef.h>
+
+#include <core/csp-problem.h>
+#include <core/csp-constraint.h>
+
+typedef bool CSPConsistent(const CSPProblem *csp, const size_t *values, const void *data, size_t index);
 
 // GETTERS
 /**

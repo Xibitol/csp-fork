@@ -6,11 +6,15 @@
  * @date 2024
  */
 
+#include "solver/csp-solver.h"
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <assert.h>
 
-#include "csp.h"
+#include "core/csp-lib.h"
+#include "core/csp-problem.h"
+#include "core/csp-constraint.h"
 
 // PUBLIC
 // Getters
@@ -47,8 +51,7 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 
 // Functions
 bool csp_problem_backtrack(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index,
-	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index)
+	size_t *values, const void *data, size_t index, CSPConsistent *is_consistent
 ) {
 	assert(csp_initialised());
 	is_consistent = is_consistent == NULL ? &csp_problem_is_consistent : is_consistent;
@@ -73,8 +76,7 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 	return false;
 }
 
-bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data,
-	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index))
+bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, CSPConsistent *is_consistent)
 {
 	assert(csp_initialised());
 	is_consistent = is_consistent == NULL ? &csp_problem_is_consistent : is_consistent;
