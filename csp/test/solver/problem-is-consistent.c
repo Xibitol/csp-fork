@@ -58,13 +58,13 @@ int test_solver_problem_is_consistent(void){
 		csp_problem_set_domain(problem, 1, 2);
 
 		// Check the consistency of the problem
-		assert(csp_problem_is_consistent(problem, values, NULL, 0, false));
+		assert(csp_problem_is_consistent(problem, values, NULL, 0));
 
 		// Backtrack the problem
-		csp_problem_backtrack(problem, values, NULL, 0, false);
+		csp_problem_backtrack(problem, values, NULL, 0, NULL);
 
 		// Check the consistency of the problem
-		assert(csp_problem_is_consistent(problem, values, NULL, 2, false));
+		assert(csp_problem_is_consistent(problem, values, NULL, 2));
 
 		// Verify that the problem has been solved
 		assert(values[0] != values[1]);
