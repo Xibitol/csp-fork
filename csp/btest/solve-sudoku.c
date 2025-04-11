@@ -9,6 +9,8 @@
 
 #include "csp.h"
 
+static size_t backtrack_counter = 0;
+
 void merge_sudoku_values(size_t *output, const size_t *values, const size_t *data) {
   int value_index = 0;
   for (int data_index = 0; data_index < 81; data_index++) {
@@ -97,6 +99,20 @@ void load_sudoku(const char* str_sudoku, size_t* grid, size_t *unknown_count) {
   }
 }
 
+bool sudoku_consistent(const CSPProblem *csp, size_t *values, const void *data, size_t index) {
+  // Only increase the backtrack counter if the value is 0, because we want to count the number of nodes explored,
+  // we can know we're on a new node when we set a value to 0, otherwise we are just testing other values for the node we're already on
+  if (values[index-1] == 0) {
+    backtrack_counter++;
+  }
+  CSPConstraint *constraint = csp_problem_get_constraint(csp, index-1);
+  if (csp_constraint_get_check(constraint)(constraint, values, data)) {
+    return true;
+  }
+  values[index-1] = 9; // reset the value to 9
+  return false;
+}
+
 int solve_sudoku(size_t* starter_grid) {
 
   // amount of unknowns in the grid
@@ -175,15 +191,15 @@ int solve_sudoku(size_t* starter_grid) {
     clock_t start_time = clock();
 
     // Solve the CSP problem
-    bool result = csp_problem_solve(problem, unknowns, starter_grid, true);
+    bool result = csp_problem_solve(problem, unknowns, starter_grid, sudoku_consistent);
 
     // Stop the timer
     clock_t end_time = clock();
     double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-    fprintf(file, "%f %zu\n", time_spent, get_backtrack_counter());
+    fprintf(file, "%f %zu\n", time_spent, backtrack_counter);
 
     fclose(file);
-    reset_backtrack_counter();
+    backtrack_counter = 0;
 
     // Destroy the CSP problem
     for (size_t index = 0; index < unknown_count; index++) {

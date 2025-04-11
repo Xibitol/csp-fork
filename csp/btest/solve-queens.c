@@ -8,6 +8,8 @@
 
 #include "util/unused.h"
 
+static size_t backtrack_counter = 0;
+
 // Check if the queens are compatible
 bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
 	unsigned int *UNUSED_VAR(data)
@@ -53,6 +55,35 @@ void print_queens_solution(unsigned int number, const size_t *queens) {
   printf("───┘\n");
 }
 
+bool constraint_to_check(const CSPConstraint *constraint, size_t index){
+  for(size_t i = 0; i < csp_constraint_get_arity(constraint); i++){
+    if(csp_constraint_get_variable(constraint, i) >= index){
+      return false;
+    }
+  }
+  return true;
+}
+
+bool is_consistent(const CSPProblem *csp,
+  const size_t *values, const void *data, size_t index
+){
+  if (values[index-1] == 0) {
+    backtrack_counter++;
+  }
+  // Check all constraints
+  for(size_t i = 0; i < csp_problem_get_num_constraints(csp); i++){
+    CSPConstraint *constraint = csp_problem_get_constraint(csp, i);
+
+    // Verify if the constraint has to be checked and check it
+    if(csp_constraint_to_check(constraint, index)
+      && !csp_constraint_get_check(constraint)(constraint, values, data)
+    ){
+      return false;
+    }
+  }
+  return true;
+}
+
 int solve_queens(size_t queen_count) {
 
   // Initialise the library
@@ -95,17 +126,14 @@ int solve_queens(size_t queen_count) {
     clock_t start_time = clock();
 
     // Solve the CSP problem
-    bool result = csp_problem_solve(problem, queens, NULL, false);
+    bool result = csp_problem_solve(problem, queens, NULL, is_consistent);
 
     // Stop the timer
     clock_t end_time = clock();
     double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-    fprintf(file, "%f %zu\n", time_spent, get_backtrack_counter());
+    fprintf(file, "%f %zu\n", time_spent, backtrack_counter);
 
     fclose(file);
-
-    // Reset the nodes explored counter
-    reset_backtrack_counter();
 
     // Destroy the CSP problem
     while (index--) {
