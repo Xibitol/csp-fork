@@ -111,14 +111,6 @@ void csp_problem_set_constraint(CSPProblem *csp,
 	assert(index < csp->num_constraints);
 	assert(constraint != NULL);
 
-	#ifndef NDEBUG
-		for(size_t i = 0; i < csp_constraint_get_arity(constraint); i++){
-			assert(
-				csp_constraint_get_variable(constraint, i) < csp->num_domains
-			);
-		}
-	#endif
-
 	csp->constraints[index] = constraint;
 }
 void csp_problem_set_domain(CSPProblem *csp, size_t index, size_t domain){

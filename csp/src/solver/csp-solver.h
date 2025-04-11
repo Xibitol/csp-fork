@@ -8,19 +8,23 @@
 
 #pragma once
 
-#if !defined (_CSP_H_INSIDE)
+#if !defined (_CSP_H_INSIDE) && !defined (CSP_COMPILATION)
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "core/csp-problem.h"
-#include "core/csp-constraint.h"
+#include <core/csp-problem.h>
+#include <core/csp-constraint.h>
+
+/**
+ *
+ */
+typedef bool CSPConsistent(const CSPProblem *csp, const size_t *values, const void *data, size_t index);
 
 // GETTERS
-/**
- * @brief Verify if the contraint can be checked.
+/** Verify if the constraint can be checked.
  * @param constraint The constraint to verify.
  * @param index The index of the last variable.
  * @return true if the constraint can be checked, false otherwise.
@@ -31,8 +35,8 @@ extern bool csp_constraint_to_check(const CSPConstraint *constraint,
 	size_t index
 );
 
-/**
- * @brief Verify if the CSP problem is consistent at the specified index.
+/** Verify if the CSP problem is consistent at the specified index.
+ * @note This function is the default one used by #csp_problem_solve and #csp_problem_backtrack.
  * @param csp The CSP problem to verify.
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
@@ -45,29 +49,31 @@ extern bool csp_problem_is_consistent(const CSPProblem *csp,
 );
 
 // FUNCTIONS
-/**
- * @brief Solve the CSP problem using backtracking.
+/** Solve the CSP problem using backtracking.
  * @param csp The CSP problem to solve.
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
  * @param index The index of the variable to set.
+ * @param is_consistent A pointer to function to check if the CSP problem is consistent; if NULL, defaults to #csp_problem_is_consistent.
  * @return true if the CSP problem is solved, false otherwise.
  * @pre The csp library is initialised.
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_backtrack(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index
+	size_t *values, const void *data, size_t index,
+	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index)
 );
 
-/**
- * @brief Solve the CSP problem using backtracking.
+/** Solve the CSP problem using backtracking.
  * @param csp The CSP problem to solve.
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
+ * @param is_consistent A pointer to function to check if the CSP problem is consistent; See #csp_problem_backtrack.
  * @return true if the CSP problem is solved, false otherwise.
  * @pre The csp library is initialised.
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_solve(const CSPProblem *csp,
-	size_t *values, const void *data
+	size_t *values, const void *data,
+	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index)
 );

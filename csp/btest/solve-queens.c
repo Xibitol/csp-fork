@@ -83,7 +83,7 @@ int solve_queens(int argc, char *argv[]) {
     }
 
     // Solve the CSP problem
-    bool result = csp_problem_solve(problem, queens, NULL);
+    bool result = csp_problem_solve(problem, queens, NULL, NULL);
 
     // Destroy the CSP problem
     while (index--) {
