@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 int main(void){
-	printf("Hello from the benchmarking program!\n");
+	printf("Hello from the benchmarking program! \n");
 
 	return EXIT_SUCCESS;
 }
