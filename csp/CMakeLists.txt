@@ -48,8 +48,10 @@ endforeach()
 
 # BENCHMARK TEST
 set(BTEST_EXECUTABLE_NAME btestCSP)
+set(BTEST_PYTHON_MOD_NAME cspbtest_plot)
 
 file(GLOB_RECURSE BTEST_FILES CONFIGURE_DEPENDS "${BTEST_DIR}/*.c")
+
 add_executable(btestLib ${BTEST_FILES})
 target_link_libraries(btestLib PRIVATE lib)
 set_target_properties(btestLib PROPERTIES
@@ -57,29 +59,14 @@ set_target_properties(btestLib PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY ${BTEST_DIR}
 )
 
-file(GLOB_RECURSE BTEST_PY_FILES CONFIGURE_DEPENDS "${BTEST_DIR}/python_scripts/*.py")
-
 get_target_property(EXECUTABLE_OUTPUT_PATH btestLib RUNTIME_OUTPUT_DIRECTORY)
 add_custom_target(btest
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_OUTPUT_PATH}/${BTEST_EXECUTABLE_NAME}"
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
 	COMMENT "Running benchmarking test"
 )
-
-## Ensure Python scripts have execute permissions
-#foreach(PY_FILE ${BTEST_PY_FILES})
-#	add_custom_command(TARGET btest PRE_BUILD
-#			COMMAND ${CMAKE_COMMAND} -E echo "Setting execute permissions for ${PY_FILE}"
-#			COMMAND ${CMAKE_COMMAND} -E chmod +x ${PY_FILE}
-#			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
-#	)
-#endforeach()
-
-foreach(PY_FILE ${BTEST_PY_FILES})
-	MESSAGE(WARNING "Don't forget to set the execute permissions for ${PY_FILE}, chmod +x ${PY_FILE}")
-	add_custom_command(TARGET btest POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E echo "Running ${PY_FILE}"
-			COMMAND ${Python3_EXECUTABLE} ${PY_FILE}
-			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
-	)
-endforeach()
+add_custom_command(TARGET btest POST_BUILD
+	COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/${BTEST_DIR}/${BTEST_PYTHON_MOD_NAME}"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
+	COMMENT "Plotting results..."
+)

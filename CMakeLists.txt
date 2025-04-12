@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.0)
 enable_testing()
 
 project(CSP
@@ -30,11 +30,12 @@ message(STATUS "Detecting external libraries...")
 find_library(EFENCE_LIBRARY efence)
 message(STATUS "EFENCE_LIBRARY=${EFENCE_LIBRARY}")
 
-# EXTERNAL PROGRAMS
+# EXTERNAL PACKAGES/PROGRAMS
 message(STATUS "Detecting external programs...")
 
 find_program(VALGRIND_EXECUTABLE "valgrind")
 message(STATUS "VALGRIND_EXECUTABLE=${VALGRIND_EXECUTABLE}")
+find_package(Python3 COMPONENTS Interpreter)
 
 find_program(DOXYGEN_EXECUTABLE "doxygen")
 message(STATUS "DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}")
