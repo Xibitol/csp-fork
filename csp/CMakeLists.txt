@@ -15,6 +15,11 @@ set_target_properties(lib PROPERTIES
 
 if(CMAKE_BUILD_TYPE MATCHES "DEBUG")
 	target_link_libraries(lib ${EFENCE_LIBRARY})
+else()
+	get_target_property(LIB_COMPILE_FLAGS lib COMPILE_FLAGS)
+	set_target_properties(lib PROPERTIES
+		COMPILE_FLAGS "${LIB_COMPILE_FLAGS} -D NDEBUG"
+	)
 endif()
 
 # TESTS
@@ -55,6 +60,7 @@ file(GLOB_RECURSE BTEST_FILES CONFIGURE_DEPENDS "${BTEST_DIR}/*.c")
 add_executable(btestLib ${BTEST_FILES})
 target_link_libraries(btestLib PRIVATE lib)
 set_target_properties(btestLib PROPERTIES
+	COMPILE_FLAGS "-D NDEBUG"
 	OUTPUT_NAME ${BTEST_EXECUTABLE_NAME}
 	RUNTIME_OUTPUT_DIRECTORY ${BTEST_DIR}
 )

@@ -84,8 +84,7 @@ bool is_consistent(const CSPProblem *csp,
   return true;
 }
 
-int solve_queens(size_t queen_count) {
-
+int solve_queens(size_t queen_count, bool silent) {
   // Initialise the library
   csp_init();
   {
@@ -142,11 +141,13 @@ int solve_queens(size_t queen_count) {
     csp_problem_destroy(problem);
 
     // Print the solution
-    if (result) {
-      print_queens_solution(queen_count, queens);
-    } else {
-      printf("No solution found\n");
-    }
+    if(!silent){
+      if (result) {
+        print_queens_solution(queen_count, queens);
+      }else{
+        printf("No solution found\n");
+      }
+	}
 
     // Free the queens array
     free(queens);

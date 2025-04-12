@@ -113,10 +113,10 @@ bool sudoku_consistent(const CSPProblem *csp, size_t *values, const void *data, 
   return false;
 }
 
-int solve_sudoku(size_t* starter_grid) {
+int solve_sudoku(size_t* starter_grid, bool silent) {
 
   // amount of unknowns in the grid
-  print_sudoku_solution(starter_grid);
+  if(!silent) print_sudoku_solution(starter_grid);
   size_t unknown_count = 0;
   for (size_t i = 0; i < 81; i++) {
       if (starter_grid[i] == 9) {
@@ -208,22 +208,19 @@ int solve_sudoku(size_t* starter_grid) {
     csp_problem_destroy(problem);
 
     // Print the solution
-    if (result) {
-      size_t* solution = calloc(81, sizeof(size_t));
-      if (solution == NULL) {
-        perror("calloc failed");
-        free(unknowns);
-        free(starter_grid);
-        free(unknown_positions);
-        return EXIT_FAILURE;
-      }
-      merge_sudoku_values(solution, unknowns, starter_grid);
-      print_sudoku_solution(solution);
-      free(solution);
-    } else {
-      printf("No solution found\n");
+    if(!silent){
+      if (result) {
+        size_t* solution = calloc(81, sizeof(size_t));
+        if (solution != NULL){
+          merge_sudoku_values(solution, unknowns, starter_grid);
+          print_sudoku_solution(solution);
+          free(solution);
+        }else
+           perror("calloc");
+      } else {
+        printf("No solution found\n");
+      }	  
     }
-
     // Free allocated arrays
     free(unknowns);
     free(starter_grid);

@@ -4,4 +4,4 @@
 
 #pragma once
 
-extern int solve_queens(int queen_count);
+extern int solve_queens(int queen_count, bool silent);
