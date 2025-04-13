@@ -10,5 +10,5 @@ out/
 build/
 
 # Temporary files
-__pycache__
+__pycache__/
 tmp/
