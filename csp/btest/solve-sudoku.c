@@ -1,6 +1,12 @@
-//
-// Created by adrien on 26/03/25.
-//
+/**
+* @file solve-sudoku.c
+ * Sudoku solver using the CSP library to perform benchmarking.
+ *
+ * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
+ * @date 2025
+ * @copyright GNU Lesser General Public License v3.0
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +17,7 @@
 
 static size_t backtrack_counter = 0;
 
-void merge_sudoku_values(size_t *output, const size_t *values, const size_t *data) {
+static void merge_sudoku_values(size_t *output, const size_t *values, const size_t *data) {
   int value_index = 0;
   for (int data_index = 0; data_index < 81; data_index++) {
     if (data[data_index] == 9 && values[value_index] != 9) {
@@ -23,7 +29,7 @@ void merge_sudoku_values(size_t *output, const size_t *values, const size_t *dat
   }
 }
 
-void get_unknown_positions(const size_t *grid, size_t *unknown_positions) {
+static void get_unknown_positions(const size_t *grid, size_t *unknown_positions) {
   int index = 0;
   for (int i = 0; i < 81; i++) {
     if (grid[i] == 9) {
@@ -33,7 +39,7 @@ void get_unknown_positions(const size_t *grid, size_t *unknown_positions) {
   }
 }
 
-void print_sudoku_solution(const size_t *sudoku_grid) {
+static void print_sudoku_solution(const size_t *sudoku_grid) {
   printf("┌─────────┬─────────┬─────────┐\n");
   for (size_t row = 0; row < 9; row++) {
     printf( "│");
@@ -62,41 +68,22 @@ bool checker(const CSPConstraint *constraint, const size_t *values, const void *
   //we need to merge the two into a single grid before checking the constraints
   size_t* grid = calloc(81, sizeof(size_t));
   if (grid == NULL) {
-    perror("calloc failed");
+    perror("calloc");
     return false;
   }
   merge_sudoku_values(grid, values, data);
 
-  for (int i = 0; i < 20; i++) {
-    // csp_constraint_get_variable(constraint, 20) is the coordinate of the unknown cell itself
-    // csp_constraint_get_variable(constraint, i) is the coordinate of a cell in the grid that is in the row, column or box of the unknown cell
-    if (grid[csp_constraint_get_variable(constraint, 20)] == grid[csp_constraint_get_variable(constraint, i)]) {
-      free(grid);
-      return false;
-    }
+  int i = 0;
+  // csp_constraint_get_variable(constraint, 20) is the coordinate of the unknown cell itself
+  // csp_constraint_get_variable(constraint, i) is the coordinate of a cell in the grid that is in the row, column or box of the unknown cell
+  while (grid[csp_constraint_get_variable(constraint, 20)] != grid[csp_constraint_get_variable(constraint, i)] && i < 20) {
+    i++;
   }
   free(grid);
-  return true;
-}
-
-void load_sudoku(const char* str_sudoku, size_t* grid, size_t *unknown_count) {
-  if (str_sudoku == NULL || grid == NULL || unknown_count == NULL) {
-    fprintf(stderr, "Invalid arguments\n");
-    return;
+  if (i == 20) {
+    return true;
   }
-  for (size_t i = 0; i < 81; i++) {
-    if (str_sudoku[i] == '\0') {
-      perror("Invalid sudoku string");
-      return;
-    }
-    grid[i] = str_sudoku[i] - '0';
-    if (grid[i] == 0) {
-      *unknown_count += 1;
-      grid[i] = 9;
-    } else {
-      grid[i] = grid[i] - 1;
-    }
-  }
+  return false;
 }
 
 bool sudoku_consistent(const CSPProblem *csp, size_t *values, const void *data, size_t index) {
@@ -130,7 +117,7 @@ int solve_sudoku(size_t* starter_grid, bool silent) {
     // array to contain all the unknowns we'll be testing through in the solver
     size_t *unknowns = calloc(unknown_count, sizeof(size_t));
     if (unknowns == NULL) {
-      perror("calloc failed");
+      perror("calloc");
       return EXIT_FAILURE;
     }
     for (size_t i = 0; i < unknown_count; i++) {
@@ -139,7 +126,7 @@ int solve_sudoku(size_t* starter_grid, bool silent) {
 
     size_t *unknown_positions = calloc(unknown_count, sizeof(size_t));
     if (unknown_positions == NULL) {
-      perror("calloc failed");
+      perror("calloc");
       return EXIT_FAILURE;
     }
     get_unknown_positions(starter_grid, unknown_positions);
@@ -173,12 +160,10 @@ int solve_sudoku(size_t* starter_grid, bool silent) {
       for (size_t i = 0; i < 3; i++) {
         for (size_t j = 0; j < 3; j++) {
           // set the variable in the constraint
-          if (x%3 == i || y%3 == j) { //variable already set in either row or column
-            continue;
+          if (!(x%3 == i || y%3 == j)) { //variable already set in either row or column
+            csp_constraint_set_variable(constraint, 16 + box_cell_counter, x-x%3 + (y-y%3)*9 + i + j*9); // box
+            box_cell_counter++;
           }
-          assert(box_cell_counter < 4);
-          csp_constraint_set_variable(constraint, 16 + box_cell_counter, x-x%3 + (y-y%3)*9 + i + j*9); // box
-          box_cell_counter++;
         }
       }
       csp_constraint_set_variable(constraint, 20, unknown_positions[constraint_index]); // unknown cell itself

@@ -1,11 +1,18 @@
+/**
+* @file solve-queens.c
+ * N_Queens problem solver using the CSP library to perform benchmarking.
+ *
+ * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
+ * @date 2025
+ * @copyright GNU Lesser General Public License v3.0
+ */
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-
 #include "csp.h"
-
 #include "util/unused.h"
 
 static size_t backtrack_counter = 0;
@@ -25,7 +32,7 @@ bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
 }
 
 // Print the solution
-void print_queens_solution(unsigned int number, const size_t *queens) {
+static void print_queens_solution(unsigned int number, const size_t *queens) {
   printf("┌");
   for (size_t i = 0; i < number - 1; i++) {
     printf("───┬");

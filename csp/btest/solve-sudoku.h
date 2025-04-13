@@ -1,6 +1,11 @@
-//
-// Created by adrien on 31/03/25.
-//
+/**
+* @file solve-sudoku.h
+ * Sudoku solver using the CSP library to perform benchmarking.
+ *
+ * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
+ * @date 2025
+ * @copyright GNU Lesser General Public License v3.0
+ */
 
 #pragma once
 
