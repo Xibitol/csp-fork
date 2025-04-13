@@ -100,7 +100,7 @@ bool sudoku_consistent(const CSPProblem *csp, size_t *values, const void *data, 
   return false;
 }
 
-int solve_sudoku(size_t* starter_grid, bool silent) {
+int solve_sudoku(size_t* starter_grid, const char* resultFile, bool silent) {
 
   // amount of unknowns in the grid
   if(!silent) print_sudoku_solution(starter_grid);
@@ -170,7 +170,7 @@ int solve_sudoku(size_t* starter_grid, bool silent) {
       csp_problem_set_constraint(problem, constraint_index, constraint);
     }
 
-    FILE* file = fopen("sudoku_benchmark.txt", "a");
+    FILE* file = fopen(resultFile, "a");
 
     // Start the timer
     clock_t start_time = clock();

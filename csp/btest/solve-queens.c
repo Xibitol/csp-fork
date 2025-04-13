@@ -91,7 +91,7 @@ bool is_consistent(const CSPProblem *csp,
   return true;
 }
 
-int solve_queens(size_t queen_count, bool silent) {
+int solve_queens(size_t queen_count, const char* resultFile, bool silent) {
   // Initialise the library
   csp_init();
   {
@@ -126,7 +126,7 @@ int solve_queens(size_t queen_count, bool silent) {
       }
     }
 
-    FILE* file = fopen("n_queens_benchmark.txt", "a");
+    FILE* file = fopen(resultFile, "a");
 
     // Start the timer
     clock_t start_time = clock();

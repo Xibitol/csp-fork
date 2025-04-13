@@ -9,4 +9,4 @@
 
 #pragma once
 
-extern int solve_sudoku(size_t* starter_grid, bool silent);
+extern int solve_sudoku(size_t* starter_grid, const char* resultFile, bool silent);
