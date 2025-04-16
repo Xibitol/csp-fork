@@ -9,4 +9,7 @@
 
 #pragma once
 
-extern int solve_sudoku(size_t* starter_grid, bool silent);
+#include <stdbool.h>
+#include <stddef.h>
+
+extern int solve_sudoku(size_t* grid, bool silent);

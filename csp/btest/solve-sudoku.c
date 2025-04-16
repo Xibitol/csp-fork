@@ -1,218 +1,272 @@
 /**
-* @file solve-sudoku.c
+ * @file solve-sudoku.c
  * Sudoku solver using the CSP library to perform benchmarking.
  *
- * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
+ * @author Xibitol <xibitol@pimous.dev>
  * @date 2025
  * @copyright GNU Lesser General Public License v3.0
  */
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "solve-sudoku.h"
+
 #include <stdbool.h>
+#include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 
 #include "csp.h"
+#include "csp-btest.h"
 
-static size_t backtrack_counter = 0;
+typedef struct{
+	size_t* sudoku;
+	size_t* unknownCells;
+} SudokuData;
 
-static void merge_sudoku_values(size_t *output, const size_t *values, const size_t *data) {
-  int value_index = 0;
-  for (int data_index = 0; data_index < 81; data_index++) {
-    if (data[data_index] == 9 && values[value_index] != 9) {
-      output[data_index] = values[value_index];
-      value_index++;
-    } else {
-      output[data_index] = data[data_index];
-    }
-  }
+static size_t constraintsChecked[3] = {0};
+
+/** Row musn't have repeated values. */
+static bool rowChecker(const CSPConstraint *constraint,
+	const size_t *value, const void *data
+){
+	SudokuData *sd = (SudokuData*) data;
+	size_t row = sd->unknownCells[csp_constraint_get_variable(constraint, 0)]/9;
+	size_t valueCounts[9] = {0};
+
+	size_t col = 0, i = 0, cIdx, val;
+	do{
+		cIdx = row*9 + col;
+
+		if(sd->sudoku[cIdx] != 0) val = sd->sudoku[cIdx];
+		else val = value[csp_constraint_get_variable(constraint, i++)] + 1;
+
+		valueCounts[val - 1]++;
+	}while(valueCounts[val - 1] <= 1 && ++col < 9);
+
+	constraintsChecked[0]++;
+
+	return col == 9;
+}
+/** Column sum must be equal to 45. */
+static bool colChecker(const CSPConstraint *constraint,
+	const size_t *value, const void *data
+){
+	SudokuData *sd = (SudokuData*) data;
+	size_t col = sd->unknownCells[csp_constraint_get_variable(constraint, 0)]%9;
+	size_t sum = 0;
+
+	size_t cIdx;
+	for(size_t row = 0, i = 0; row < 9; row++){
+		cIdx = row*9 + col;
+
+		if(sd->sudoku[cIdx] != 0) sum += sd->sudoku[cIdx];
+		else sum += value[csp_constraint_get_variable(constraint, i++)] + 1;
+	}
+
+	constraintsChecked[1]++;
+
+	return sum == 45;
+}
+/** Box sum must be equal to 45. */
+static bool blockChecker(const CSPConstraint *constraint,
+	const size_t *value, const void *data
+){
+	SudokuData *sd = (SudokuData*) data;
+	size_t var0Idx = csp_constraint_get_variable(constraint, 0);
+	size_t block = (sd->unknownCells[var0Idx]/(9*3))*3
+		+ (sd->unknownCells[var0Idx]/3)%3;
+	size_t sum = 0;
+
+	size_t bIdx = (block/3)*(9*3) + (block%3)*3, cIdx = 0;
+	for(size_t cell = 0, i = 0; cell < 9; cell++){
+		cIdx = bIdx + (cell/3)*9 + cell%3;
+
+		if(sd->sudoku[cIdx] != 0) sum += sd->sudoku[cIdx];
+		else sum += value[csp_constraint_get_variable(constraint, i++)] + 1;
+	}
+
+	constraintsChecked[2]++;
+
+	return sum == 45;
 }
 
-static void get_unknown_positions(const size_t *grid, size_t *unknown_positions) {
-  int index = 0;
-  for (int i = 0; i < 81; i++) {
-    if (grid[i] == 9) {
-      unknown_positions[index] = i;
-      index++;
-    }
-  }
+/** @author agueguen-LR */
+static void print_sudoku_solution(const size_t* sudoku, const size_t* unknowns){
+	printf("┌─────────┬─────────┬─────────┐\n");
+
+	for(size_t row = 0, i = 0; row < 9; row++){
+		printf("│");
+
+		for(size_t col = 0; col < 9; col++){
+			if(sudoku[row*9 + col] == 0){
+				if(unknowns == NULL || unknowns[i] + 1 == 0) printf("   ");
+				else printf(" %lu,", unknowns[i++] + 1);
+			}else printf(" %lu ", sudoku[row*9 + col]);
+
+			if(col % 3 == 2) printf("│");
+		}
+
+		printf("\n");
+		if(row%3 == 2 && row != 8)
+			printf("├─────────┼─────────┼─────────┤\n");
+	}
+
+	printf( "└─────────┴─────────┴─────────┘\n");
 }
 
-static void print_sudoku_solution(const size_t *sudoku_grid) {
-  printf("┌─────────┬─────────┬─────────┐\n");
-  for (size_t row = 0; row < 9; row++) {
-    printf( "│");
-    for (size_t col = 0; col < 9; col++) {
-      if (sudoku_grid[row * 9 + col] == 9) {
-        printf( "  ");
-      } else {
-        printf( " %zu", sudoku_grid[row * 9 + col] + 1);
-      }
-      if (col % 3 == 2) {
-        printf( " │");
-      } else {
-        printf( " ");
-      }
-    }
-    printf( "\n");
-    if (row % 3 == 2 && row != 8) {
-      printf( "├─────────┼─────────┼─────────┤\n");
-    }
-  }
-  printf( "└─────────┴─────────┴─────────┘\n");
-}
+int solve_sudoku(size_t *sudoku, bool silent){
+	size_t unknownCount = 0;
+	size_t *unknowns = NULL, *unknownCells = malloc(sizeof(size_t)*81);
 
-bool checker(const CSPConstraint *constraint, const size_t *values, const void *data) {
-  //data is the starter grid, values are the unknowns
-  //we need to merge the two into a single grid before checking the constraints
-  size_t* grid = calloc(81, sizeof(size_t));
-  if (grid == NULL) {
-    perror("calloc");
-    return false;
-  }
-  merge_sudoku_values(grid, values, data);
+	// Changes values and count unknowns.
+	for(size_t i = 0; i < 81; i++){
+		sudoku[i] = sudoku[i] == 9 ? 0 : sudoku[i] + 1;
 
-  int i = 0;
-  // csp_constraint_get_variable(constraint, 20) is the coordinate of the unknown cell itself
-  // csp_constraint_get_variable(constraint, i) is the coordinate of a cell in the grid that is in the row, column or box of the unknown cell
-  while (grid[csp_constraint_get_variable(constraint, 20)] != grid[csp_constraint_get_variable(constraint, i)] && i < 20) {
-    i++;
-  }
-  free(grid);
-  if (i == 20) {
-    return true;
-  }
-  return false;
-}
+		if(sudoku[i] == 0){
+			unknownCells[unknownCount] = i;
+			unknownCount++;
+		}
+	}
 
-bool sudoku_consistent(const CSPProblem *csp, size_t *values, const void *data, size_t index) {
-  // Only increase the backtrack counter if the value is 0, because we want to count the number of nodes explored,
-  // we can know we're on a new node when we set a value to 0, otherwise we are just testing other values for the node we're already on
-  if (values[index-1] == 0) {
-    backtrack_counter++;
-  }
-  CSPConstraint *constraint = csp_problem_get_constraint(csp, index-1);
-  if (csp_constraint_get_check(constraint)(constraint, values, data)) {
-    return true;
-  }
-  values[index-1] = 9; // reset the value to 9
-  return false;
-}
+	// Prints sudoku.
+	if(!silent) print_sudoku_solution(sudoku, unknowns);
 
-int solve_sudoku(size_t* starter_grid, bool silent) {
+	CSPProblem* problem;
 
-  // amount of unknowns in the grid
-  if(!silent) print_sudoku_solution(starter_grid);
-  size_t unknown_count = 0;
-  for (size_t i = 0; i < 81; i++) {
-      if (starter_grid[i] == 9) {
-          unknown_count++;
-      }
-  }
+	unknownCells = realloc(unknownCells, sizeof(size_t)*unknownCount);
+	unknowns = malloc(sizeof(size_t)*unknownCount);
 
-  // Initialise the library
-  csp_init();
-  {
-    // array to contain all the unknowns we'll be testing through in the solver
-    size_t *unknowns = calloc(unknown_count, sizeof(size_t));
-    if (unknowns == NULL) {
-      perror("calloc");
-      return EXIT_FAILURE;
-    }
-    for (size_t i = 0; i < unknown_count; i++) {
-      unknowns[i] = 9; // set to 9, keeps 0 available for the values within domain
-    }
+	SudokuData sudokuData = (SudokuData) {sudoku, unknownCells};
 
-    size_t *unknown_positions = calloc(unknown_count, sizeof(size_t));
-    if (unknown_positions == NULL) {
-      perror("calloc");
-      return EXIT_FAILURE;
-    }
-    get_unknown_positions(starter_grid, unknown_positions);
+	csp_init();
+	{
+		// Creates constraints.
+		size_t consIdx = 0;
+		CSPConstraint* constraints[9 + 9 + 9] = {NULL};
+		size_t unkIdx = 0;
+		size_t arity, variables[9] = {0};
+		size_t bIdx, cIdx;
 
-    CSPProblem *problem = csp_problem_create(unknown_count, unknown_count);
-    for (size_t i = 0; i < unknown_count; i++) {
-      csp_problem_set_domain(problem, i, 9); // Each unknown cell can have values 0-8
-    }
+		for(size_t row = 0; row < 9; row++){
+			arity = 0;
+			for(size_t col = 0, i = 0; col < 9; col++){
+				cIdx = row*9 + col;
 
-    // one constraint per unknown cell, each constraint checks unknown value is unique in row, column and box
-    for (size_t constraint_index = 0; constraint_index < unknown_count; constraint_index++) {
-      // arity = 9 from box + 6 from row + 6 from column
-      CSPConstraint *constraint = csp_constraint_create(21, checker);
+				if(sudoku[cIdx] == 0){
+					arity++;
+					variables[i++] = unkIdx++;
+				}
+			}
 
-      // coords of the unknown cell corresponding to the constraint
-      size_t x = unknown_positions[constraint_index] % 9;
-      size_t y = unknown_positions[constraint_index] / 9;
-      size_t row_cell_counter = 0;
-      size_t column_cell_counter = 0;
-      for (size_t i = 0; i < 9; i++) {
-        if (i != y) {
-          csp_constraint_set_variable(constraint, column_cell_counter + 8, i*9 + x); // column
-          column_cell_counter++;
-        }
-        if (i != x) {
-          csp_constraint_set_variable(constraint, row_cell_counter, y*9 + i); // row
-          row_cell_counter++;
-        }
-      }
-      size_t box_cell_counter = 0;
-      for (size_t i = 0; i < 3; i++) {
-        for (size_t j = 0; j < 3; j++) {
-          // set the variable in the constraint
-          if (!(x%3 == i || y%3 == j)) { //variable already set in either row or column
-            csp_constraint_set_variable(constraint, 16 + box_cell_counter, x-x%3 + (y-y%3)*9 + i + j*9); // box
-            box_cell_counter++;
-          }
-        }
-      }
-      csp_constraint_set_variable(constraint, 20, unknown_positions[constraint_index]); // unknown cell itself
-      csp_problem_set_constraint(problem, constraint_index, constraint);
-    }
+			if(arity > 0){
+				constraints[consIdx] = csp_constraint_create(arity,
+					&rowChecker
+				);
+				for(size_t i = 0; i < arity; i++)
+					csp_constraint_set_variable(constraints[consIdx],
+						i, variables[i]
+					);
 
-    FILE* file = fopen("sudoku_benchmark.txt", "a");
+				consIdx++;
+			}
+		}
 
-    // Start the timer
-    clock_t start_time = clock();
+		for(size_t col = 0; col < 9; col++){
+			arity = 0;
+			for(size_t row = 0, i = 0; row < 9; row++){
+				cIdx = row*9 + col;
 
-    // Solve the CSP problem
-    bool result = csp_problem_solve(problem, unknowns, starter_grid, sudoku_consistent);
+				if(sudoku[cIdx] == 0){
+					arity++;
+					variables[i++] = cIdx;
+				}
+			}
 
-    // Stop the timer
-    clock_t end_time = clock();
-    double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-    fprintf(file, "%f %zu\n", time_spent, backtrack_counter);
+			if(arity > 0){
+				constraints[consIdx] = csp_constraint_create(arity,
+					&colChecker
+				);
 
-    fclose(file);
-    backtrack_counter = 0;
+				unkIdx = 0;
+				for(size_t i = 0; i < arity; unkIdx++)
+					if(unknownCells[unkIdx] == variables[i])
+						csp_constraint_set_variable(constraints[consIdx],
+							i++, unkIdx
+						);
 
-    // Destroy the CSP problem
-    for (size_t index = 0; index < unknown_count; index++) {
-      csp_constraint_destroy(csp_problem_get_constraint(problem, index));
-    }
-    csp_problem_destroy(problem);
+				consIdx++;
+			}
+		}
 
-    // Print the solution
-    if(!silent){
-      if (result) {
-        size_t* solution = calloc(81, sizeof(size_t));
-        if (solution != NULL){
-          merge_sudoku_values(solution, unknowns, starter_grid);
-          print_sudoku_solution(solution);
-          free(solution);
-        }else
-           perror("calloc");
-      } else {
-        printf("No solution found\n");
-      }	  
-    }
-    // Free allocated arrays
-    free(unknowns);
-    free(starter_grid);
-    free(unknown_positions);
-  }
-  // Finish the library
-  csp_finish();
+		for(size_t block = 0; block < 9; block++){
+			arity = 0;
+			bIdx = (block/3)*(9*3) + (block%3)*3;
+			for(size_t cell = 0, i = 0; cell < 9; cell++){
+				cIdx = bIdx + (cell/3)*9 + cell%3;
 
-  return EXIT_SUCCESS;
+				if(sudoku[cIdx] == 0){
+					arity++;
+					variables[i++] = cIdx;
+				}
+			}
+
+			if(arity > 0){
+				constraints[consIdx] = csp_constraint_create(arity,
+					&blockChecker
+				);
+
+				unkIdx = 0;
+				for(size_t i = 0; i < arity; unkIdx++)
+					if(unknownCells[unkIdx] == variables[i])
+						csp_constraint_set_variable(constraints[consIdx],
+							i++, unkIdx
+						);
+
+				consIdx++;
+			}
+		}
+
+		// Creates problem
+		problem = csp_problem_create(unknownCount, consIdx);
+
+		for(size_t i = 0; i < csp_problem_get_num_domains(problem); i++)
+			csp_problem_set_domain(problem, i, 9);
+		for(size_t i = 0; i < csp_problem_get_num_constraints(problem); i++)
+			csp_problem_set_constraint(problem, i, constraints[i]);
+	}
+
+	// Solves a problem instance.
+	{
+		FILE* file = fopen(SUDOKU_RESULT_FILE, "a");
+
+		clock_t st = clock();
+		bool res = csp_problem_solve(problem, unknowns, &sudokuData, NULL);
+		clock_t et = clock();
+
+		float delay = ((float) (et - st))/CLOCKS_PER_SEC;
+
+		printf("%s in %f!\n", res ? "SUCCEED" : "FAILED", delay);
+		printf("Row checks: %lu, Column checks: %lu and Block checks: %lu.\n",
+			constraintsChecked[0], constraintsChecked[1], constraintsChecked[2]
+		);
+		fprintf(file, "%f %zu\n", delay, (size_t) 0);
+
+		fclose(file);
+	}
+
+	// Destroys constraints and problem.
+	{
+		for(size_t i = 0; i < csp_problem_get_num_constraints(problem); i++)
+			csp_constraint_destroy(csp_problem_get_constraint(problem, i));
+
+		csp_problem_destroy(problem);
+	}
+	csp_finish();
+
+	// Prints resolved sudoku
+	if(!silent) print_sudoku_solution(sudoku, unknowns);
+
+	free(unknowns);
+	free(unknownCells);
+
+	return EXIT_SUCCESS;
 }

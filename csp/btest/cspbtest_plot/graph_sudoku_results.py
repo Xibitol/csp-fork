@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 average_count = 5
 
 # Read the data from the file
-unknown_count = [i for i in range(5, 81, 5)]
+unknown_count = [i for i in range(5, 40, 5)]
 nodes = []
 times = []
 

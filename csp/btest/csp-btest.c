@@ -1,5 +1,5 @@
 /**
- * @file csp-btest.h
+ * @file csp-btest.c
  * Entry point of CSP lib's benchmarking program.
  *
  * @author Xibitol <xibitol@pimous.dev>
@@ -7,12 +7,13 @@
  * @copyright GNU Lesser General Public License v3.0
  */
 
+#include "csp-btest.h"
+
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <time.h>
+#include <stdio.h>
 
 #include "util/unused.h"
 #include "solve-queens.h"
@@ -31,10 +32,10 @@ static pid_t benchmark(const char* resultFile, BenchmarkFunc* func, void* arg){
 
 	// Creates or truncates result file.
 	FILE *file = fopen(resultFile, "w");
-    if(file == NULL){
-        perror("fopen"), exitCode = EXIT_FAILURE;
-        return fpid;
-    }else if(fclose(file) == -1)
+	if(file == NULL){
+		perror("fopen"), exitCode = EXIT_FAILURE;
+		return fpid;
+	}else if(fclose(file) == -1)
 		perror("fopen"), exitCode = EXIT_FAILURE;
 
 	// Starts benchmark in new process.
@@ -47,7 +48,7 @@ static pid_t benchmark(const char* resultFile, BenchmarkFunc* func, void* arg){
 			break;
 	}
 
-    return fpid;
+	return fpid;
 }
 
 static int nqueensBenchmark(const char* UNUSED_VAR(resultFile), void* arg){
@@ -64,7 +65,7 @@ static int sudokuBenchmark(const char* UNUSED_VAR(resultFile), void* arg){
 	int unknown_increment = ((int*) arg)[1];
 	size_t** sudokus = 0;
 
-	for (int i = 5; i < 81; i += unknown_increment) {
+	for (int i = 5; i < 40; i += unknown_increment) {
 		sudokus = load_new_sudoku(i, average_amount);
 
 		for (int j = 0; j < average_amount; j++) {
@@ -84,19 +85,18 @@ int main(void){
 	);
 
 	int sudokuArgs[2] = {5, 5};
-	pid_t spid = benchmark(NQUEENS_RESULT_FILE, &sudokuBenchmark, sudokuArgs);
+	pid_t spid = benchmark(SUDOKU_RESULT_FILE, &sudokuBenchmark, sudokuArgs);
 	printf("Started benchmarking on Sudoku puzzles (%d).\n", spid);
 
 	if(npid != -1 && waitpid(npid, NULL, 0) == -1)
 		perror("waitpid"), exitCode = EXIT_FAILURE;
-	else{
-		printf("Finished benchmarking (NQueens problems; %d).\n", getpid());
-	}
+	else
+		printf("Finished benchmarking (NQueens problems; %d).\n", npid);
+
 	if(spid != -1 && waitpid(spid, NULL, 0) == -1)
 		perror("waitpid"), exitCode = EXIT_FAILURE;
-	else{
-		printf("Finished benchmarking (Sudoku puzzles; %d).\n", getpid());
-	}
+	else
+		printf("Finished benchmarking (Sudoku puzzles; %d).\n", spid);
 
 	return EXIT_SUCCESS;
 }
