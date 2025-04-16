@@ -36,6 +36,7 @@ message(STATUS "Detecting external programs...")
 find_program(VALGRIND_EXECUTABLE "valgrind")
 message(STATUS "VALGRIND_EXECUTABLE=${VALGRIND_EXECUTABLE}")
 find_package(Python3 COMPONENTS Interpreter)
+message(STATUS "Python3_EXECUTABLE=${Python3_EXECUTABLE}")
 
 find_program(DOXYGEN_EXECUTABLE "doxygen")
 message(STATUS "DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}")
