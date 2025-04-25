@@ -130,9 +130,9 @@ size_t** load_new_sudoku(const size_t unknown_count, const size_t sudoku_count) 
         return NULL;
     }
     for (size_t i = 0; i < sudoku_count; i++) {
-        size_t* sudoku = calloc(81, sizeof(size_t));
+        size_t* sudoku = malloc(81 * sizeof(size_t));
         if (sudoku == NULL) {
-            perror("calloc");
+            perror("malloc");
             free(sudoku_list);
             return NULL;
         }
@@ -142,13 +142,9 @@ size_t** load_new_sudoku(const size_t unknown_count, const size_t sudoku_count) 
         // remove random numbers from the grid to create a puzzle
         remove_numbers(grid, unknown_count);
         for (size_t k = 0; k < N; k++) {
-            for (size_t j = 0; j < N; j++) {
-                if (grid[k][j] == 0) {
-                    sudoku[k * N + j] = 9;
-                } else {
-                    sudoku[k * N + j] = grid[k][j] - 1;
-                }
-            }
+          for (size_t j = 0; j < N; j++) {
+            sudoku[k * N + j] = grid[k][j];
+          }
         }
         sudoku_list[i] = sudoku;
     }
