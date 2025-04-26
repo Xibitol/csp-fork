@@ -27,6 +27,11 @@ bool test_solver_problem_is_consistent__different(
 	return values[v0] != values[v1];
 }
 
+void test_checklist(const CSPProblem *csp, CSPConstraint** checklist, size_t* amount, size_t UNUSED_VAR(index)) {
+	*amount = 1;
+	checklist[0] = csp_problem_get_constraint(csp, 0);
+}
+
 int test_solver_problem_is_consistent(void){
 	CSPChecker *different = &test_solver_problem_is_consistent__different;
 
@@ -58,13 +63,13 @@ int test_solver_problem_is_consistent(void){
 		csp_problem_set_domain(problem, 1, 2);
 
 		// Check the consistency of the problem
-		assert(csp_problem_is_consistent(problem, values, NULL, 0));
+		assert(!csp_problem_is_consistent(problem, values, NULL, 0, test_checklist));
 
 		// Backtrack the problem
-		csp_problem_backtrack(problem, values, NULL, 0, NULL);
+		csp_problem_backtrack(problem, values, NULL, 0, test_checklist);
 
 		// Check the consistency of the problem
-		assert(csp_problem_is_consistent(problem, values, NULL, 2));
+		assert(csp_problem_is_consistent(problem, values, NULL, 1, test_checklist));
 
 		// Verify that the problem has been solved
 		assert(values[0] != values[1]);

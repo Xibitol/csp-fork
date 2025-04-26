@@ -112,17 +112,10 @@ static void get_constraining_unknowns(const Unknown *unknown_positions, const si
   }
 }
 
-bool sudoku_consistent(const CSPProblem *csp, size_t *values, const void *data, size_t index) {
-  // Only increase the backtrack counter if the value is 0, because we want to count the number of nodes explored,
-  // we can know we're on a new node when we set a value to 0, otherwise we are just testing other values for the node we're already on
-  if (values[index - 1] == 0) {
-    backtrack_counter++;
-  }
-  const CSPConstraint *constraint = csp_problem_get_constraint(csp, index-1);
-  if (csp_constraint_get_check(constraint)(constraint, values, data)) {
-    return true;
-  }
-  return false;
+void sudoku_checklist(const CSPProblem *csp, CSPConstraint** checklist, size_t* amount, const size_t index) {
+	backtrack_counter++;
+	*amount = 1;
+	checklist[0] = csp_problem_get_constraint(csp, index);
 }
 
 bool checker(const CSPConstraint *constraint, const size_t *values, const void *data) {
@@ -245,7 +238,7 @@ int solve_sudoku(const size_t * starter_grid, const char* resultFile, bool silen
     clock_t start_time = clock();
 
     // Solve the CSP problem
-    bool result = csp_problem_solve(problem, unknowns, starter_grid, sudoku_consistent);
+    bool result = csp_problem_solve(problem, unknowns, starter_grid, sudoku_checklist);
 
     // Stop the timer
     clock_t end_time = clock();
