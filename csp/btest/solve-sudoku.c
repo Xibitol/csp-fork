@@ -19,6 +19,13 @@
 
 static size_t backtrack_counter = 0;
 
+/**
+ * Merges the values of the unknowns with the starter grid to create a solved grid
+ * Used solely for printing the solution at the end
+ * @param output size_t* to store the merged sudoku values
+ * @param values array of filled unknowns to be merged
+ * @param data starter grid of the sudoku, 0s are unknowns
+ */
 static void merge_sudoku_values(size_t *output, const size_t *values, const size_t *data) {
   int value_index = 0;
   for (int data_index = 0; data_index < 81; data_index++) {
@@ -55,12 +62,23 @@ static void print_sudoku_solution(const size_t *sudoku_grid) {
   printf( "└─────────┴─────────┴─────────┘\n");
 }
 
+/**
+ * Store the characteristics of the unknowns for the construction of the
+ * CSPProblem
+ */
 typedef struct {
-  size_t index;
-  size_t x;
-  size_t y;
+  size_t index; // index of the unknown in the unknown list
+  size_t x; // x coordinate of the unknown in the starter grid
+  size_t y; // y coordinate of the unknown in the starter grid
 } Unknown;
 
+/**
+ * Fills the unknown_positions array with the positions of the unknowns in the
+ * grid.
+ * @param grid starter grid of the sudoku, 0s are unknowns
+ * @param unknown_positions array of Unknowns to fill with the positions of the
+ * unknowns
+ */
 static void get_unknown_positions(const size_t *grid, Unknown *unknown_positions) {
   size_t index = 0;
   for (size_t i = 0; i < 81; i++) {
@@ -72,6 +90,17 @@ static void get_unknown_positions(const size_t *grid, Unknown *unknown_positions
   }
 }
 
+/**
+ * Fills the constraining_unknowns array and conflict_count with the positions
+ * and count of the unknowns that are affected by the unknown at position
+ * "index".
+ * @param unknown_positions array of Unknowns (view typedef Unknown)
+ * @param index index of the unknown in the unknown_positions array
+ * @param conflict_count pointer to size_t to store the number of unknowns that
+ * are affected by the unknown at position "index"
+ * @param constraining_unknowns array of Unknowns to fill with the positions of
+ * the unknowns that are affected by the unknown at position "index"
+ */
 static void get_constraining_unknowns(const Unknown *unknown_positions, const size_t index, size_t * conflict_count, Unknown* constraining_unknowns) {
   for (size_t i = 0; i < index; i++) {
     if ((unknown_positions[i].x / 3 == unknown_positions[index].x / 3 && unknown_positions[i].y / 3 == unknown_positions[index].y / 3) /*box*/ ||
@@ -195,7 +224,7 @@ int solve_sudoku(const size_t * starter_grid, const char* resultFile, bool silen
       }
       for (size_t i = 0; i < 3; i++) {
         for (size_t j = 0; j < 3; j++) {
-          if (!(x%3 == i || y%3 == j)  && starter_grid[x-x%3 + (y-y%3)*9 + i + j*9] != 0) {
+          if (!(x%3 == i || y%3 == j) /*not already added earlier through row or column*/  && starter_grid[x-x%3 + (y-y%3)*9 + i + j*9] != 0) {
             variables[constraint_arity_index] = x-x%3 + (y-y%3)*9 + i + j*9; // box
             constraint_arity_index++;
           }
@@ -205,6 +234,7 @@ int solve_sudoku(const size_t * starter_grid, const char* resultFile, bool silen
       for (size_t i = 0; i < constraint_arity_index; i++) {
         csp_constraint_set_variable(constraint, i, variables[i]);
       }
+      // the last variable is the unknown cell itself, so the checker function can use it for its logic
       csp_constraint_set_variable(constraint, constraint_arity_index, constraint_index);
       csp_problem_set_constraint(problem, constraint_index, constraint);
     }
