@@ -76,3 +76,12 @@ add_custom_command(TARGET btest POST_BUILD
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
 	COMMENT "Plotting results..."
 )
+
+# TESTING
+add_executable(
+	fc-testing testing/fc-testing.c
+	btest/load-new-sudoku.c btest/load-new-sudoku.h
+	btest/solve-sudoku.c btest/solve-sudoku.h
+	btest/solve-queens.c btest/solve-queens.h
+)
+target_link_libraries(fc-testing PRIVATE lib)
