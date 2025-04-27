@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <stddef.h>
+
 /**
  * Loads a new Sudoku puzzle with a specified number of unknown cells.
  * @param unknown_count amount of unknown cells in the Sudoku grid.
