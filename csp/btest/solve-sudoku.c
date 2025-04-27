@@ -15,8 +15,6 @@
 
 #include "csp.h"
 
-#include <string.h>
-
 static size_t backtrack_counter = 0;
 
 /**

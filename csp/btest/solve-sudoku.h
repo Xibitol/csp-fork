@@ -9,4 +9,6 @@
 
 #pragma once
 
+#include <stddef.h>
+
 extern int solve_sudoku(size_t* starter_grid, const char* resultFile, bool silent);
