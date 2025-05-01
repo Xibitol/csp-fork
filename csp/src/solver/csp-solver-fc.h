@@ -13,13 +13,17 @@
  
  #include "core/csp-problem.h"
  
- // PUBLIC
- // Function types
- typedef bool (*CSPConsistentFC)(const CSPProblem *, const size_t *, const void *, size_t, bool **);
  
- // Functions
+ typedef bool (*CSPConsistentFC)(const CSPProblem *, 
+                                const size_t *, 
+                                const void *, 
+                                size_t, 
+                                bool **);
+ 
+ 
  bool csp_problem_backtrack_fc(const CSPProblem *csp, size_t *values, 
                               const void *data, size_t index, 
                               CSPConsistentFC is_consistent, bool **domains);
+                              
  bool csp_problem_solve_fc(const CSPProblem *csp, size_t *values, 
                           const void *data, CSPConsistentFC is_consistent);
