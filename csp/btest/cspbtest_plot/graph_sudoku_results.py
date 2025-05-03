@@ -26,13 +26,12 @@ with open(SUDOKU_RESULT_FILE, 'r') as file:
 # Plot the time taken
 plt.figure(figsize=(10, 5))
 plt.subplot(1, 2, 1)
-plt.plot(unknown_count, times, marker='o', label='v1')
+plt.plot(unknown_count, times, marker='o')
 plt.title('Sudoku Benchmark: Time Taken')
 plt.xlabel(f'Unknown Count, average over {average_count} sudokus')
 plt.ylabel('Time (seconds)')
 plt.yscale('log')
 plt.grid(True)
-plt.legend()
 
 # Plot the number of backtracks
 plt.subplot(1, 2, 2)
