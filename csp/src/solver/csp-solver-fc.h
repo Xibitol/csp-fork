@@ -20,22 +20,6 @@
 #include <core/csp-constraint.h>
 #include <solver/csp-solver.h>
 
-// FUNCTIONS
-/** Solve the CSP problem using backtracking.
- * @param csp The CSP problem to solve.
- * @param values The values of the variables.
- * @param data The data to pass to the check function.
- * @param index The index of the variable to set.
- * @param checklist A pointer to function to get the list of necessary constraints for the current variable.
- * @return true if the CSP problem is solved, false otherwise.
- * @pre The csp library is initialised.
- * @post The values are assigned to the solution.
- */
-extern bool csp_problem_backtrack_fc(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index,
-	CSPChecklist* checklist
-);
-
 /** Solve the CSP problem using backtracking.
  * @param csp The CSP problem to solve.
  * @param values The values of the variables.
