@@ -20,6 +20,11 @@
 // PRIVATE
 static int backtrack_counter = 0;
 
+typedef struct {
+	size_t amount;
+	size_t values[];
+}Domain;
+
 // PUBLIC
 // Getters
 bool csp_problem_is_consistent(const CSPProblem *csp,
@@ -50,7 +55,7 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 
 // Functions
 bool csp_problem_backtrack(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index, CSPChecklist *checklist
+	size_t *values, const void *data, size_t index, CSPChecklist *checklist, Domain** domains
 ) {
 	assert(csp_initialised());
 	backtrack_counter++;
@@ -61,13 +66,13 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 	}
 
 	// Try all values in the domain of the current variable
-	for(size_t i = 0; i < csp_problem_get_domain(csp, index); i++) {
+	for (size_t i = 0; i < domains[index]->amount; i++) {
 		// Assign the value to the variable
-		values[index] = i;
+		values[index] = domains[index]->values[i];
 
 		// Check if the assignment is consistent with the constraints
 		if(csp_problem_is_consistent(csp, values, data, index, checklist)
-			&& csp_problem_backtrack(csp, values, data, index+1, checklist)
+			&& csp_problem_backtrack(csp, values, data, index+1, checklist, domains)
 		){
 			return true;
 		}
@@ -78,7 +83,35 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, CSPChecklist *checklist, size_t* benchmark)
 {
 	assert(csp_initialised());
-	bool result = csp_problem_backtrack(csp, values, data, 0, checklist);
+
+	size_t num_domains = csp_problem_get_num_domains(csp);
+	Domain *domains[num_domains];
+
+	// Allocate memory for each domain
+	for (size_t i = 0; i < num_domains; i++) {
+		size_t domain_size = csp_problem_get_domain(csp, i);
+		domains[i] = malloc(sizeof(Domain) + domain_size * sizeof(size_t));
+		if (domains[i] == NULL) {
+			perror("malloc");
+			// Free previously allocated domains
+			for (size_t j = 0; j < i; j++) {
+				free(domains[j]);
+			}
+			return false;
+		}
+		domains[i]->amount = domain_size;
+		for (size_t j = 0; j < domain_size; j++) {
+			domains[i]->values[j] = j;
+		}
+	}
+
+	bool result = csp_problem_backtrack(csp, values, data, 0, checklist, domains);
+
+	// Free allocated memory
+	for (size_t i = 0; i < num_domains; i++) {
+		free(domains[i]);
+	}
+
 	if (benchmark!=NULL) {
 		benchmark[0] = backtrack_counter;
 	}
