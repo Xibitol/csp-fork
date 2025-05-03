@@ -20,6 +20,7 @@
 #include "solve-sudoku.h"
 
 #define NQUEENS_RESULT_FILE "n_queens_benchmark.txt"
+#define NQUEENS_FC_RESULT_FILE "n_queens_fc_benchmark.txt"
 #define SUDOKU_RESULT_FILE "sudoku_benchmark.txt"
 
 typedef int BenchmarkFunc(const char* resultFile, void* arg);
@@ -52,7 +53,17 @@ static int nqueensBenchmark(const char* resultFile, void* arg){
 	int test_count = *((int*) arg);
 
 	for (int i = 4; i < test_count+4; i++) {
-		solve_queens(i, resultFile, true);
+		solve_queens(i, resultFile, false, true);
+	}
+
+	return EXIT_SUCCESS;
+}
+
+static int nqueensFCBenchmark(const char* resultFile, void* arg){
+	int test_count = *((int*) arg);
+
+	for (int i = 4; i < test_count+4; i++) {
+		solve_queens(i, resultFile, true, true);
 	}
 
 	return EXIT_SUCCESS;
@@ -82,6 +93,11 @@ int main(void){
 		nqueensArgs[0], npid
 	);
 
+	pid_t nfcpid = benchmark(NQUEENS_FC_RESULT_FILE, &nqueensFCBenchmark, nqueensArgs);
+	printf("Started FC benchmarking on %d NQueens problems (%d).\n",
+		nqueensArgs[0], nfcpid
+	);
+
 	int sudokuArgs[2] = {5, 5};
 	pid_t spid = benchmark(SUDOKU_RESULT_FILE, &sudokuBenchmark, sudokuArgs);
 	printf("Started benchmarking on Sudoku puzzles (%d).\n", spid);
@@ -90,6 +106,11 @@ int main(void){
 		perror("waitpid"), exitCode = EXIT_FAILURE;
 	else{
 		printf("Finished benchmarking (NQueens problems; %d).\n", getpid());
+	}
+	if(nfcpid != -1 && waitpid(nfcpid, NULL, 0) == -1)
+		perror("waitpid"), exitCode = EXIT_FAILURE;
+	else{
+		printf("Finished FC benchmarking (NQueens problems; %d).\n", getpid());
 	}
 	if(spid != -1 && waitpid(spid, NULL, 0) == -1)
 		perror("waitpid"), exitCode = EXIT_FAILURE;
