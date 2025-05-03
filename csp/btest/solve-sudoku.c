@@ -238,7 +238,7 @@ int solve_sudoku(const size_t * starter_grid, const char* resultFile, bool silen
     clock_t start_time = clock();
 
     // Solve the CSP problem
-    bool result = csp_problem_solve(problem, unknowns, starter_grid, sudoku_checklist);
+    bool result = csp_problem_solve(problem, unknowns, starter_grid, sudoku_checklist, NULL);
 
     // Stop the timer
     clock_t end_time = clock();

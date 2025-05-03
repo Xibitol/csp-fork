@@ -15,7 +15,7 @@
 #include "csp.h"
 #include "util/unused.h"
 
-static size_t backtrack_counter = 0;
+static size_t backtrack_counter;
 
 // Check if the queens are compatible
 bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
@@ -63,7 +63,6 @@ static void print_queens_solution(unsigned int number, const size_t *queens) {
 }
 
 void queens_checklist(const CSPProblem *csp, CSPConstraint** checklist, size_t* amount, const size_t index) {
-	backtrack_counter++;
 	*amount = index;
 
 	size_t queen_count = csp_problem_get_num_domains(csp);
@@ -117,9 +116,9 @@ int solve_queens(size_t queen_count, const char* resultFile, bool forward_checki
   	bool result;
     // Solve the CSP problem
   	if (forward_checking) {
-  		result = csp_problem_solve_fc(problem, queens, NULL, queens_checklist);
+  		result = csp_problem_solve_fc(problem, queens, NULL, queens_checklist, &backtrack_counter);
   	} else {
-  		result = csp_problem_solve(problem, queens, NULL, queens_checklist);
+  		result = csp_problem_solve(problem, queens, NULL, queens_checklist, &backtrack_counter);
   	}
 
     // Stop the timer

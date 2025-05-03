@@ -17,6 +17,9 @@
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
 
+// PRIVATE
+static int backtrack_counter = 0;
+
 // PUBLIC
 // Getters
 bool csp_problem_is_consistent(const CSPProblem *csp,
@@ -50,6 +53,7 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 	size_t *values, const void *data, size_t index, CSPChecklist *checklist
 ) {
 	assert(csp_initialised());
+	backtrack_counter++;
 
 	// If all variables are assigned, the CSP is solved
 	if(index == csp_problem_get_num_domains(csp)){
@@ -71,10 +75,16 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 	return false;
 }
 
-bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, CSPChecklist *checklist)
+bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, CSPChecklist *checklist, size_t* benchmark)
 {
 	assert(csp_initialised());
+	bool result = csp_problem_backtrack(csp, values, data, 0, checklist);
+	if (benchmark!=NULL) {
+		benchmark[0] = backtrack_counter;
+	}
+	// Reset the backtrack counter
+	backtrack_counter = 0;
 
 	// Start the backtracking algorithm
-	return csp_problem_backtrack(csp, values, data, 0, checklist);
+	return result;
 }
