@@ -10,4 +10,4 @@
 
 #pragma once
 
-extern int solve_queens(int queen_count, const char* resultFile, bool silent);
+extern int solve_queens(int queen_count, const char* resultFile, bool forward_checking, bool silent);

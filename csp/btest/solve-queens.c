@@ -74,7 +74,7 @@ void queens_checklist(const CSPProblem *csp, CSPConstraint** checklist, size_t* 
 	}
 }
 
-int solve_queens(size_t queen_count, const char* resultFile, bool silent) {
+int solve_queens(size_t queen_count, const char* resultFile, bool forward_checking, bool silent) {
   // Initialise the library
   csp_init();
   {
@@ -114,8 +114,13 @@ int solve_queens(size_t queen_count, const char* resultFile, bool silent) {
     // Start the timer
     clock_t start_time = clock();
 
+  	bool result;
     // Solve the CSP problem
-    bool result = csp_problem_solve(problem, queens, NULL, queens_checklist);
+  	if (forward_checking) {
+  		result = csp_problem_solve_fc(problem, queens, NULL, queens_checklist);
+  	} else {
+  		result = csp_problem_solve(problem, queens, NULL, queens_checklist);
+  	}
 
     // Stop the timer
     clock_t end_time = clock();

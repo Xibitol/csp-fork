@@ -9,6 +9,6 @@
 #include "../btest/solve-sudoku.h"
 
 int main(void) {
-	solve_queens(8, "test-fc-queens.txt", false);
-	solve_sudoku(load_new_sudoku(45, 1)[0], "test-fc-sudoku.txt", false);
+	solve_queens(10, "test-fc-queens.txt", true, false);
+	// solve_sudoku(load_new_sudoku(10, 1)[0], "test-fc-sudoku.txt", false);
 }
