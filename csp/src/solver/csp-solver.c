@@ -8,10 +8,11 @@
 
 #include "solver/csp-solver.h"
 
-#include <stdlib.h>
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
@@ -24,6 +25,10 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 	assert(csp_initialised());
 
 	CSPConstraint **checks = malloc(sizeof(CSPConstraint*) * csp_problem_get_num_constraints(csp));
+	if (checks == NULL) {
+		perror("malloc");
+		return false;
+	}
 	size_t amount = 0;
 
 	// Get the list of checks to verify for the current index
