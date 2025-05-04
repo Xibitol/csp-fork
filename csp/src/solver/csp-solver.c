@@ -25,10 +25,42 @@ typedef struct {
 	size_t values[];
 }Domain;
 
+void print_domains(Domain **domains, size_t num_domains) {
+	for (size_t i = 0; i < num_domains; i++) {
+		printf("Domain %zu: ", i);
+		for (size_t j = 0; j < domains[i]->amount; j++) {
+			printf("%zu ", domains[i]->values[j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+static void reduce_domains(const CSPProblem *csp, size_t* values, const void* data, Domain** domains, CSPDataChecklist dataChecklist) {
+	if (dataChecklist == NULL) {
+		return;
+	}
+	for (size_t i = 0; i < csp_problem_get_num_domains(csp); i++) {
+		for (size_t j = 0; j < domains[i]->amount; /* no increment here */) {
+		    values[i] = domains[i]->values[j];
+		    if (!csp_problem_is_consistent(csp, values, data, i, dataChecklist)) {
+		        // Remove the value from the domain
+		        domains[i]->amount--;
+		        for (size_t k = j; k < domains[i]->amount; k++) {
+		            domains[i]->values[k] = domains[i]->values[k + 1];
+		        }
+		        // Do not increment j, as the next value is now at the same index
+		    } else {
+		        j++; // Increment only if no value was removed
+		    }
+		}
+	}
+}
+
 // PUBLIC
 // Getters
 bool csp_problem_is_consistent(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index, CSPChecklist *checklist
+	size_t *values, const void *data, size_t index, CSPValueChecklist *checklist
 ){
 	assert(csp_initialised());
 
@@ -55,7 +87,7 @@ bool csp_problem_is_consistent(const CSPProblem *csp,
 
 // Functions
 bool csp_problem_backtrack(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index, CSPChecklist *checklist, Domain** domains
+	size_t *values, const void *data, size_t index, CSPValueChecklist *checklist, Domain** domains
 ) {
 	assert(csp_initialised());
 	backtrack_counter++;
@@ -80,7 +112,7 @@ bool csp_problem_backtrack(const CSPProblem *csp,
 	return false;
 }
 
-bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, CSPChecklist *checklist, size_t* benchmark)
+bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, CSPValueChecklist *checklist, CSPDataChecklist dataChecklist, size_t* benchmark)
 {
 	assert(csp_initialised());
 
@@ -104,6 +136,10 @@ bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, 
 			domains[i]->values[j] = j;
 		}
 	}
+
+	reduce_domains(csp, values, data, domains, dataChecklist);
+
+	// print_domains(domains, csp_problem_get_num_domains(csp)); //DEBUG
 
 	bool result = csp_problem_backtrack(csp, values, data, 0, checklist, domains);
 
