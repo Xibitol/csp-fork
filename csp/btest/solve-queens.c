@@ -118,7 +118,7 @@ int solve_queens(size_t queen_count, const char* resultFile, bool forward_checki
   	if (forward_checking) {
   		result = csp_problem_solve_fc(problem, queens, NULL, queens_checklist, &backtrack_counter);
   	} else {
-  		result = csp_problem_solve(problem, queens, NULL, queens_checklist, &backtrack_counter);
+  		result = csp_problem_solve(problem, queens, NULL, queens_checklist, NULL, &backtrack_counter);
   	}
 
     // Stop the timer

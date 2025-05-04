@@ -7,8 +7,6 @@
  * @copyright GNU Lesser General Public License v3.0
  */
 
-#include "solver/csp-solver-fc.h"
-
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -18,6 +16,7 @@
 
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
+#include "solver/csp-solver-fc.h"
 
 // PRIVATE
 typedef struct {
@@ -25,16 +24,16 @@ typedef struct {
 	size_t values[];
 }Domain;
 
-void print_domains(Domain **domains, size_t num_domains) {
-	for (size_t i = 0; i < num_domains; i++) {
-		printf("Domain %zu: ", i);
-		for (size_t j = 0; j < domains[i]->amount; j++) {
-			printf("%zu ", domains[i]->values[j]);
-		}
-		printf("\n");
-	}
-	printf("\n");
-}
+// void print_domains(Domain **domains, size_t num_domains) {
+// 	for (size_t i = 0; i < num_domains; i++) {
+// 		printf("Domain %zu: ", i);
+// 		for (size_t j = 0; j < domains[i]->amount; j++) {
+// 			printf("%zu ", domains[i]->values[j]);
+// 		}
+// 		printf("\n");
+// 	}
+// 	printf("\n");
+// }
 
 void print_values(size_t* values, size_t num_domains) {
 	for (size_t i = 0; i < num_domains; i++) {
@@ -51,7 +50,7 @@ typedef struct {
 } DomainChange;
 
 bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
-  const void *data, size_t index, CSPChecklist *checklist, Domain **domains,
+  const void *data, size_t index, CSPValueChecklist *checklist, Domain **domains,
   DomainChange *change_stack, size_t *stack_top, size_t stack_start
 ) {
   CSPConstraint** variable_checks = malloc(sizeof(CSPConstraint*) * csp_problem_get_num_constraints(csp));
@@ -115,7 +114,7 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 }
 
 bool csp_problem_backtrack_fc(const CSPProblem *csp,
- size_t *values, const void *data, size_t index, CSPChecklist *checklist,
+ size_t *values, const void *data, size_t index, CSPValueChecklist *checklist,
  Domain **domains, DomainChange *change_stack, size_t *stack_top
 ) {
 	assert(csp_initialised());
@@ -161,7 +160,7 @@ bool csp_problem_backtrack_fc(const CSPProblem *csp,
 
 // PUBLIC
 // Functions
-bool csp_problem_solve_fc(const CSPProblem *csp, size_t *values, const void *data, CSPChecklist *checklist, size_t* benchmark) {
+bool csp_problem_solve_fc(const CSPProblem *csp, size_t *values, const void *data, CSPValueChecklist *checklist, size_t* benchmark) {
 	assert(csp_initialised());
 
 	size_t num_domains = csp_problem_get_num_domains(csp);

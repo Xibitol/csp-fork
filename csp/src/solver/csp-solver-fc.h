@@ -31,4 +31,4 @@
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_solve_fc(const CSPProblem *csp,
-	size_t *values, const void *data, CSPChecklist* checklist, size_t* benchmark);
+	size_t *values, const void *data, CSPValueChecklist* checklist, size_t* benchmark);
