@@ -52,7 +52,7 @@ int main(void) {
 	size_t* loaded_puzzle = load_puzzle_from_bytes("current-puzzle.bin");
 
 	// Use the loaded puzzle (e.g., solve it)
-	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", false);
+	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", false, false);
 
 	// free(sudoku[0]);
 	// free(sudoku);
