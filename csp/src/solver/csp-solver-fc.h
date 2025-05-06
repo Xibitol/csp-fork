@@ -25,10 +25,11 @@
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
  * @param checklist A pointer to function to get the list of necessary constraints for the current variable.
+ * @param dataChecklist A pointer to function to get the list of necessary data constraints for the current variable.
  * @param benchmark pointer to Node counter for benchmarking, NULL if no benchmarking required
  * @return true if the CSP problem is solved, false otherwise.
  * @pre The csp library is initialised.
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_solve_fc(const CSPProblem *csp,
-	size_t *values, const void *data, CSPValueChecklist* checklist, size_t* benchmark);
+	size_t *values, const void *data, CSPValueChecklist* checklist, CSPDataChecklist dataChecklist, size_t* benchmark);
