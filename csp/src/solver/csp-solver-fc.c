@@ -24,16 +24,16 @@ typedef struct {
 	size_t values[];
 }Domain;
 
-// void print_domains(Domain **domains, size_t num_domains) {
-// 	for (size_t i = 0; i < num_domains; i++) {
-// 		printf("Domain %zu: ", i);
-// 		for (size_t j = 0; j < domains[i]->amount; j++) {
-// 			printf("%zu ", domains[i]->values[j]);
-// 		}
-// 		printf("\n");
-// 	}
-// 	printf("\n");
-// }
+void print_domains_fc(Domain **domains, size_t num_domains) {
+	for (size_t i = 0; i < num_domains; i++) {
+		printf("Domain %zu: ", i);
+		for (size_t j = 0; j < domains[i]->amount; j++) {
+			printf("%zu ", domains[i]->values[j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
 
 void print_values(size_t* values, size_t num_domains) {
 	for (size_t i = 0; i < num_domains; i++) {
@@ -87,7 +87,9 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
     CSPConstraint *relevant_check = NULL;
     for (size_t check_i = 0; check_i < v_amount; check_i++) {
       if (csp_constraint_get_variable(variable_checks[check_i], 0) == index &&
-          csp_constraint_get_variable(variable_checks[check_i], 1) == i) {
+          csp_constraint_get_variable(variable_checks[check_i], 1) == i ||
+          csp_constraint_get_variable(variable_checks[check_i], 1) == index &&
+					csp_constraint_get_variable(variable_checks[check_i], 0) == i) {
         relevant_check = variable_checks[check_i];
         break;
       }
@@ -154,7 +156,7 @@ bool csp_problem_backtrack_fc(const CSPProblem *csp,
 		values[index] = domains[index]->values[i];
 
 		// print_values(values, index + 1); //DEBUG
-		// print_domains(domains, csp_problem_get_num_domains(csp)); //DEBUG
+		// print_domains_fc(domains, csp_problem_get_num_domains(csp)); //DEBUG
 
 		// Check if the assignment is consistent with the constraints
 		if (csp_problem_is_consistent(csp, values, data, index, checklist)
@@ -174,7 +176,7 @@ bool csp_problem_backtrack_fc(const CSPProblem *csp,
 			domains[domain_index]->amount++;
 		}
 		// printf("backtracked\n"); //DEBUG
-		// print_domains(domains, csp_problem_get_num_domains(csp)); //DEBUG
+		// print_domains_fc(domains, csp_problem_get_num_domains(csp)); //DEBUG
 	}
 	return false;
 }
