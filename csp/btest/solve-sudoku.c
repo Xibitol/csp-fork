@@ -195,7 +195,7 @@ static CSPConstraint* create_data_constraint(size_t constraint_index, const Unkn
 	return constraint;
 }
 
-int solve_sudoku(const size_t * starter_grid, const char* resultFile, bool silent) {
+int solve_sudoku(const size_t * starter_grid, const char* resultFile, bool forward_checking, bool silent) {
 
   if(!silent) print_sudoku_solution(starter_grid);
 
@@ -282,7 +282,13 @@ int solve_sudoku(const size_t * starter_grid, const char* resultFile, bool silen
     clock_t start_time = clock();
 
     // Solve the CSP problem
-    bool result = csp_problem_solve(problem, unknowns, starter_grid, sudoku_unknown_checklist, sudoku_data_checklist, &backtrack_counter);
+  	bool result;
+  	// Solve the CSP problem
+  	if (forward_checking) {
+  		result = csp_problem_solve_fc(problem, unknowns, starter_grid, sudoku_unknown_checklist, sudoku_data_checklist, &backtrack_counter);
+  	} else {
+  		result = csp_problem_solve(problem, unknowns, starter_grid, sudoku_unknown_checklist, sudoku_data_checklist, &backtrack_counter);
+  	}
 
     // Stop the timer
     clock_t end_time = clock();
