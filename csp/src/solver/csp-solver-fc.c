@@ -21,8 +21,10 @@
  
  
  // Forward checking function
- static bool forward_check(const CSPProblem *csp, const size_t *values, 
-                          size_t index, bool **domains) {
+ static bool forward_check(const CSPProblem *csp,
+                            const size_t *values, 
+                            size_t index,
+                            bool **domains) {
      // For each constraint
      for (size_t i = 0; i < csp_problem_get_num_constraints(csp); i++) {
          CSPConstraint *constraint = csp_problem_get_constraint(csp, i);
