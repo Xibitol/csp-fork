@@ -41,21 +41,24 @@ size_t* load_puzzle_from_bytes(const char* filename) {
 }
 
 int main(void) {
-	// solve_queens(10, "test-fc-queens.txt", false, false);
+  solve_queens(10, "test-fc-queens.txt", false, false);
+	solve_queens(10, "test-fc-queens.txt", true, false);
 
-	// size_t** sudoku = load_new_sudoku(5, 1);
 
-	// Save the puzzle as bytes
-	// save_puzzle_as_bytes(sudoku[0], "current-puzzle.bin");
+  size_t** sudoku = load_new_sudoku(50, 1);
 
-	// Load the puzzle back
-	size_t* loaded_puzzle = load_puzzle_from_bytes("current-puzzle.bin");
+  // Save the puzzle as bytes
+  save_puzzle_as_bytes(sudoku[0], "current-puzzle.bin");
 
-	// Use the loaded puzzle (e.g., solve it)
-	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", false, false);
+  // Load the puzzle back
+  size_t* loaded_puzzle = load_puzzle_from_bytes("current-puzzle.bin");
 
-	// free(sudoku[0]);
-	// free(sudoku);
-	free(loaded_puzzle);
-	return 0;
+  // Use the loaded puzzle (e.g., solve it)
+  solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", false, false);
+  solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", true, false);
+
+  free(sudoku[0]);
+  free(sudoku);
+  free(loaded_puzzle);
+  return 0;
 }
