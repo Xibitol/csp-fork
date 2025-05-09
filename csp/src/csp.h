@@ -28,13 +28,13 @@ COPYING.LESSER). If not, see https://www.gnu.org/licenses/.
 
 #define _CSP_H_INSIDE
 
-#include "core/csp-lib.h"
 #include "core/csp-constraint.h"
+#include "core/csp-lib.h"
 #include "core/csp-problem.h"
-
+#include "solver/csp-solver-fc.h"
 #include "solver/csp-solver.h"
-// #include "solver/csp-solver-fc.h"
 // #include "solver/csp-solver-ovars.h"
 // #include "solver/csp-solver-ovals.h"
 
 #undef _CSP_H_INSIDE
+
