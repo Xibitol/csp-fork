@@ -20,6 +20,29 @@
 #include <core/csp-constraint.h>
 #include <solver/csp-solver.h>
 
+typedef struct {
+	size_t domain_index;
+	size_t value;
+} DomainChange;
+
+/**
+ *
+ * @param csp
+ * @param values
+ * @param data
+ * @param index
+ * @param checklist
+ * @param domains
+ * @param change_stack
+ * @param stack_top
+ * @param stack_start
+ * @return
+ */
+extern bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
+	const void *data, size_t index, CSPValueChecklist *checklist, Domain **domains,
+	DomainChange *change_stack, size_t *stack_top, size_t stack_start
+);
+
 /** Solve the CSP problem using backtracking.
  * @param csp The CSP problem to solve.
  * @param values The values of the variables.

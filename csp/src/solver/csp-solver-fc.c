@@ -16,14 +16,11 @@
 
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
+#include "core/csp-lib.h"
+#include "solver/csp-solver.h"
 #include "solver/csp-solver-fc.h"
 
 // PRIVATE
-typedef struct {
-	size_t amount;
-	size_t values[];
-}Domain;
-
 void print_domains_fc(Domain **domains, size_t num_domains) {
 	for (size_t i = 0; i < num_domains; i++) {
 		printf("Domain %zu: ", i);
@@ -44,32 +41,6 @@ void print_values(size_t* values, size_t num_domains) {
 
 static int backtrack_counter = 0;
 
-typedef struct {
-  size_t domain_index;
-  size_t value;
-} DomainChange;
-
-static void reduce_domains(const CSPProblem *csp, size_t* values, const void* data, Domain** domains, CSPDataChecklist dataChecklist) {
-	if (dataChecklist == NULL) {
-		return;
-	}
-	for (size_t i = 0; i < csp_problem_get_num_domains(csp); i++) {
-		for (size_t j = 0; j < domains[i]->amount; /* no increment here */) {
-			values[i] = domains[i]->values[j];
-			if (!csp_problem_is_consistent(csp, values, data, i, dataChecklist)) {
-				// Remove the value from the domain
-				domains[i]->amount--;
-				for (size_t k = j; k < domains[i]->amount; k++) {
-					domains[i]->values[k] = domains[i]->values[k + 1];
-				}
-				// Do not increment j, as the next value is now at the same index
-			} else {
-				j++; // Increment only if no value was removed
-			}
-		}
-	}
-}
-
 bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
   const void *data, size_t index, CSPValueChecklist *checklist, Domain **domains,
   DomainChange *change_stack, size_t *stack_top, size_t stack_start
@@ -86,10 +57,9 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 
     CSPConstraint *relevant_check = NULL;
     for (size_t check_i = 0; check_i < v_amount; check_i++) {
-      if (csp_constraint_get_variable(variable_checks[check_i], 0) == index &&
-          csp_constraint_get_variable(variable_checks[check_i], 1) == i ||
-          csp_constraint_get_variable(variable_checks[check_i], 1) == index &&
-					csp_constraint_get_variable(variable_checks[check_i], 0) == i) {
+    	size_t var0 = csp_constraint_get_variable(variable_checks[check_i], 0);
+    	size_t var1 = csp_constraint_get_variable(variable_checks[check_i], 1);
+      if ((var0 == index && var1 == i) || (var1 == index && var0 == i)) {
         relevant_check = variable_checks[check_i];
         break;
       }
@@ -159,8 +129,8 @@ bool csp_problem_backtrack_fc(const CSPProblem *csp,
 		// print_domains_fc(domains, csp_problem_get_num_domains(csp)); //DEBUG
 
 		// Check if the assignment is consistent with the constraints
-		if (csp_problem_is_consistent(csp, values, data, index, checklist)
-		 && csp_problem_forward_check(csp, values, data, index, checklist, domains, change_stack, stack_top, *stack_top)
+		if (/*csp_problem_is_consistent(csp, values, data, index, checklist)
+		 &&*/ csp_problem_forward_check(csp, values, data, index, checklist, domains, change_stack, stack_top, *stack_top)
 		 && csp_problem_backtrack_fc(csp, values, data, index + 1, checklist, domains, change_stack, stack_top)
 		) {
 			return true;
