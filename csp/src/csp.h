@@ -34,7 +34,7 @@ COPYING.LESSER). If not, see https://www.gnu.org/licenses/.
 
 #include "solver/csp-solver.h"
 #include "solver/csp-solver-fc.h"
-// #include "solver/csp-solver-ovars.h"
+#include "solver/csp-solver-ovars.h"
 // #include "solver/csp-solver-ovals.h"
 
 #undef _CSP_H_INSIDE
