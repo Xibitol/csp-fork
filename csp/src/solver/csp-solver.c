@@ -20,11 +20,6 @@
 // PRIVATE
 static int backtrack_counter = 0;
 
-typedef struct {
-	size_t amount;
-	size_t values[];
-}Domain;
-
 void print_domains(Domain **domains, size_t num_domains) {
 	for (size_t i = 0; i < num_domains; i++) {
 		printf("Domain %zu: ", i);
@@ -36,7 +31,7 @@ void print_domains(Domain **domains, size_t num_domains) {
 	printf("\n");
 }
 
-static void reduce_domains(const CSPProblem *csp, size_t* values, const void* data, Domain** domains, CSPDataChecklist dataChecklist) {
+void reduce_domains(const CSPProblem *csp, size_t* values, const void* data, Domain** domains, CSPDataChecklist dataChecklist) {
 	if (dataChecklist == NULL) {
 		return;
 	}
