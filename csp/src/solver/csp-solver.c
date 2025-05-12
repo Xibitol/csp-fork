@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <assert.h>
 
+#include "core/csp-lib.h"
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
 

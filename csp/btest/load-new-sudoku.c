@@ -7,12 +7,11 @@
  * @copyright GNU Lesser General Public License v3.0
  */
 
-#include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-#include <stddef.h>
-#include <stdbool.h>
+#include <stdio.h>
 
 #define N 9
 

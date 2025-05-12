@@ -20,9 +20,6 @@
 #include "load-new-sudoku.h"
 #include "solve-sudoku.h"
 
-#define NQUEENS_RESULT_FILE "n_queens_benchmark.txt"
-#define SUDOKU_RESULT_FILE "sudoku_benchmark.txt"
-
 typedef int BenchmarkFunc(const char* resultFile, void* arg);
 
 static int exitCode = EXIT_SUCCESS;

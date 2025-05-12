@@ -10,4 +10,6 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 extern int solve_queens(int queen_count, const char* resultFile, bool silent);

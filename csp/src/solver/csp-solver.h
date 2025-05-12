@@ -18,6 +18,7 @@
 #include <core/csp-problem.h>
 #include <core/csp-constraint.h>
 
+// TYPE DEFINITIONS
 /**
  * Get the list of constraints to verify for the current variable to know if the CSPProblem is consistent.
  * @note This function is used by #csp_problem_is_consistent.
@@ -28,6 +29,7 @@
  */
 typedef void CSPChecklist(const CSPProblem *csp, CSPConstraint** checklist, size_t* amount, size_t index);
 
+// FUNCTIONS
 /** Verify if the CSP problem is consistent at the specified index.
  * @param csp The CSP problem to verify.
  * @param values The values of the variables.
@@ -41,7 +43,6 @@ extern bool csp_problem_is_consistent(const CSPProblem *csp,
 	size_t *values, const void *data, size_t index, CSPChecklist* checklist
 );
 
-// FUNCTIONS
 /** Solve the CSP problem using backtracking.
  * @param csp The CSP problem to solve.
  * @param values The values of the variables.

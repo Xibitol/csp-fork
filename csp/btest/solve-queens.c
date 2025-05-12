@@ -8,9 +8,9 @@
  */
 
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
 
 #include "csp.h"
 #include "util/unused.h"
