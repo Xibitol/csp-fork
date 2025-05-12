@@ -62,36 +62,19 @@ static void print_queens_solution(unsigned int number, const size_t *queens) {
   printf("───┘\n");
 }
 
-bool constraint_to_check(const CSPConstraint *constraint, size_t index){
-  for(size_t i = 0; i < csp_constraint_get_arity(constraint); i++){
-    if(csp_constraint_get_variable(constraint, i) >= index){
-      return false;
-    }
-  }
-  return true;
+void queens_checklist(const CSPProblem *csp, CSPConstraint** checklist, size_t* amount, const size_t index) {
+	backtrack_counter++;
+	*amount = index;
+
+	size_t queen_count = csp_problem_get_num_domains(csp);
+	// for 6 queens, these are the values the formula below creates per index 0 ; 1 5 ; 2 6 9 ; 3 7 10 12 ; 4 8 11 13 14
+	// this pattern is necessary due to the way the constraints are created
+	for (size_t i = 0; i < index; i++) {
+		checklist[i] = csp_problem_get_constraint(csp, i * queen_count - i * (i + 1) / 2 + (index - i - 1));
+	}
 }
 
-bool is_consistent(const CSPProblem *csp,
-  size_t *values, const void *data, size_t index
-){
-  if (values[index-1] == 0) {
-    backtrack_counter++;
-  }
-  // Check all constraints
-  for(size_t i = 0; i < csp_problem_get_num_constraints(csp); i++){
-    CSPConstraint *constraint = csp_problem_get_constraint(csp, i);
-
-    // Verify if the constraint has to be checked and check it
-    if(csp_constraint_to_check(constraint, index)
-      && !csp_constraint_get_check(constraint)(constraint, values, data)
-    ){
-      return false;
-    }
-  }
-  return true;
-}
-
-int solve_queens(size_t queen_count, bool silent) {
+int solve_queens(size_t queen_count, const char* resultFile, bool silent) {
   // Initialise the library
   csp_init();
   {
@@ -126,13 +109,13 @@ int solve_queens(size_t queen_count, bool silent) {
       }
     }
 
-    FILE* file = fopen("n_queens_benchmark.txt", "a");
+    FILE* file = fopen(resultFile, "a");
 
     // Start the timer
     clock_t start_time = clock();
 
     // Solve the CSP problem
-    bool result = csp_problem_solve(problem, queens, NULL, is_consistent);
+    bool result = csp_problem_solve(problem, queens, NULL, queens_checklist);
 
     // Stop the timer
     clock_t end_time = clock();

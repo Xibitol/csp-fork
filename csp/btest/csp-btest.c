@@ -45,31 +45,31 @@ static pid_t benchmark(const char* resultFile, BenchmarkFunc* func, void* arg){
 			break;
 		case 0:
 			exit(func(resultFile, arg));
-			break;
 	}
 
 	return fpid;
 }
 
-static int nqueensBenchmark(const char* UNUSED_VAR(resultFile), void* arg){
+static int nqueensBenchmark(const char* resultFile, void* arg){
 	int test_count = *((int*) arg);
 
 	for (int i = 4; i < test_count+4; i++) {
-		solve_queens(i, true);
+		solve_queens(i, resultFile, true);
 	}
 
 	return EXIT_SUCCESS;
 }
-static int sudokuBenchmark(const char* UNUSED_VAR(resultFile), void* arg){
+
+static int sudokuBenchmark(const char* resultFile, void* arg){
 	int average_amount = ((int*) arg)[0];
 	int unknown_increment = ((int*) arg)[1];
 	size_t** sudokus = 0;
 
-	for (int i = 5; i < 40; i += unknown_increment) {
+	for (int i = 5; i < 81; i += unknown_increment) {
 		sudokus = load_new_sudoku(i, average_amount);
 
 		for (int j = 0; j < average_amount; j++) {
-			solve_sudoku(sudokus[j], true);
+			solve_sudoku(sudokus[j], resultFile, true);
 		}
 	}
 

@@ -1,6 +1,7 @@
-#!/usr/bin/env python3
-
 import matplotlib.pyplot as plt
+
+SUDOKU_RESULT_FILE = 'sudoku_benchmark.txt'
+SUDOKU_PLOT_FILE = 'sudoku_benchmark.png'
 
 average_count = 5
 
@@ -9,7 +10,7 @@ unknown_count = [i for i in range(5, 40, 5)]
 nodes = []
 times = []
 
-with open('sudoku_benchmark.txt', 'r') as file:
+with open(SUDOKU_RESULT_FILE, 'r') as file:
     temp_time = []
     temp_nodes = []
     for i, line in enumerate(file):
@@ -43,4 +44,4 @@ plt.yscale('log')
 plt.grid(True)
 
 plt.tight_layout()
-plt.savefig('sudoku_benchmark.png')
+plt.savefig(SUDOKU_PLOT_FILE)
