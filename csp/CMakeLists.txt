@@ -15,6 +15,11 @@ set_target_properties(lib PROPERTIES
 
 if(CMAKE_BUILD_TYPE MATCHES "DEBUG")
 	target_link_libraries(lib ${EFENCE_LIBRARY})
+else()
+	get_target_property(LIB_COMPILE_FLAGS lib COMPILE_FLAGS)
+	set_target_properties(lib PROPERTIES
+		COMPILE_FLAGS "${LIB_COMPILE_FLAGS} -D NDEBUG"
+	)
 endif()
 
 # TESTS
@@ -48,11 +53,14 @@ endforeach()
 
 # BENCHMARK TEST
 set(BTEST_EXECUTABLE_NAME btestCSP)
+set(BTEST_PYTHON_MOD_NAME cspbtest_plot)
 
 file(GLOB_RECURSE BTEST_FILES CONFIGURE_DEPENDS "${BTEST_DIR}/*.c")
+
 add_executable(btestLib ${BTEST_FILES})
 target_link_libraries(btestLib PRIVATE lib)
 set_target_properties(btestLib PROPERTIES
+	COMPILE_FLAGS "-D NDEBUG"
 	OUTPUT_NAME ${BTEST_EXECUTABLE_NAME}
 	RUNTIME_OUTPUT_DIRECTORY ${BTEST_DIR}
 )
@@ -62,4 +70,9 @@ add_custom_target(btest
 	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_OUTPUT_PATH}/${BTEST_EXECUTABLE_NAME}"
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
 	COMMENT "Running benchmarking test"
+)
+add_custom_command(TARGET btest POST_BUILD
+	COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/${BTEST_DIR}/${BTEST_PYTHON_MOD_NAME}"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
+	COMMENT "Plotting results..."
 )
