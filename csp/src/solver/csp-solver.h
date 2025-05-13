@@ -19,12 +19,13 @@
 #include <solver/types-and-structs.h>
 
 /**
- *
- * @param csp
- * @param values
- * @param data
- * @param domains
- * @param dataChecklist
+ * Reduce the domains of the variables based on the data provided.
+ * @param csp The CSP problem to reduce.
+ * @param values The values of the variables.
+ * @param data The data to pass to the check function.
+ * @param domains The domains of the variables.
+ * @param dataChecklist A pointer to function to get the list of constraints
+ * affected by the contents of data for the current variable.
  */
 extern void reduce_domains(const CSPProblem *csp, size_t* values, const void* data, Domain** domains, CSPDataChecklist dataChecklist);
 
@@ -33,12 +34,13 @@ extern void reduce_domains(const CSPProblem *csp, size_t* values, const void* da
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
  * @param index The index of the current variable.
+ * @param fv The FilledVariables structure to track filled variables.
  * @param checklist A pointer to function to get the list of necessary constraints for the current variable.
  * @return true if the CSP problem is consistent, false otherwise.
  * @pre The csp library is initialised.
  */
 extern bool csp_problem_is_consistent(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index, CSPValueChecklist* checklist
+	size_t *values, const void *data, size_t index, FilledVariables* fv, CSPValueChecklist* checklist
 );
 
 /** Solve the CSP problem using backtracking.

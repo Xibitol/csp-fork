@@ -28,84 +28,105 @@ void print_domains(Domain **domains, size_t num_domains) {
 	printf("\n");
 }
 
-void reduce_domains(const CSPProblem *csp, size_t* values, const void* data, Domain** domains, CSPDataChecklist dataChecklist) {
+void print_values(size_t *values, size_t num_domains) {
+	for (size_t i = 0; i < num_domains; i++) {
+		printf("%zu ", values[i]);
+	}
+	printf("\n\n");
+}
+
+void reduce_domains(const CSPProblem *csp, size_t *values, const void *data,
+										Domain **domains, CSPDataChecklist dataChecklist) {
 	if (dataChecklist == NULL) {
 		return;
 	}
 	for (size_t i = 0; i < csp_problem_get_num_domains(csp); i++) {
 		for (size_t j = 0; j < domains[i]->amount; /* no increment here */) {
-		    values[i] = domains[i]->values[j];
-		    if (!csp_problem_is_consistent(csp, values, data, i, dataChecklist)) {
-		        // Remove the value from the domain
-		        domains[i]->amount--;
-		        for (size_t k = j; k < domains[i]->amount; k++) {
-		            domains[i]->values[k] = domains[i]->values[k + 1];
-		        }
-		        // Do not increment j, as the next value is now at the same index
-		    } else {
-		        j++; // Increment only if no value was removed
-		    }
+
+			CSPConstraint *checks[csp_problem_get_num_constraints(csp)];
+			size_t amount = 0;
+
+			dataChecklist(csp, checks, &amount, i);
+
+			values[i] = domains[i]->values[j];
+			bool consistent = true;
+			for (size_t i = 0; i < amount; i++) {
+				if (!csp_constraint_get_check(checks[i])(checks[i], values, data)) {
+					consistent = false;
+					break;
+				}
+			}
+			if (!consistent) {
+				// Remove the value from the domain
+				domains[i]->amount--;
+				for (size_t k = j; k < domains[i]->amount; k++) {
+					domains[i]->values[k] = domains[i]->values[k + 1];
+				}
+				// Do not increment j, as the next value is now at the same index
+			} else {
+				j++;	// Increment only if no value was removed
+			}
 		}
 	}
 }
 
 // PUBLIC
 // Getters
-bool csp_problem_is_consistent(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index, CSPValueChecklist *checklist
-){
+bool csp_problem_is_consistent(const CSPProblem *csp, size_t *values,
+															 const void *data, size_t index,
+															 FilledVariables *fv,
+															 CSPValueChecklist *checklist) {
 	assert(csp_initialised());
 
-	CSPConstraint **checks = malloc(sizeof(CSPConstraint*) * csp_problem_get_num_constraints(csp));
-	if (checks == NULL) {
-		perror("malloc");
-		return false;
-	}
+	CSPConstraint *checks[csp_problem_get_num_constraints(csp)];
 	size_t amount = 0;
 
 	// Get the list of checks to verify for the current index
-	checklist(csp, checks, &amount, index);
+	checklist(csp, checks, &amount, index, fv);
 
 	// if any check from the checklist fails, the CSP is not consistent
-	for(size_t i = 0; i < amount; i++){
-		if(!csp_constraint_get_check(checks[i])(checks[i], values, data)){
-			free(checks);
+	for (size_t i = 0; i < amount; i++) {
+		if (!csp_constraint_get_check(checks[i])(checks[i], values, data)) {
 			return false;
 		}
 	}
-	free(checks);
 	return true;
 }
 
 // Functions
-bool csp_problem_backtrack(const CSPProblem *csp,
-	size_t *values, const void *data, size_t index, CSPValueChecklist *checklist, Domain** domains
-) {
+bool csp_problem_backtrack(const CSPProblem *csp, size_t *values,
+													 const void *data, FilledVariables *fv,
+													 CSPValueChecklist *checklist, Domain **domains) {
 	assert(csp_initialised());
 	backtrack_counter++;
 
 	// If all variables are assigned, the CSP is solved
-	if(index == csp_problem_get_num_domains(csp)){
+	if (filled_variables_all_filled(fv)) {
 		return true;
 	}
+
+	size_t index = filled_variables_next_unfilled(fv, 0);
+	filled_variables_mark_filled(fv, index);
 
 	// Try all values in the domain of the current variable
 	for (size_t i = 0; i < domains[index]->amount; i++) {
 		// Assign the value to the variable
 		values[index] = domains[index]->values[i];
+		// print_values(values, csp_problem_get_num_domains(csp)); //DEBUG
 
 		// Check if the assignment is consistent with the constraints
-		if(csp_problem_is_consistent(csp, values, data, index, checklist)
-			&& csp_problem_backtrack(csp, values, data, index+1, checklist, domains)
-		){
+		if (csp_problem_is_consistent(csp, values, data, index, fv, checklist) &&
+				csp_problem_backtrack(csp, values, data, fv, checklist, domains)) {
 			return true;
 		}
 	}
+	filled_variables_mark_unfilled(fv, index);
 	return false;
 }
 
-bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, CSPValueChecklist *checklist, CSPDataChecklist dataChecklist, size_t* benchmark)
-{
+bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data,
+											 CSPValueChecklist *checklist,
+											 CSPDataChecklist dataChecklist, size_t *benchmark) {
 	assert(csp_initialised());
 
 	size_t num_domains = csp_problem_get_num_domains(csp);
@@ -124,22 +145,34 @@ bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, 
 		}
 	}
 
+	FilledVariables *fv = filled_variables_create(num_domains);
+	if (fv == NULL) {
+		// Free previously allocated domains
+		for (size_t j = 0; j < num_domains; j++) {
+			domain_destroy(domains[j]);
+		}
+		return false;
+	}
+
 	reduce_domains(csp, values, data, domains, dataChecklist);
 
 	// print_domains(domains, csp_problem_get_num_domains(csp)); //DEBUG
 
-	bool result = csp_problem_backtrack(csp, values, data, 0, checklist, domains);
+	bool result =
+			csp_problem_backtrack(csp, values, data, fv, checklist, domains);
 
 	// Free allocated memory
 	for (size_t i = 0; i < num_domains; i++) {
 		domain_destroy(domains[i]);
 	}
 
-	if (benchmark!=NULL) {
+	if (benchmark != NULL) {
 		benchmark[0] = backtrack_counter;
 	}
 	// Reset the backtrack counter
 	backtrack_counter = 0;
+
+	filled_variables_destroy(fv);
 
 	// Start the backtracking algorithm
 	return result;
