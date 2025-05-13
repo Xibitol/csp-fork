@@ -23,8 +23,6 @@ with open(SUDOKU_RESULT_FILE, 'r') as file:
             temp_nodes = []
             temp_time = []
 
-print(unknown_count, times)
-
 # Plot the time taken
 plt.figure(figsize=(10, 5))
 plt.subplot(1, 2, 1)

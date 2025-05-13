@@ -22,7 +22,7 @@ static size_t backtrackCount = 0;
 
 // Getters
 // Checks if the queens are compatible.
-static bool queens_are_comptatible(const CSPConstraint *constraint,
+static bool queens_areComptatible(const CSPConstraint *constraint,
 	const size_t *values, const void *UNUSED_VAR(data)
 ){
 	size_t x0 = csp_constraint_get_variable(constraint, 0);
@@ -34,7 +34,7 @@ static bool queens_are_comptatible(const CSPConstraint *constraint,
 	return x0 != x1 && y0 != y1 && x0 + y1 != x1 + y0 && x0 + y0 != x1 + y1;
 }
 
-static void queens_get_checklist(const CSPProblem *csp,
+static void queens_getChecklist(const CSPProblem *csp,
 	CSPConstraint** checklist, size_t* amount, const size_t index
 ){
 	backtrackCount++; // TODO: Use yield syntax.
@@ -123,7 +123,7 @@ int queens_solve(size_t queenCount, const char* resultFile, bool silent) {
 				// arity is 2 because we are checking compatibility between two
 				// queens.
 				csp_problem_set_constraint(problem, index,
-					csp_constraint_create(2, &queens_are_comptatible)
+					csp_constraint_create(2, &queens_areComptatible)
 				);
 
 				csp_constraint_set_variable(
@@ -142,7 +142,7 @@ int queens_solve(size_t queenCount, const char* resultFile, bool silent) {
 	{
 		clock_t st = clock();
 		bool res = csp_problem_solve(problem, queens, NULL,
-			&queens_get_checklist
+			&queens_getChecklist
 		);
 		clock_t et = clock();
 
