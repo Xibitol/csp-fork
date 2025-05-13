@@ -20,6 +20,12 @@
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
 
+typedef enum {
+	BASIC,
+	FC,
+	FC_OVARS,
+} SolveType;
+
 /**
  * Structure to represent the domain of a variable in a CSP problem.
  * It contains the number of values in the domain and an array of values.
