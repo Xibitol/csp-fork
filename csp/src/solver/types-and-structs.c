@@ -28,9 +28,12 @@ FilledVariables* filled_variables_create(size_t num_variables) {
 	return fv;
 }
 
-// Mark a variable as filled
 void filled_variables_mark_filled(FilledVariables* fv, size_t index) {
 	fv->bitset[index / 8] |= (1 << (index % 8));
+}
+
+void filled_variables_mark_unfilled(FilledVariables* fv, size_t index) {
+	fv->bitset[index / 8] &= ~(1 << (index % 8));
 }
 
 // Check if a variable is filled

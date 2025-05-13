@@ -87,6 +87,20 @@ extern void filled_variables_mark_filled(FilledVariables* fv, size_t index);
 extern bool filled_variables_is_filled(const FilledVariables* fv, size_t index);
 
 /**
+ * Mark a variable as unfilled.
+ * @param fv The FilledVariables structure.
+ * @param index The index of the variable to mark as unfilled.
+ */
+extern void filled_variables_mark_unfilled(FilledVariables* fv, size_t index);
+
+/**
+ * Check if all variables are filled.
+ * @param fv The FilledVariables structure.
+ * @return true if all variables are filled, false otherwise.
+ */
+extern bool filled_variables_all_filled(const FilledVariables* fv);
+
+/**
  * Create a new FilledVariables structure.
  * @param num_variables The number of variables to track.
  * @return A pointer to the new FilledVariables structure, or NULL on failure.
