@@ -38,6 +38,28 @@ bool filled_variables_is_filled(const FilledVariables* fv, size_t index) {
 	return fv->bitset[index / 8] & (1 << (index % 8));
 }
 
+bool filled_variables_all_filled(const FilledVariables* fv) {
+    size_t full_bytes = fv->size / 8; // Number of fully used bytes
+    size_t remaining_bits = fv->size % 8; // Remaining bits in the last byte
+
+    // Check all full bytes
+    for (size_t i = 0; i < full_bytes; i++) {
+        if (fv->bitset[i] != 0xFF) {
+            return false;
+        }
+    }
+
+    // Check the last byte if there are remaining bits
+    if (remaining_bits > 0) {
+        uint8_t mask = (1 << remaining_bits) - 1; // Mask for the valid bits
+        if ((fv->bitset[full_bytes] & mask) != mask) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // Free the structure
 void filled_variables_destroy(FilledVariables* fv) {
 	free(fv->bitset);
