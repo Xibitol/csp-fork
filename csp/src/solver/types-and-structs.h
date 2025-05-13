@@ -56,9 +56,11 @@ typedef struct {
  * @param checklist Array to store the list of constraints to verify.
  * @param amount Pointer to size_t to store the number of constraints to verify.
  * @param index The index of the current variable.
+ * @param fv The FilledVariables structure to track filled variables.
  */
 typedef void CSPValueChecklist(const CSPProblem* csp, CSPConstraint** checklist,
-															 size_t* amount, size_t index);
+															 size_t* amount, size_t index,
+															 FilledVariables* fv);
 
 /**
  * Get the list of data constraints to verify for the current variable to know
@@ -103,9 +105,22 @@ extern bool filled_variables_all_filled(const FilledVariables* fv);
 /**
  * Get the next unfilled variable.
  * @param fv The FilledVariables structure.
- * @return The index of the next unfilled variable, or SIZE_MAX if all are filled.
+ * @param index The index to start searching from.
+ * @return The index of the next unfilled variable, or SIZE_MAX if all are
+ * filled.
  */
-extern size_t filled_variables_next_unfilled(const FilledVariables* fv);
+extern size_t filled_variables_next_unfilled(const FilledVariables* fv,
+																						 size_t index);
+
+/**
+ * Get the next filled variable.
+ * @param fv The FilledVariables structure.
+ * @param index The index to start searching from.
+ * @return The index of the next filled variable, or SIZE_MAX if all are
+ * unfilled.
+ */
+extern size_t filled_variables_next_filled(const FilledVariables* fv,
+																						 size_t index);
 
 /**
  * Create a new FilledVariables structure.
@@ -160,7 +175,7 @@ extern void domain_change_stack_destroy(DomainChange* stack);
  * @param domains The array of domains to restore.
  */
 extern void domain_change_stack_restore(DomainChange* stack, size_t* stack_top,
-															size_t* stop_point, Domain** domains);
+																				size_t* stop_point, Domain** domains);
 
 /**
  * Add a change to the change stack.
@@ -170,4 +185,4 @@ extern void domain_change_stack_restore(DomainChange* stack, size_t* stack_top,
  * @param value The value that was removed from the domain.
  */
 extern void domain_change_stack_add(DomainChange* stack, size_t* stack_top,
-																							size_t domain_index, size_t value);
+																		size_t domain_index, size_t value);

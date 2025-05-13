@@ -42,42 +42,127 @@ bool filled_variables_is_filled(const FilledVariables* fv, size_t index) {
 }
 
 bool filled_variables_all_filled(const FilledVariables* fv) {
-    size_t full_bytes = fv->size / 8; // Number of fully used bytes
-    size_t remaining_bits = fv->size % 8; // Remaining bits in the last byte
+	size_t full_bytes = fv->size / 8;			 // Number of fully used bytes
+	size_t remaining_bits = fv->size % 8;	 // Remaining bits in the last byte
 
-    // Check all full bytes
-    for (size_t i = 0; i < full_bytes; i++) {
-        if (fv->bitset[i] != 0xFF) {
-            return false;
-        }
-    }
+	// Check all full bytes
+	for (size_t i = 0; i < full_bytes; i++) {
+		if (fv->bitset[i] != 0xFF) {
+			return false;
+		}
+	}
 
-    // Check the last byte if there are remaining bits
-    if (remaining_bits > 0) {
-        uint8_t mask = (1 << remaining_bits) - 1; // Mask for the valid bits
-        if ((fv->bitset[full_bytes] & mask) != mask) {
-            return false;
-        }
-    }
+	// Check the last byte if there are remaining bits
+	if (remaining_bits > 0) {
+		uint8_t mask = (1 << remaining_bits) - 1;	 // Mask for the valid bits
+		if ((fv->bitset[full_bytes] & mask) != mask) {
+			return false;
+		}
+	}
 
-    return true;
+	return true;
 }
 
-size_t filled_variables_next_unfilled(const FilledVariables* fv) {
-	for (size_t byte = 0; byte < (fv->size + 7) / 8; byte++) {
-		if (fv->bitset[byte] != 0xFF) { // Check if the byte has any unset bits
-			for (size_t bit = 0; bit < 8; bit++) {
-				size_t index = byte * 8 + bit;
-				if (index >= fv->size) {
-					return SIZE_MAX; // Out of bounds
+size_t filled_variables_next_unfilled(const FilledVariables* fv,
+																			size_t start_index) {
+	if (start_index >= fv->size) {
+		return SIZE_MAX;	// Invalid index
+	}
+	size_t start_byte = start_index / 8;
+	size_t start_bit = start_index % 8;
+
+	// Check the first byte from the start bit
+	if (start_bit > 0) {
+		uint8_t mask = ~(0xFF << start_bit);	// Mask for bits from start_bit onward
+		if ((fv->bitset[start_byte] & mask) != mask) {
+			for (size_t bit = start_bit; bit < 8; bit++) {
+				if (!(fv->bitset[start_byte] & (1 << bit))) {
+					return start_byte * 8 + bit;
 				}
-				if (!(fv->bitset[byte] & (1 << bit))) {
-					return index; // Return the first unset bit
+			}
+		}
+		start_byte++;
+		if (start_byte * 8 >= fv->size) {
+			return SIZE_MAX; // Invalid index
+		}
+	}
+
+	// Check all full bytes
+	for (size_t i = start_byte; i < fv->size / 8; i++) {
+		if (fv->bitset[i] != 0xFF) {
+			for (size_t bit = 0; bit < 8; bit++) {
+				if (!(fv->bitset[i] & (1 << bit))) {
+					return i * 8 + bit;
 				}
 			}
 		}
 	}
-	return SIZE_MAX; // No unfilled variable found
+
+	// Check the last byte if there are remaining bits
+	size_t remaining_bits = fv->size % 8;
+	if (remaining_bits > 0) {
+		uint8_t mask = (1 << remaining_bits) - 1;	 // Mask for the valid bits
+		if ((fv->bitset[fv->size / 8] & mask) != mask) {
+			for (size_t bit = 0; bit < remaining_bits; bit++) {
+				if (!(fv->bitset[fv->size / 8] & (1 << bit))) {
+					return (fv->size / 8) * 8 + bit;
+				}
+			}
+		}
+	}
+
+	return SIZE_MAX;
+}
+
+size_t filled_variables_next_filled(const FilledVariables* fv,
+																			size_t start_index) {
+	if (start_index >= fv->size) {
+		return SIZE_MAX; // Invalid index
+	}
+	size_t start_byte = start_index / 8;
+	size_t start_bit = start_index % 8;
+
+	// Check the first byte from the start bit
+	if (start_bit > 0) {
+		uint8_t mask = 0xFF << start_bit; // Mask for bits from start_bit onward
+		if (fv->bitset[start_byte] & mask) {
+			for (size_t bit = start_bit; bit < 8; bit++) {
+				if (fv->bitset[start_byte] & (1 << bit)) {
+					return start_byte * 8 + bit;
+				}
+			}
+		}
+		start_byte++;
+		if (start_byte * 8 >= fv->size) {
+			return SIZE_MAX; // Invalid index
+		}
+	}
+
+	// Check all full bytes
+	for (size_t i = start_byte; i < fv->size / 8; i++) {
+		if (fv->bitset[i] != 0x00) {
+			for (size_t bit = 0; bit < 8; bit++) {
+				if (fv->bitset[i] & (1 << bit)) {
+					return i * 8 + bit;
+				}
+			}
+		}
+	}
+
+	// Check the last byte if there are remaining bits
+	size_t remaining_bits = fv->size % 8;
+	if (remaining_bits > 0) {
+		uint8_t mask = (1 << remaining_bits) - 1; // Mask for the valid bits
+		if (fv->bitset[fv->size / 8] & mask) {
+			for (size_t bit = 0; bit < remaining_bits; bit++) {
+				if (fv->bitset[fv->size / 8] & (1 << bit)) {
+					return (fv->size / 8) * 8 + bit;
+				}
+			}
+		}
+	}
+
+	return SIZE_MAX;
 }
 
 // Free the structure
@@ -133,7 +218,7 @@ void domain_change_stack_restore(DomainChange* stack, size_t* stack_top,
 }
 
 void domain_change_stack_add(DomainChange* stack, size_t* stack_top,
-																 size_t domain_index, size_t value) {
+														 size_t domain_index, size_t value) {
 	stack[*stack_top].domain_index = domain_index;
 	stack[*stack_top].value = value;
 	(*stack_top)++;
