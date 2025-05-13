@@ -15,8 +15,6 @@
 #include "csp.h"
 #include "util/unused.h"
 
-static size_t backtrack_counter;
-
 // Check if the queens are compatible
 bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
 											 unsigned int *UNUSED_VAR(data)) {
@@ -80,7 +78,7 @@ void queens_checklist(const CSPProblem *csp, CSPConstraint **checklist,
 }
 
 int solve_queens(size_t queen_count, const char *resultFile,
-								 bool forward_checking, bool silent) {
+								 SolveType solve_type, bool silent) {
 	// Initialise the library
 	csp_init();
 	{
@@ -125,26 +123,39 @@ int solve_queens(size_t queen_count, const char *resultFile,
 		}
 
 		FILE *file = fopen(resultFile, "a");
+		size_t* backtrack_counter = malloc(sizeof(size_t));
 
 		// Start the timer
 		clock_t start_time = clock();
 
 		bool result;
 		// Solve the CSP problem
-		if (forward_checking) {
-			result = csp_problem_solve_fc(problem, queens, NULL, queens_checklist,
-																		NULL, &backtrack_counter);
-		} else {
-			result = csp_problem_solve(problem, queens, NULL, queens_checklist, NULL,
-																 &backtrack_counter);
+		switch (solve_type) {
+			case BASIC:
+				csp_problem_solve(problem, queens, NULL, queens_checklist, NULL,
+													backtrack_counter);
+				break;
+			case FC:
+				csp_problem_solve_fc(problem, queens, NULL, queens_checklist,
+															NULL, backtrack_counter);
+				break;
+			case FC_OVARS:
+				csp_problem_solve_ovars(problem, queens, NULL,
+																	queens_checklist, NULL,
+																	backtrack_counter);
+				break;
+			default:
+				perror("Unknown solve type");
 		}
 
 		// Stop the timer
 		clock_t end_time = clock();
 		double time_spent = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-		fprintf(file, "%f %zu\n", time_spent, backtrack_counter);
+		fprintf(file, "%f %zu\n", time_spent, *backtrack_counter);
 
 		fclose(file);
+
+		free(backtrack_counter);
 
 		// Destroy the CSP problem
 		while (index--) {
