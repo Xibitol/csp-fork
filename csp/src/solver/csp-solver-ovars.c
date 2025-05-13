@@ -1,5 +1,5 @@
 /**
-* @file csp-solver-ovars.c
+ * @file csp-solver-ovars.c
  * Library CSP solving functions with forward checking + variable heuristics
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
@@ -22,29 +22,34 @@
 #include "solver/csp-solver-ovars.h"
 #include "solver/types-and-structs.h"
 
-// PRIVATE
-// void print_domains_fc(Domain **domains, size_t num_domains) {
-// 	for (size_t i = 0; i < num_domains; i++) {
-// 		printf("Domain %zu: ", i);
-// 		for (size_t j = 0; j < domains[i]->amount; j++) {
-// 			printf("%zu ", domains[i]->values[j]);
-// 		}
-// 		printf("\n");
-// 	}
-// 	printf("\n");
-// }
-//
-// void print_values(size_t* values, size_t num_domains) {
-// 	for (size_t i = 0; i < num_domains; i++) {
-// 		printf("%zu ", values[i]);
-// 	}
-// 	printf("\n");
-// }
-
 static int backtrack_counter = 0;
 
+size_t csp_problem_choose_variable(const CSPProblem *csp,
+																	 const FilledVariables *fv,
+																	 const Domain **domains) {
+	assert(csp_initialised());
+
+	size_t index = 0;
+	size_t min_domain_size = SIZE_MAX;
+
+	for (size_t i = 0; i < csp_problem_get_num_domains(csp); i++) {
+		if (!filled_variables_is_filled(fv, i)) {
+			size_t domain_size = domains[i]->amount;
+			if (domain_size < min_domain_size) {
+				min_domain_size = domain_size;
+				index = i;
+				if (min_domain_size == 1) {	 // exit early
+					break;
+				}
+			}
+		}
+	}
+
+	return index;
+}
+
 bool csp_problem_backtrack_ovars(const CSPProblem *csp, size_t *values,
-																 const void *data, size_t index,
+																 const void *data, const FilledVariables *fv,
 																 CSPValueChecklist *checklist, Domain **domains,
 																 DomainChange *change_stack,
 																 size_t *stack_top) {
@@ -52,12 +57,12 @@ bool csp_problem_backtrack_ovars(const CSPProblem *csp, size_t *values,
 	backtrack_counter++;
 
 	// If all variables are assigned, the CSP is solved
-	if (index == csp_problem_get_num_domains(csp)) {
+	if (filled_variables_all_filled(fv)) {
 		return true;
 	}
 
 	size_t stack_start = *stack_top;
-	// Track the stack size at the start of the call
+	size_t index = csp_problem_choose_variable(csp, fv, domains);
 
 	// Try all values in the domain of the current variable
 	for (size_t i = 0; i < domains[index]->amount; i++) {
@@ -68,11 +73,10 @@ bool csp_problem_backtrack_ovars(const CSPProblem *csp, size_t *values,
 		// print_domains_fc(domains, csp_problem_get_num_domains(csp)); //DEBUG
 
 		// Check if the assignment is consistent with the constraints
-		if (csp_problem_is_consistent(csp, values, data, index, checklist) &&
-				csp_problem_forward_check(csp, values, data, index, checklist, domains,
+		if (csp_problem_forward_check(csp, values, data, fv, checklist, domains,
 																	change_stack, stack_top) &&
-				csp_problem_backtrack_ovars(csp, values, data, index + 1, checklist,
-																		domains, change_stack, stack_top)) {
+				csp_problem_backtrack_ovars(csp, values, data, fv, checklist, domains,
+																		change_stack, stack_top)) {
 			return true;
 		}
 
@@ -94,7 +98,9 @@ bool csp_problem_solve_ovars(const CSPProblem *csp, size_t *values,
 
 	size_t num_domains = csp_problem_get_num_domains(csp);
 	Domain *domains[num_domains];
-	size_t stack_capacity = 0; // Adjust as needed
+	size_t stack_capacity = 0;
+
+	FilledVariables *filled_vars = filled_variables_create(num_domains);
 
 	// Allocate memory for each domain
 	for (size_t i = 0; i < num_domains; i++) {
@@ -106,6 +112,7 @@ bool csp_problem_solve_ovars(const CSPProblem *csp, size_t *values,
 			for (size_t j = 0; j < i; j++) {
 				domain_destroy(domains[j]);
 			}
+			filled_variables_destroy(filled_vars);
 			return false;
 		}
 	}
@@ -116,6 +123,7 @@ bool csp_problem_solve_ovars(const CSPProblem *csp, size_t *values,
 		for (size_t i = 0; i < num_domains; i++) {
 			domain_destroy(domains[i]);
 		}
+		filled_variables_destroy(filled_vars);
 		return false;
 	}
 	size_t stack_top = 0;
@@ -123,14 +131,16 @@ bool csp_problem_solve_ovars(const CSPProblem *csp, size_t *values,
 	reduce_domains(csp, values, data, domains, dataChecklist);
 
 	// Start the backtracking algorithm
-	bool result = csp_problem_backtrack_ovars(csp, values, data, 0, checklist,
-																						domains, change_stack, &stack_top);
+	bool result =
+			csp_problem_backtrack_ovars(csp, values, data, filled_vars, checklist,
+																	domains, change_stack, &stack_top);
 
 	// Free allocated memory
 	for (size_t i = 0; i < num_domains; i++) {
 		domain_destroy(domains[i]);
 	}
 	domain_change_stack_destroy(change_stack);
+	filled_variables_destroy(filled_vars);
 
 	if (benchmark != NULL) {
 		benchmark[0] = backtrack_counter;
