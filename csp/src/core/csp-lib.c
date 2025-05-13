@@ -17,7 +17,7 @@
 static int counter = 0;
 
 // Assertions
-static void verify(void){
+static __attribute__((__unused__)) void verify(void){
  	assert(!csp_initialised());
 }
 
@@ -27,7 +27,7 @@ bool csp_init(void){
 	static bool first = true;
 
 	if(first){
-		assert(atexit(verify) == 0);
+		assert(atexit(&verify) == 0);
 		first = false;
 	}
 
