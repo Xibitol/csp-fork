@@ -6,7 +6,7 @@ SUDOKU_PLOT_FILE = 'sudoku_benchmark.png'
 average_count = 5
 
 # Read the data from the file
-unknown_count = [i for i in range(5, 40, 5)]
+unknown_count = [i for i in range(5, 81, 5)]
 nodes = []
 times = []
 
@@ -22,6 +22,8 @@ with open(SUDOKU_RESULT_FILE, 'r') as file:
             nodes.append(sum(temp_nodes) / average_count)
             temp_nodes = []
             temp_time = []
+
+print(unknown_count, times)
 
 # Plot the time taken
 plt.figure(figsize=(10, 5))
