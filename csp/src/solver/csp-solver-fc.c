@@ -85,14 +85,7 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 
     if (domains[i]->amount == 0) {
       // Restore domains from the stack
-      while (*stack_top > stack_start) {
-        (*stack_top)--;
-        size_t domain_index = change_stack[*stack_top].domain_index;
-        size_t value = change_stack[*stack_top].value;
-
-        domains[domain_index]->values[domains[domain_index]->amount] = value;
-        domains[domain_index]->amount++;
-      }
+      domain_change_stack_restore(change_stack, stack_top, &stack_start, domains);
       free(variable_checks);
       return false;
     }
@@ -132,15 +125,7 @@ bool csp_problem_backtrack_fc(const CSPProblem *csp,
 			return true;
 		}
 
-		// Restore domains from the stack after backtracking
-		while (*stack_top > stack_start) { // Only restore changes made during this call
-			(*stack_top)--;
-			size_t domain_index = change_stack[*stack_top].domain_index;
-			size_t value = change_stack[*stack_top].value;
-
-			domains[domain_index]->values[domains[domain_index]->amount] = value;
-			domains[domain_index]->amount++;
-		}
+		domain_change_stack_restore(change_stack, stack_top, &stack_start, domains);
 		// printf("backtracked\n"); //DEBUG
 		// print_domains_fc(domains, csp_problem_get_num_domains(csp)); //DEBUG
 	}

@@ -13,6 +13,7 @@
 #if !defined(_CSP_H_INSIDE) && !defined(CSP_COMPILATION)
 #error "Only <csp/csp.h> can be included directly."
 #endif
+
 #include <stddef.h>
 #include <stdint.h>
 
@@ -129,3 +130,13 @@ extern DomainChange* domain_change_stack_create(size_t size);
  * @param stack The DomainChange structure to free.
  */
 extern void domain_change_stack_destroy(DomainChange* stack);
+
+/**
+ * Restore the domains from the change stack up to the specified stop point.
+ * @param stack The DomainChange structure.
+ * @param stack_top Pointer to the top of the stack.
+ * @param stack_start The start index of the stack.
+ * @param domains The array of domains to restore.
+ */
+extern void domain_change_stack_restore(DomainChange* stack, size_t* stack_top,
+															size_t* stack_start, Domain** domains);
