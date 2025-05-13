@@ -63,6 +63,23 @@ bool filled_variables_all_filled(const FilledVariables* fv) {
     return true;
 }
 
+size_t filled_variables_next_unfilled(const FilledVariables* fv) {
+	for (size_t byte = 0; byte < (fv->size + 7) / 8; byte++) {
+		if (fv->bitset[byte] != 0xFF) { // Check if the byte has any unset bits
+			for (size_t bit = 0; bit < 8; bit++) {
+				size_t index = byte * 8 + bit;
+				if (index >= fv->size) {
+					return SIZE_MAX; // Out of bounds
+				}
+				if (!(fv->bitset[byte] & (1 << bit))) {
+					return index; // Return the first unset bit
+				}
+			}
+		}
+	}
+	return SIZE_MAX; // No unfilled variable found
+}
+
 // Free the structure
 void filled_variables_destroy(FilledVariables* fv) {
 	free(fv->bitset);

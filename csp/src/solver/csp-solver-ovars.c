@@ -7,6 +7,8 @@
  * @copyright GNU Lesser General Public License v3.0
  */
 
+#include "solver/csp-solver-ovars.h"
+
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -19,14 +21,13 @@
 #include "core/csp-problem.h"
 #include "solver/csp-solver-fc.h"
 #include "solver/csp-solver.h"
-#include "solver/csp-solver-ovars.h"
 #include "solver/types-and-structs.h"
 
 static int backtrack_counter = 0;
 
 size_t csp_problem_choose_variable(const CSPProblem *csp,
 																	 const FilledVariables *fv,
-																	 const Domain **domains) {
+																	 Domain **domains) {
 	assert(csp_initialised());
 
 	size_t index = 0;
@@ -49,7 +50,7 @@ size_t csp_problem_choose_variable(const CSPProblem *csp,
 }
 
 bool csp_problem_backtrack_ovars(const CSPProblem *csp, size_t *values,
-																 const void *data, const FilledVariables *fv,
+																 const void *data, FilledVariables *fv,
 																 CSPValueChecklist *checklist, Domain **domains,
 																 DomainChange *change_stack,
 																 size_t *stack_top) {
@@ -73,8 +74,8 @@ bool csp_problem_backtrack_ovars(const CSPProblem *csp, size_t *values,
 		// print_domains_fc(domains, csp_problem_get_num_domains(csp)); //DEBUG
 
 		// Check if the assignment is consistent with the constraints
-		if (csp_problem_forward_check(csp, values, data, fv, checklist, domains,
-																	change_stack, stack_top) &&
+		if (csp_problem_forward_check(csp, values, data, index, fv, checklist,
+																	domains, change_stack, stack_top) &&
 				csp_problem_backtrack_ovars(csp, values, data, fv, checklist, domains,
 																		change_stack, stack_top)) {
 			return true;

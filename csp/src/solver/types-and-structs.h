@@ -101,6 +101,13 @@ extern void filled_variables_mark_unfilled(FilledVariables* fv, size_t index);
 extern bool filled_variables_all_filled(const FilledVariables* fv);
 
 /**
+ * Get the next unfilled variable.
+ * @param fv The FilledVariables structure.
+ * @return The index of the next unfilled variable, or SIZE_MAX if all are filled.
+ */
+extern size_t filled_variables_next_unfilled(const FilledVariables* fv);
+
+/**
  * Create a new FilledVariables structure.
  * @param num_variables The number of variables to track.
  * @return A pointer to the new FilledVariables structure, or NULL on failure.
