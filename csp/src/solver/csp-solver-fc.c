@@ -39,7 +39,7 @@ static int backtrack_counter = 0;
 
 bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
   const void *data, size_t index, CSPValueChecklist *checklist, Domain **domains,
-  DomainChange *change_stack, size_t *stack_top, size_t stack_start
+  DomainChange *change_stack, size_t *stack_top
 ) {
   CSPConstraint** variable_checks = malloc(sizeof(CSPConstraint*) * csp_problem_get_num_constraints(csp));
   if (variable_checks == NULL) {
@@ -65,14 +65,14 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
       continue;
     }
 
+  	size_t stack_start = *stack_top; // Track the stack size at the start of the call
+
     for (size_t j = 0; j < domains[i]->amount; j++) {
       values[i] = domains[i]->values[j];
 
       if (!csp_constraint_get_check(relevant_check)(relevant_check, values, data)) {
         // Record the change in the stack
-        change_stack[*stack_top].domain_index = i;
-        change_stack[*stack_top].value = domains[i]->values[j];
-        (*stack_top)++;
+        domain_change_stack_add(change_stack, stack_top, i, domains[i]->values[j]);
 
         // Remove the value from the domain
         domains[i]->amount--;
@@ -117,9 +117,7 @@ bool csp_problem_backtrack_fc(const CSPProblem *csp,
 		// print_values(values, index + 1); //DEBUG
 		// print_domains_fc(domains, csp_problem_get_num_domains(csp)); //DEBUG
 
-		// Check if the assignment is consistent with the constraints
-		if (/*csp_problem_is_consistent(csp, values, data, index, checklist)
-		 &&*/ csp_problem_forward_check(csp, values, data, index, checklist, domains, change_stack, stack_top, *stack_top)
+		if (csp_problem_forward_check(csp, values, data, index, checklist, domains, change_stack, stack_top)
 		 && csp_problem_backtrack_fc(csp, values, data, index + 1, checklist, domains, change_stack, stack_top)
 		) {
 			return true;

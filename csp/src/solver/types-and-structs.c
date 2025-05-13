@@ -89,3 +89,10 @@ void domain_change_stack_restore(DomainChange* stack, size_t* stack_top,
 		domains[domain_index]->amount++;
 	}
 }
+
+void domain_change_stack_add(DomainChange* stack, size_t* stack_top,
+																 size_t domain_index, size_t value) {
+	stack[*stack_top].domain_index = domain_index;
+	stack[*stack_top].value = value;
+	(*stack_top)++;
+}

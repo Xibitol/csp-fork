@@ -30,12 +30,11 @@
  * @param domains
  * @param change_stack
  * @param stack_top
- * @param stack_start
  * @return
  */
 extern bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 	const void *data, size_t index, CSPValueChecklist *checklist, Domain **domains,
-	DomainChange *change_stack, size_t *stack_top, size_t stack_start
+	DomainChange *change_stack, size_t *stack_top
 );
 
 /** Solve the CSP problem using backtracking.

@@ -70,7 +70,7 @@ bool csp_problem_backtrack_ovars(const CSPProblem *csp, size_t *values,
 		// Check if the assignment is consistent with the constraints
 		if (csp_problem_is_consistent(csp, values, data, index, checklist) &&
 				csp_problem_forward_check(csp, values, data, index, checklist, domains,
-																	change_stack, stack_top, *stack_top) &&
+																	change_stack, stack_top) &&
 				csp_problem_backtrack_ovars(csp, values, data, index + 1, checklist,
 																		domains, change_stack, stack_top)) {
 			return true;

@@ -135,8 +135,18 @@ extern void domain_change_stack_destroy(DomainChange* stack);
  * Restore the domains from the change stack up to the specified stop point.
  * @param stack The DomainChange structure.
  * @param stack_top Pointer to the top of the stack.
- * @param stack_start The start index of the stack.
+ * @param stop_point Pointer to the point to restore up to.
  * @param domains The array of domains to restore.
  */
 extern void domain_change_stack_restore(DomainChange* stack, size_t* stack_top,
-															size_t* stack_start, Domain** domains);
+															size_t* stop_point, Domain** domains);
+
+/**
+ * Add a change to the change stack.
+ * @param stack The DomainChange structure.
+ * @param stack_top Pointer to the top of the stack.
+ * @param domain_index The index of the domain that changed.
+ * @param value The value that was removed from the domain.
+ */
+extern void domain_change_stack_add(DomainChange* stack, size_t* stack_top,
+																							size_t domain_index, size_t value);
