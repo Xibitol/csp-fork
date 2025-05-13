@@ -1,0 +1,131 @@
+/**
+ * @file types-and-structs.h
+ * File containing the definition of the types and structures used in the CSP
+ * And the functions to manipulate them.
+ *
+ * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
+ * @date 2025
+ * @copyright GNU Lesser General Public License v3.0
+ */
+
+#pragma once
+
+#if !defined(_CSP_H_INSIDE) && !defined(CSP_COMPILATION)
+#error "Only <csp/csp.h> can be included directly."
+#endif
+#include <stddef.h>
+#include <stdint.h>
+
+#include "core/csp-constraint.h"
+#include "core/csp-problem.h"
+
+/**
+ * Structure to represent the domain of a variable in a CSP problem.
+ * It contains the number of values in the domain and an array of values.
+ */
+typedef struct {
+	size_t amount;
+	size_t values[];
+} Domain;
+
+/**
+ * Structure to track changes in the domain of a variable during forward
+ * checking. Use as a stack to store the changes.
+ * It stores the index of the domain and the value that was removed.
+ */
+typedef struct {
+	size_t domain_index;
+	size_t value;
+} DomainChange;
+
+/**
+ * Structure to track filled variables in a CSP problem.
+ * It uses a bitset to efficiently track which variables are filled.
+ */
+typedef struct {
+	size_t size;			// Number of variables
+	uint8_t* bitset;	// Bitset to track filled variables
+} FilledVariables;
+
+/**
+ * Get the list of value constraints to verify for the current variable to know
+ * if the CSPProblem is consistent.
+ * @note This function is used by #csp_problem_is_consistent.
+ * @param csp The CSP problem.
+ * @param checklist Array to store the list of constraints to verify.
+ * @param amount Pointer to size_t to store the number of constraints to verify.
+ * @param index The index of the current variable.
+ */
+typedef void CSPValueChecklist(const CSPProblem* csp, CSPConstraint** checklist,
+															 size_t* amount, size_t index);
+
+/**
+ * Get the list of data constraints to verify for the current variable to know
+ * if the CSPProblem is consistent.
+ * @param csp The CSP problem.
+ * @param checklist Array to store the list of constraints to verify.
+ * @param amount Pointer to size_t to store the number of constraints to verify.
+ * @param index The index of the current variable.
+ */
+typedef void CSPDataChecklist(const CSPProblem* csp, CSPConstraint** checklist,
+															size_t* amount, size_t index);
+
+/**
+ * Mark a variable as filled.
+ * @param fv The FilledVariables structure.
+ * @param index The index of the variable to mark as filled.
+ */
+extern void filled_variables_mark_filled(FilledVariables* fv, size_t index);
+
+/**
+ * Check if a variable is filled.
+ * @param fv The FilledVariables structure.
+ * @param index The index of the variable to check.
+ * @return true if the variable is filled, false otherwise.
+ */
+extern bool filled_variables_is_filled(const FilledVariables* fv, size_t index);
+
+/**
+ * Create a new FilledVariables structure.
+ * @param num_variables The number of variables to track.
+ * @return A pointer to the new FilledVariables structure, or NULL on failure.
+ */
+extern FilledVariables* filled_variables_create(size_t num_variables);
+
+/**
+ * Free the memory allocated for a FilledVariables structure.
+ * @param fv The FilledVariables structure to free.
+ */
+extern void filled_variables_destroy(FilledVariables* fv);
+
+/**
+ * Create a new Domain structure.
+ * @param size The size of the domain.
+ * @return A pointer to the new Domain structure, or NULL on failure.
+ */
+extern Domain* domain_create(size_t size);
+
+/**
+ * Free the memory allocated for a Domain structure.
+ * @param domain The Domain structure to free.
+ */
+extern void domain_destroy(Domain* domain);
+
+/**
+ * Print the values in a Domain structure.
+ * @param domain The Domain structure to print.
+ */
+extern void domain_print(const Domain* domain);
+
+/**
+ * Create a new DomainChange structure.
+ * @param size The size of the change stack.
+ * @return A pointer to the new DomainChange structure, or NULL on failure.
+ */
+extern DomainChange* domain_change_stack_create(size_t size);
+
+/**
+ * Free the memory allocated for a DomainChange structure.
+ * @param stack The DomainChange structure to free.
+ */
+extern void domain_change_stack_destroy(DomainChange* stack);

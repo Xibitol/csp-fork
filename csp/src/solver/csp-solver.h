@@ -16,31 +16,7 @@
 #include <stddef.h>
 
 #include <core/csp-problem.h>
-#include <core/csp-constraint.h>
-
-typedef struct {
-	size_t amount;
-	size_t values[];
-}Domain;
-
-/**
- * Get the list of value constraints to verify for the current variable to know if the CSPProblem is consistent.
- * @note This function is used by #csp_problem_is_consistent.
- * @param csp The CSP problem.
- * @param checklist Array to store the list of constraints to verify.
- * @param amount Pointer to size_t to store the number of constraints to verify.
- * @param index The index of the current variable.
- */
-typedef void CSPValueChecklist(const CSPProblem *csp, CSPConstraint** checklist, size_t* amount, size_t index);
-
-/**
- * Get the list of data constraints to verify for the current variable to know if the CSPProblem is consistent.
- * @param csp The CSP problem.
- * @param checklist Array to store the list of constraints to verify.
- * @param amount Pointer to size_t to store the number of constraints to verify.
- * @param index The index of the current variable.
- */
-typedef void CSPDataChecklist(const CSPProblem *csp, CSPConstraint** checklist, size_t* amount, size_t index);
+#include <solver/types-and-structs.h>
 
 /**
  *

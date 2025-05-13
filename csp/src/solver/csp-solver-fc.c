@@ -16,18 +16,14 @@
 
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
-#include "core/csp-lib.h"
 #include "solver/csp-solver.h"
 #include "solver/csp-solver-fc.h"
+#include "solver/types-and-structs.h"
 
 // PRIVATE
 void print_domains_fc(Domain **domains, size_t num_domains) {
 	for (size_t i = 0; i < num_domains; i++) {
-		printf("Domain %zu: ", i);
-		for (size_t j = 0; j < domains[i]->amount; j++) {
-			printf("%zu ", domains[i]->values[j]);
-		}
-		printf("\n");
+		domain_print(domains[i]);
 	}
 	printf("\n");
 }
@@ -165,27 +161,21 @@ bool csp_problem_solve_fc(const CSPProblem *csp, size_t *values, const void *dat
 	for (size_t i = 0; i < num_domains; i++) {
 		size_t domain_size = csp_problem_get_domain(csp, i);
 		stack_capacity += domain_size;
-		domains[i] = malloc(sizeof(Domain) + domain_size * sizeof(size_t));
+		domains[i] = domain_create(domain_size);
 		if (domains[i] == NULL) {
-			perror("malloc");
 			// Free previously allocated domains
 			for (size_t j = 0; j < i; j++) {
-				free(domains[j]);
+				domain_destroy(domains[j]);
 			}
 			return false;
-		}
-		domains[i]->amount = domain_size;
-		for (size_t j = 0; j < domain_size; j++) {
-			domains[i]->values[j] = j;
 		}
 	}
 
 	// Initialize the change stack for forward checking
-	DomainChange *change_stack = malloc(stack_capacity * sizeof(DomainChange));
+	DomainChange *change_stack = domain_change_stack_create(stack_capacity);
 	if (change_stack == NULL) {
-		perror("malloc");
 		for (size_t i = 0; i < num_domains; i++) {
-			free(domains[i]);
+			domain_destroy(domains[i]);
 		}
 		return false;
 	}
@@ -198,9 +188,9 @@ bool csp_problem_solve_fc(const CSPProblem *csp, size_t *values, const void *dat
 
 	// Free allocated memory
 	for (size_t i = 0; i < num_domains; i++) {
-		free(domains[i]);
+		domain_destroy(domains[i]);
 	}
-	free(change_stack);
+	domain_change_stack_destroy(change_stack);
 
 	if (benchmark != NULL) {
 		benchmark[0] = backtrack_counter;

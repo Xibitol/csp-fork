@@ -20,11 +20,6 @@
 #include <core/csp-constraint.h>
 #include <solver/csp-solver.h>
 
-typedef struct {
-	size_t domain_index;
-	size_t value;
-} DomainChange;
-
 /**
  *
  * @param csp

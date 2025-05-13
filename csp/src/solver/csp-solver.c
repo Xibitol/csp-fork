@@ -16,17 +16,14 @@
 
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
+#include "solver/types-and-structs.h"
 
 // PRIVATE
 static int backtrack_counter = 0;
 
 void print_domains(Domain **domains, size_t num_domains) {
 	for (size_t i = 0; i < num_domains; i++) {
-		printf("Domain %zu: ", i);
-		for (size_t j = 0; j < domains[i]->amount; j++) {
-			printf("%zu ", domains[i]->values[j]);
-		}
-		printf("\n");
+		domain_print(domains[i]);
 	}
 	printf("\n");
 }
@@ -117,18 +114,13 @@ bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, 
 	// Allocate memory for each domain
 	for (size_t i = 0; i < num_domains; i++) {
 		size_t domain_size = csp_problem_get_domain(csp, i);
-		domains[i] = malloc(sizeof(Domain) + domain_size * sizeof(size_t));
+		domains[i] = domain_create(domain_size);
 		if (domains[i] == NULL) {
-			perror("malloc");
 			// Free previously allocated domains
 			for (size_t j = 0; j < i; j++) {
-				free(domains[j]);
+				domain_destroy(domains[j]);
 			}
 			return false;
-		}
-		domains[i]->amount = domain_size;
-		for (size_t j = 0; j < domain_size; j++) {
-			domains[i]->values[j] = j;
 		}
 	}
 
@@ -140,7 +132,7 @@ bool csp_problem_solve(const CSPProblem *csp, size_t *values, const void *data, 
 
 	// Free allocated memory
 	for (size_t i = 0; i < num_domains; i++) {
-		free(domains[i]);
+		domain_destroy(domains[i]);
 	}
 
 	if (benchmark!=NULL) {
