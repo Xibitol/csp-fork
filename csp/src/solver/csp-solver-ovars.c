@@ -64,6 +64,8 @@ bool csp_problem_backtrack_ovars(const CSPProblem *csp, size_t *values,
 
 	size_t stack_start = *stack_top;
 	size_t index = csp_problem_choose_variable(csp, fv, domains);
+	// printf("%zu\n", index);	//DEBUG
+	filled_variables_mark_filled(fv, index);
 
 	// Try all values in the domain of the current variable
 	for (size_t i = 0; i < domains[index]->amount; i++) {
@@ -86,6 +88,7 @@ bool csp_problem_backtrack_ovars(const CSPProblem *csp, size_t *values,
 		// printf("backtracked\n"); //DEBUG
 		// print_domains_fc(domains, csp_problem_get_num_domains(csp)); //DEBUG
 	}
+	filled_variables_mark_unfilled(fv, index);
 	return false;
 }
 

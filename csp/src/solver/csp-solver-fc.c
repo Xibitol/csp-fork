@@ -29,13 +29,6 @@ void print_domains_fc(Domain **domains, size_t num_domains) {
 	printf("\n");
 }
 
-void print_values(size_t *values, size_t num_domains) {
-	for (size_t i = 0; i < num_domains; i++) {
-		printf("%zu ", values[i]);
-	}
-	printf("\n");
-}
-
 static int backtrack_counter = 0;
 
 bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
@@ -53,7 +46,7 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 	for (size_t i = 0; i < fv->size; i++) {
 		if (!filled_variables_is_filled(fv, i)) {
 			size_t v_amount = 0;
-			checklist(csp, variable_checks, &v_amount, i);
+			checklist(csp, variable_checks, &v_amount, i, fv);
 
 			CSPConstraint *relevant_check = NULL;
 			for (size_t check_i = 0; check_i < v_amount; check_i++) {
@@ -116,7 +109,8 @@ bool csp_problem_backtrack_fc(const CSPProblem *csp, size_t *values,
 	}
 
 	size_t stack_start = *stack_top;
-	size_t index = filled_variables_next_unfilled(fv);
+	size_t index = filled_variables_next_unfilled(fv, 0);
+	filled_variables_mark_filled(fv, index);
 
 	// Try all values in the domain of the current variable
 	for (size_t i = 0; i < domains[index]->amount; i++) {
@@ -139,6 +133,7 @@ bool csp_problem_backtrack_fc(const CSPProblem *csp, size_t *values,
 		// printf("backtracked\n"); //DEBUG
 		// print_domains_fc(domains, csp_problem_get_num_domains(csp)); //DEBUG
 	}
+	filled_variables_mark_unfilled(fv, index);
 	return false;
 }
 
