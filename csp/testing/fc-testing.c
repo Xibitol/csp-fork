@@ -41,14 +41,12 @@ size_t* load_puzzle_from_bytes(const char* filename) {
 }
 
 int main(void) {
-	SolveType basic = BASIC;
-	SolveType fc = FC;
-	SolveType fc_ovars = FC_OVARS;
-  solve_queens(10, "test-fc-queens.txt", basic, false);
-	solve_queens(10, "test-fc-queens.txt", fc, false);
-	solve_queens(10, "test-fc-queens.txt", fc_ovars, false);
+  solve_queens(10, "test-fc-queens.txt", 0, false);
+	solve_queens(10, "test-fc-queens.txt", FC, false);
+	solve_queens(10, "test-fc-queens.txt", OVARS, false);
+	solve_queens(10, "test-fc-queens.txt", FC | OVARS, false);
 
-  size_t** sudoku = load_new_sudoku(50, 1);
+  size_t** sudoku = load_new_sudoku(65, 1);
 
   // Save the puzzle as bytes
   save_puzzle_as_bytes(sudoku[0], "current-puzzle.bin");
@@ -57,9 +55,10 @@ int main(void) {
   size_t* loaded_puzzle = load_puzzle_from_bytes("current-puzzle.bin");
 
   // Use the loaded puzzle (e.g., solve it)
-  solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", basic, false);
-  solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", fc, false);
-	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", fc_ovars, false);
+  solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", 0, false);
+  solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", FC, false);
+	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", OVARS, false);
+	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", FC | OVARS, false);
 
   free(sudoku[0]);
   free(sudoku);
