@@ -132,17 +132,16 @@ int solve_queens(size_t queen_count, const char *resultFile,
 		// Solve the CSP problem
 		switch (solve_type) {
 			case BASIC:
-				csp_problem_solve(problem, queens, NULL, queens_checklist, NULL,
-													backtrack_counter);
+				result = csp_problem_solve(problem, queens, NULL, queens_checklist,
+																	 NULL, backtrack_counter);
 				break;
 			case FC:
-				csp_problem_solve_fc(problem, queens, NULL, queens_checklist,
-															NULL, backtrack_counter);
+				result = csp_problem_solve_fc(problem, queens, NULL, queens_checklist,
+																			NULL, backtrack_counter);
 				break;
 			case FC_OVARS:
-				csp_problem_solve_ovars(problem, queens, NULL,
-																	queens_checklist, NULL,
-																	backtrack_counter);
+				result = csp_problem_solve_ovars(
+						problem, queens, NULL, queens_checklist, NULL, backtrack_counter);
 				break;
 			default:
 				perror("Unknown solve type");
