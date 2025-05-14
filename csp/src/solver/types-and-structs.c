@@ -1,6 +1,12 @@
-//
-// Created by adrien on 13/05/25.
-//
+/**
+* @file types-and-structs.c
+ * File containing the definition of the types and structures used in the CSP
+ * And the functions to manipulate them.
+ *
+ * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
+ * @date 2025
+ * @copyright GNU Lesser General Public License v3.0
+ */
 
 #include "solver/types-and-structs.h"
 
@@ -186,14 +192,21 @@ Domain* domain_create(size_t size) {
 
 void domain_destroy(Domain* domain) { free(domain); }
 
-void domain_print(const Domain* domain) {
+void print_domain(const Domain* domain) {
 	for (size_t i = 0; i < domain->amount; i++) {
 		printf("%zu ", domain->values[i]);
 	}
 	printf("\n");
 }
 
-DomainChange* domain_change_stack_create(size_t size) {
+void print_domains(const Domain **domains, const size_t num_domains) {
+	for (size_t i = 0; i < num_domains; i++) {
+		print_domain(domains[i]);
+	}
+	printf("\n");
+}
+
+DomainChange* domain_change_stack_create(const size_t size) {
 	DomainChange* stack = malloc(size * sizeof(DomainChange));
 	if (stack == NULL) {
 		perror("malloc");
@@ -204,8 +217,8 @@ DomainChange* domain_change_stack_create(size_t size) {
 
 void domain_change_stack_destroy(DomainChange* stack) { free(stack); }
 
-void domain_change_stack_restore(DomainChange* stack, size_t* stack_top,
-																 size_t* stop_point, Domain** domains) {
+void domain_change_stack_restore(const DomainChange* stack, size_t* stack_top,
+																 const size_t* stop_point, Domain** domains) {
 	while (*stack_top > *stop_point) {
 		// Only restore changes until stop point
 		(*stack_top)--;
