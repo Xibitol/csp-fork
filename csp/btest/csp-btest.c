@@ -26,6 +26,7 @@
 #define NQUEENS_FC_OVARS_RESULT_FILE "n_queens_fc_ovars_benchmark.txt"
 #define SUDOKU_RESULT_FILE "sudoku_benchmark.txt"
 #define SUDOKU_FC_RESULT_FILE "sudoku_fc_benchmark.txt"
+#define SUDOKU_FC_OVARS_RESULT_FILE "sudoku_fc_ovars_benchmark.txt"
 
 typedef int BenchmarkFunc(const char* resultFile, void* arg);
 
@@ -135,9 +136,10 @@ static int nqueensFCOvarsBenchmark(const char* resultFile, void* arg){
 static int sudokuBenchmark(const char* resultFile, void* arg) {
 	const int total_count = ((SudokuArgs*) arg)->total_count;
 	size_t** sudokus = ((SudokuArgs*) arg)->sudokus;
+	SolveType solve_type = BASIC;
 
 	for (int j = 0; j < total_count; j++) {
-		if (solve_sudoku(sudokus[j], resultFile, false, true)) {
+		if (solve_sudoku(sudokus[j], resultFile, solve_type, true)) {
 			perror("solve_sudoku");
 		}
 	}
@@ -148,14 +150,29 @@ static int sudokuBenchmark(const char* resultFile, void* arg) {
 static int sudokuFCBenchmark(const char* resultFile, void* arg) {
   const int total_count = ((SudokuArgs*) arg)->total_count;
   size_t** sudokus = ((SudokuArgs*) arg)->sudokus;
+	SolveType solve_type = FC;
 
   for (int j = 0; j < total_count; j++) {
-    if (solve_sudoku(sudokus[j], resultFile, true, true)) {
+    if (solve_sudoku(sudokus[j], resultFile, solve_type, true)) {
       perror("solve_sudoku");
     }
   }
 
   return EXIT_SUCCESS;
+}
+
+static int sudokuFCOvarsBenchmark(const char* resultFile, void* arg) {
+	const int total_count = ((SudokuArgs*) arg)->total_count;
+	size_t** sudokus = ((SudokuArgs*) arg)->sudokus;
+	SolveType solve_type = FC_OVARS;
+
+	for (int j = 0; j < total_count; j++) {
+		if (solve_sudoku(sudokus[j], resultFile, solve_type, true)) {
+			perror("solve_sudoku");
+		}
+	}
+
+	return EXIT_SUCCESS;
 }
 
 int main(void){
@@ -175,32 +192,35 @@ int main(void){
 	  nqueensArgs[0], nfcovpid
 	);
 
-  // int average_amount = 5;
-  // int increment = 5;
-  //
-  // SudokuArgs sudokuArgs = {0};
-  // sudokuArgs.sudokus = malloc(81 * sizeof(size_t*)); // Allocate memory for the flexible array
-  // if (sudokuArgs.sudokus == NULL) {
-  //     perror("malloc");
-  //     exit(EXIT_FAILURE);
-  // }
-  //
-  // int i = 5;
-  // while (i < 81) {
-  //     size_t** sudokus = load_new_sudoku(i, average_amount);
-  //     i += increment;
-  //     for (int j = 0; j < average_amount; j++) {
-	 //  sudokuArgs.sudokus[sudokuArgs.total_count + j] = sudokus[j];
-  //     }
-  //     sudokuArgs.total_count += average_amount;
-  //     free(sudokus); // Free the temporary sudokus array
-  // }
-  //
-  // pid_t spid = benchmark(SUDOKU_RESULT_FILE, &sudokuBenchmark, &sudokuArgs);
-  // printf("Started benchmarking on Sudoku puzzles (%d).\n", spid);
-  //
-  // pid_t sfcpid = benchmark(SUDOKU_FC_RESULT_FILE, &sudokuFCBenchmark, &sudokuArgs);
-  // printf("Started FC benchmarking on Sudoku puzzles (%d).\n", spid);
+  int average_amount = 5;
+  int increment = 5;
+
+  SudokuArgs sudokuArgs = {0};
+  sudokuArgs.sudokus = malloc(81 * sizeof(size_t*)); // Allocate memory for the flexible array
+  if (sudokuArgs.sudokus == NULL) {
+      perror("malloc");
+      exit(EXIT_FAILURE);
+  }
+
+  int i = 5;
+  while (i < 81) {
+      size_t** sudokus = load_new_sudoku(i, average_amount);
+      i += increment;
+      for (int j = 0; j < average_amount; j++) {
+	  sudokuArgs.sudokus[sudokuArgs.total_count + j] = sudokus[j];
+      }
+      sudokuArgs.total_count += average_amount;
+      free(sudokus); // Free the temporary sudokus array
+  }
+
+  pid_t spid = benchmark(SUDOKU_RESULT_FILE, &sudokuBenchmark, &sudokuArgs);
+  printf("Started benchmarking on Sudoku puzzles (%d).\n", spid);
+
+  pid_t sfcpid = benchmark(SUDOKU_FC_RESULT_FILE, &sudokuFCBenchmark, &sudokuArgs);
+  printf("Started FC benchmarking on Sudoku puzzles (%d).\n", spid);
+
+	pid_t sfcpovpid = benchmark(SUDOKU_FC_OVARS_RESULT_FILE, &sudokuFCOvarsBenchmark, &sudokuArgs);
+	printf("Started FC_OVARS benchmarking on Sudoku puzzles (%d).\n", spid);
 
   if(npid != -1 && waitpid(npid, NULL, 0) == -1)
 	  perror("waitpid"), exitCode = EXIT_FAILURE;
@@ -217,21 +237,26 @@ int main(void){
 	else{
 	  printf("Finished FC_OVARS benchmarking (NQueens problems; %d).\n", getpid());
 	}
-  // if(spid != -1 && waitpid(spid, NULL, 0) == -1)
-	 //  perror("waitpid"), exitCode = EXIT_FAILURE;
-  // else{
-	 //  printf("Finished benchmarking (Sudoku puzzles; %d).\n", getpid());
-  // }
-  // if(sfcpid != -1 && waitpid(sfcpid, NULL, 0) == -1)
-  //   perror("waitpid"), exitCode = EXIT_FAILURE;
-  // else{
-  //   printf("Finished FC benchmarking (Sudoku puzzles; %d).\n", getpid());
-  // }
-  //
-  // for (int i = 0; i < sudokuArgs.total_count; i++) {
-	 //  free(sudokuArgs.sudokus[i]);
-  // }
-  // free(sudokuArgs.sudokus);
+  if(spid != -1 && waitpid(spid, NULL, 0) == -1)
+	  perror("waitpid"), exitCode = EXIT_FAILURE;
+  else{
+	  printf("Finished benchmarking (Sudoku puzzles; %d).\n", getpid());
+  }
+  if(sfcpid != -1 && waitpid(sfcpid, NULL, 0) == -1)
+    perror("waitpid"), exitCode = EXIT_FAILURE;
+  else{
+    printf("Finished FC benchmarking (Sudoku puzzles; %d).\n", getpid());
+  }
+	if(sfcpovpid != -1 && waitpid(sfcpovpid, NULL, 0) == -1)
+		perror("waitpid"), exitCode = EXIT_FAILURE;
+	else{
+		printf("Finished FC_OVARS benchmarking (Sudoku puzzles; %d).\n", getpid());
+	}
+
+  for (int i = 0; i < sudokuArgs.total_count; i++) {
+	  free(sudokuArgs.sudokus[i]);
+  }
+  free(sudokuArgs.sudokus);
 
   return EXIT_SUCCESS;
 }
