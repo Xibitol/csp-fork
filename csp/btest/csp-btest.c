@@ -195,45 +195,24 @@ int main(void) {
 	pid_t sfcovpid = benchmark(SUDOKU_FC_OVARS_RESULT_FILE, &sudokuBenchmark, &sudokuArgs);
 	printf("Started FC_OVARS benchmarking on Sudoku puzzles (%d).\n", sfcovpid);
 
-  if(npid != -1 && waitpid(npid, NULL, 0) == -1)
-	  perror("waitpid"), exitCode = EXIT_FAILURE;
-  else{
-	  printf("Finished benchmarking (NQueens problems; %d).\n", getpid());
-  }
-	if(novpid != -1 && waitpid(novpid, NULL, 0) == -1)
-	  perror("waitpid"), exitCode = EXIT_FAILURE;
-	else {
-		printf("Finished OVARS benchmarking (NQueens problems; %d).\n", getpid());
-	}
-  if(nfcpid != -1 && waitpid(nfcpid, NULL, 0) == -1)
-	  perror("waitpid"), exitCode = EXIT_FAILURE;
-  else{
-	  printf("Finished FC benchmarking (NQueens problems; %d).\n", getpid());
-  }
-	if(nfcovpid != -1 && waitpid(nfcovpid, NULL, 0) == -1)
-	  perror("waitpid"), exitCode = EXIT_FAILURE;
-	else{
-	  printf("Finished FC_OVARS benchmarking (NQueens problems; %d).\n", getpid());
-	}
-  if(spid != -1 && waitpid(spid, NULL, 0) == -1)
-	  perror("waitpid"), exitCode = EXIT_FAILURE;
-  else{
-	  printf("Finished benchmarking (Sudoku puzzles; %d).\n", getpid());
-  }
-	if(sovpid != -1 && waitpid(sovpid, NULL, 0) == -1)
-	  perror("waitpid"), exitCode = EXIT_FAILURE;
-	else {
-		printf("Finished OVARS benchmarking (Sudoku puzzles; %d).\n", getpid());
-	}
-  if(sfcpid != -1 && waitpid(sfcpid, NULL, 0) == -1)
-    perror("waitpid"), exitCode = EXIT_FAILURE;
-  else{
-    printf("Finished FC benchmarking (Sudoku puzzles; %d).\n", getpid());
-  }
-	if(sfcovpid != -1 && waitpid(sfcovpid, NULL, 0) == -1)
-		perror("waitpid"), exitCode = EXIT_FAILURE;
-	else{
-		printf("Finished FC_OVARS benchmarking (Sudoku puzzles; %d).\n", getpid());
+	pid_t pids[] = {npid, novpid, nfcpid, nfcovpid, sfcovpid, sfcpid, spid, sovpid};
+	const char* messages[] = {
+		"Finished benchmarking (NQueens problems; %d).\n",
+		"Finished OVARS benchmarking (NQueens problems; %d).\n",
+		"Finished FC benchmarking (NQueens problems; %d).\n",
+		"Finished FC_OVARS benchmarking (NQueens problems; %d).\n",
+		"Finished FC_OVARS benchmarking (Sudoku puzzles; %d).\n",
+		"Finished FC benchmarking (Sudoku puzzles; %d).\n",
+		"Finished benchmarking (Sudoku puzzles; %d).\n",
+		"Finished OVARS benchmarking (Sudoku puzzles; %d).\n"
+	};
+	for (int idx = 0; idx < 8; ++idx) {
+		if (pids[idx] != -1 && waitpid(pids[idx], NULL, 0) == -1) {
+			perror("waitpid");
+			exitCode = EXIT_FAILURE;
+		} else {
+			printf(messages[idx], getpid());
+		}
 	}
 
   for (int i = 0; i < sudokuArgs.total_count; i++) {
