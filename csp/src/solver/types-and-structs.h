@@ -21,9 +21,9 @@
 #include "core/csp-problem.h"
 
 typedef enum {
-	BASIC,
-	FC,
-	FC_OVARS,
+	FC = 1,
+	OVARS = 2,
+	OVALS = 4,
 } SolveType;
 
 /**
@@ -158,7 +158,14 @@ extern void domain_destroy(Domain* domain);
  * Print the values in a Domain structure.
  * @param domain The Domain structure to print.
  */
-extern void domain_print(const Domain* domain);
+extern void print_domain(const Domain* domain);
+
+/**
+ * Print the values in an array of Domain structures.
+ * @param domains The array of Domain structures to print.
+ * @param num_domains The number of Domain structures in the array.
+ */
+extern void print_domains(const Domain** domains, const size_t num_domains);
 
 /**
  * Create a new DomainChange structure.
@@ -180,8 +187,8 @@ extern void domain_change_stack_destroy(DomainChange* stack);
  * @param stop_point Pointer to the point to restore up to.
  * @param domains The array of domains to restore.
  */
-extern void domain_change_stack_restore(DomainChange* stack, size_t* stack_top,
-																				size_t* stop_point, Domain** domains);
+extern void domain_change_stack_restore(const DomainChange* stack, size_t* stack_top,
+																				const size_t* stop_point, Domain** domains);
 
 /**
  * Add a change to the change stack.
