@@ -22,13 +22,13 @@
 #include "solve-sudoku.h"
 
 #define NQUEENS_RESULT_FILE "n_queens/_basic_benchmark.txt"
-#define NQUEENS_OVARS_RESULT_FILE "n_queens/_ovars_benchmark.txt"
 #define NQUEENS_FC_RESULT_FILE "n_queens/_fc_benchmark.txt"
-#define NQUEENS_FC_OVARS_RESULT_FILE "n_queens/_fc_ovars_benchmark.txt"
+#define NQUEENS_FC_OVARS_MIN_RESULT_FILE "n_queens/_fc_ovars_min_benchmark.txt"
+#define NQUEENS_FC_OVARS_MAX_RESULT_FILE "n_queens/_fc_ovars_max_benchmark.txt"
 #define SUDOKU_RESULT_FILE "sudoku/_basic_benchmark.txt"
-#define SUDOKU_OVARS_RESULT_FILE "sudoku/_ovars_benchmark.txt"
 #define SUDOKU_FC_RESULT_FILE "sudoku/_fc_benchmark.txt"
-#define SUDOKU_FC_OVARS_RESULT_FILE "sudoku/_fc_ovars_benchmark.txt"
+#define SUDOKU_FC_OVARS_MIN_RESULT_FILE "sudoku/_fc_ovars_min_benchmark.txt"
+// #define SUDOKU_FC_OVARS_MAX_RESULT_FILE "n_queens/_fc_ovars_max_benchmark.txt"
 
 typedef int BenchmarkFunc(const char* resultFile, void* arg);
 
@@ -140,10 +140,10 @@ int main(void) {
 		nqueensArgsB.total_count, npid
 	);
 
-	NQueensArgs nqueensArgsOV = {20, OVARS};
-	pid_t novpid = benchmark(NQUEENS_OVARS_RESULT_FILE, nqueensBenchmark, &nqueensArgsOV);
-	printf("Started OVARS benchmarking on %d NQueens problems (%d).\n",
-		nqueensArgsOV.total_count, novpid
+	NQueensArgs nqueensArgsOV = {20, FC | OVARS_MIN};
+	pid_t nfcovminpid = benchmark(NQUEENS_FC_OVARS_MIN_RESULT_FILE, nqueensBenchmark, &nqueensArgsOV);
+	printf("Started FC_OVARS_MIN benchmarking on %d NQueens problems (%d).\n",
+		nqueensArgsOV.total_count, nfcovminpid
 	);
 
 	NQueensArgs nqueensArgsFC = {20, FC};
@@ -152,10 +152,10 @@ int main(void) {
 	  nqueensArgsFC.total_count, nfcpid
   );
 
-	NQueensArgs nqueensArgsFCOV = {20, FC | OVARS};
-	pid_t nfcovpid = benchmark(NQUEENS_FC_OVARS_RESULT_FILE, nqueensBenchmark, &nqueensArgsFCOV);
-	printf("Started FC_OVARS benchmarking on %d NQueens problems (%d).\n",
-	  nqueensArgsFCOV.total_count, nfcovpid
+	NQueensArgs nqueensArgsFCOV = {20, FC | OVARS_MAX};
+	pid_t nfcovmaxpid = benchmark(NQUEENS_FC_OVARS_MAX_RESULT_FILE, nqueensBenchmark, &nqueensArgsFCOV);
+	printf("Started FC_OVARS_MAX benchmarking on %d NQueens problems (%d).\n",
+	  nqueensArgsFCOV.total_count, nfcovmaxpid
 	);
 
   int average_amount = 5;
@@ -183,30 +183,30 @@ int main(void) {
   pid_t spid = benchmark(SUDOKU_RESULT_FILE, &sudokuBenchmark, &sudokuArgs);
   printf("Started benchmarking on Sudoku puzzles (%d).\n", spid);
 
-	sudokuArgs.solve_type = OVARS;
-	pid_t sovpid = benchmark(SUDOKU_OVARS_RESULT_FILE, &sudokuBenchmark, &sudokuArgs);
-	printf("Started OVARS benchmarking on Sudoku puzzles (%d).\n", sovpid);
+	// sudokuArgs.solve_type = FC | OVARS_MAX;
+	// pid_t sfcovmaxpid = benchmark(SUDOKU_FC_OVARS_MAX_RESULT_FILE, &sudokuBenchmark, &sudokuArgs);
+	// printf("Started FC_OVARS_MAX benchmarking on Sudoku puzzles (%d).\n", sfcovmaxpid);
 
 	sudokuArgs.solve_type = FC;
   pid_t sfcpid = benchmark(SUDOKU_FC_RESULT_FILE, &sudokuBenchmark, &sudokuArgs);
   printf("Started FC benchmarking on Sudoku puzzles (%d).\n", sfcpid);
 
-	sudokuArgs.solve_type = FC | OVARS;
-	pid_t sfcovpid = benchmark(SUDOKU_FC_OVARS_RESULT_FILE, &sudokuBenchmark, &sudokuArgs);
-	printf("Started FC_OVARS benchmarking on Sudoku puzzles (%d).\n", sfcovpid);
+	sudokuArgs.solve_type = FC | OVARS_MIN;
+	pid_t sfcovminpid = benchmark(SUDOKU_FC_OVARS_MIN_RESULT_FILE, &sudokuBenchmark, &sudokuArgs);
+	printf("Started FC_OVARS_MIN benchmarking on Sudoku puzzles (%d).\n", sfcovminpid);
 
-	pid_t pids[] = {npid, novpid, nfcpid, nfcovpid, sfcovpid, sfcpid, spid, sovpid};
+	pid_t pids[] = {npid, nfcovminpid, nfcpid, nfcovmaxpid, sfcovminpid, sfcpid, spid/*,sfcovmaxpid*/};
 	const char* messages[] = {
 		"Finished benchmarking (NQueens problems; %d).\n",
-		"Finished OVARS benchmarking (NQueens problems; %d).\n",
 		"Finished FC benchmarking (NQueens problems; %d).\n",
-		"Finished FC_OVARS benchmarking (NQueens problems; %d).\n",
-		"Finished FC_OVARS benchmarking (Sudoku puzzles; %d).\n",
-		"Finished FC benchmarking (Sudoku puzzles; %d).\n",
+		"Finished FC_OVARS_MIN benchmarking (NQueens problems; %d).\n",
+		"Finished FC_OVARS_MAX benchmarking (NQueens problems; %d).\n",
 		"Finished benchmarking (Sudoku puzzles; %d).\n",
-		"Finished OVARS benchmarking (Sudoku puzzles; %d).\n"
+		"Finished FC benchmarking (Sudoku puzzles; %d).\n",
+		"Finished FC_OVARS_MIN benchmarking (Sudoku puzzles; %d).\n",
+		/*"Finished FC_OVARS_MAX benchmarking (Sudoku puzzles; %d).\n",*/
 	};
-	for (int idx = 0; idx < 8; ++idx) {
+	for (int idx = 0; idx < 7; ++idx) {
 		if (pids[idx] != -1 && waitpid(pids[idx], NULL, 0) == -1) {
 			perror("waitpid");
 			exitCode = EXIT_FAILURE;
