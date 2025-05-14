@@ -320,27 +320,9 @@ int solve_sudoku(const size_t *starter_grid, const char *resultFile,
 		clock_t start_time = clock();
 
 		// Solve the CSP problem
-		bool result;
-		// Solve the CSP problem
-		switch (solve_type) {
-			case BASIC:
-				result = csp_problem_solve(problem, unknowns, starter_grid,
-																	 sudoku_unknown_checklist,
-																	 sudoku_data_checklist, &backtrack_counter);
-				break;
-			case FC:
-				result = csp_problem_solve_fc(
-						problem, unknowns, starter_grid, sudoku_unknown_checklist,
-						sudoku_data_checklist, &backtrack_counter);
-				break;
-			case FC_OVARS:
-				result = csp_problem_solve_ovars(
-						problem, unknowns, starter_grid, sudoku_unknown_checklist,
-						sudoku_data_checklist, &backtrack_counter);
-				break;
-			default:
-				perror("Unknown solve type");
-		}
+		bool result = csp_problem_solve(problem, unknowns, starter_grid, solve_type,
+																		sudoku_unknown_checklist,
+																		sudoku_data_checklist, &backtrack_counter);
 
 		// Stop the timer
 		clock_t end_time = clock();

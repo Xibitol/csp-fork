@@ -128,24 +128,8 @@ int solve_queens(size_t queen_count, const char *resultFile,
 		// Start the timer
 		clock_t start_time = clock();
 
-		bool result;
-		// Solve the CSP problem
-		switch (solve_type) {
-			case BASIC:
-				result = csp_problem_solve(problem, queens, NULL, queens_checklist,
-																	 NULL, backtrack_counter);
-				break;
-			case FC:
-				result = csp_problem_solve_fc(problem, queens, NULL, queens_checklist,
-																			NULL, backtrack_counter);
-				break;
-			case FC_OVARS:
-				result = csp_problem_solve_ovars(
-						problem, queens, NULL, queens_checklist, NULL, backtrack_counter);
-				break;
-			default:
-				perror("Unknown solve type");
-		}
+		bool result = csp_problem_solve(problem, queens, NULL, solve_type,
+																		queens_checklist, NULL, backtrack_counter);
 
 		// Stop the timer
 		clock_t end_time = clock();
