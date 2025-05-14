@@ -43,8 +43,8 @@ size_t* load_puzzle_from_bytes(const char* filename) {
 int main(void) {
   solve_queens(10, "test-fc-queens.txt", 0, false);
 	solve_queens(10, "test-fc-queens.txt", FC, false);
-	solve_queens(10, "test-fc-queens.txt", OVARS, false);
-	solve_queens(10, "test-fc-queens.txt", FC | OVARS, false);
+	solve_queens(10, "test-fc-queens.txt", OVARS_MIN, false);
+	solve_queens(10, "test-fc-queens.txt", FC | OVARS_MIN, false);
 
   size_t** sudoku = load_new_sudoku(65, 1);
 
@@ -57,8 +57,8 @@ int main(void) {
   // Use the loaded puzzle (e.g., solve it)
   solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", 0, false);
   solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", FC, false);
-	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", OVARS, false);
-	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", FC | OVARS, false);
+	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", FC | OVARS_MAX, false);
+	solve_sudoku(loaded_puzzle, "test-fc-sudoku.txt", FC | OVARS_MIN, false);
 
   free(sudoku[0]);
   free(sudoku);

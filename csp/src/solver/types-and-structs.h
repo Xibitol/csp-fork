@@ -22,8 +22,9 @@
 
 typedef enum {
 	FC = 1,
-	OVARS = 2,
-	OVALS = 4,
+	OVARS_MIN = 2,
+	OVARS_MAX = 4,
+	OVALS = 8,
 } SolveType;
 
 /**

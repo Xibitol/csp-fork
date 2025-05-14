@@ -102,8 +102,10 @@ bool csp_problem_backtrack(const CSPProblem *csp, size_t *values,
 		stack_start = *stack_top;
 	}
 
-	if (solve_type & OVARS) {
-		index = csp_problem_choose_variable(csp, fv, domains);
+	if (solve_type & OVARS_MIN) {
+		index = csp_problem_choose_min_domain(csp, fv, domains);
+	} else if (solve_type & OVARS_MAX) {
+		index = csp_problem_choose_max_domain(csp, fv, domains);
 	} else {
 		index = filled_variables_next_unfilled(fv, 0);
 	}

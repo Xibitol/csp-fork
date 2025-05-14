@@ -28,6 +28,20 @@
  * @param domains The array of domains for each variable.
  * @return The index of the chosen variable.
  */
-extern size_t csp_problem_choose_variable(const CSPProblem *csp,
+extern size_t csp_problem_choose_min_domain(const CSPProblem *csp,
+																		const FilledVariables *fv,
+																		Domain **domains);
+
+/**
+ * Choose the next variable to assign in the CSP problem.
+ * This function selects the variable with the largest domain size
+ * (Maximum Remaining Values heuristic).
+ *
+ * @param csp
+ * @param fv
+ * @param domains
+ * @return
+ */
+extern size_t csp_problem_choose_max_domain(const CSPProblem *csp,
 																		const FilledVariables *fv,
 																		Domain **domains);
