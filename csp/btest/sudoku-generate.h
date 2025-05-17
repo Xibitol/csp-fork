@@ -1,5 +1,5 @@
 /**
- * @file sudoku_generate.h
+ * @file sudoku-generate.h
  * Sudoku generator using a backtracking algorithm to generate test grids used
  * in benchmarking.
  *
@@ -13,11 +13,9 @@
 #include <stddef.h>
 
 /**
- * Loads a new Sudoku puzzle with a specified number of unknown cells.
+ * Generates a new Sudoku puzzle with a specified number of unknown cells.
+ * @param count number of Sudoku grids to generate.
  * @param unknownCount amount of unknown cells in the Sudoku grid.
- * @param sudokuCount number of Sudoku grids to generate.
  * @return A pointer to an array of Sudoku grids, or NULL if an error occurred.
  */
-extern size_t** sudoku_generate(
-	const size_t unknownCount, const size_t sudokuCount
-);
+extern size_t** sudoku_generate(const size_t count, const size_t unknownCount);

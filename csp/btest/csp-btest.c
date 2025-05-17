@@ -15,9 +15,10 @@
 #include <stdio.h>
 
 #include "util/unused.h"
-#include "sudoku_generate.h"
+#include "sudoku-generate.h"
 #include "queens-solve.h"
 #include "solve-sudoku.h"
+#include "dumb-solve-sudoku.h"
 
 // PRIVATE
 static int exitCode = EXIT_SUCCESS;
@@ -49,27 +50,30 @@ static pid_t benchmark(const char* resultFile, BenchmarkFunc* func, void* arg){
 	return fpid;
 }
 
-static int nqueensBenchmark(const char* resultFile, void* arg){
-	int test_count = *((int*) arg);
+static int benchmark_nqueens(const char* resultFile, void* arg){
+	unsigned int count = *((int*) arg);
 
-	for (int i = 4; i < test_count+4; i++)
+	for(unsigned int i = 4; i < count + 4; i++)
 		queens_solve(i, resultFile, true);
 
 	return EXIT_SUCCESS;
 }
-static int sudokuBenchmark(const char* resultFile, void* arg){
-	int average_amount = ((int*) arg)[0];
-	int unknown_increment = ((int*) arg)[1];
+static int benchmark_sudoku(const char* resultFile, void* arg){
+	unsigned int average_amount = ((int*) arg)[0];
+	unsigned int unknown_increment = ((int*) arg)[1];
 	size_t** sudokus = 0;
 
-	for (int i = 5; i < 81; i += unknown_increment){
+	for(unsigned int i = 5; i < 81; i += unknown_increment){
 		sudokus = sudoku_generate(average_amount, i);
 
-		for (int j = 0; j < average_amount; j++)
-			solve_sudoku(sudokus[j], resultFile, true);
+		for(unsigned int j = 0; j < average_amount; j++){
+			sudoku_solve(sudokus[j], resultFile, true);
+			free(sudokus[j]);
+		}
+
+		free(sudokus);
 	}
 
-	free(sudokus);
 	return EXIT_SUCCESS;
 }
 
@@ -78,13 +82,15 @@ static int sudokuBenchmark(const char* resultFile, void* arg){
 int main(void){
 	// Starts benchmarks
 	int nqueensArgs[1] = {16};
-	pid_t npid = benchmark(NQUEENS_RESULT_FILE, &nqueensBenchmark, nqueensArgs);
+	pid_t npid = benchmark(NQUEENS_RESULT_FILE,
+		&benchmark_nqueens, nqueensArgs
+	);
 	printf("Started benchmarking on %d NQueens problems (%d).\n",
 		nqueensArgs[0], npid
 	);
 
 	int sudokuArgs[2] = {5, 5};
-	pid_t spid = benchmark(SUDOKU_RESULT_FILE, &sudokuBenchmark, sudokuArgs);
+	pid_t spid = benchmark(SUDOKU_RESULT_FILE, &benchmark_sudoku, sudokuArgs);
 	printf("Started benchmarking on Sudoku puzzles (%d).\n", spid);
 
 	// Finishes benchmarks
@@ -93,16 +99,16 @@ int main(void){
 	if(npid != -1 && waitpid(npid, &stat, 0) == -1)
 		perror("waitpid"), exitCode = EXIT_FAILURE;
 	else
-		printf("Finished benchmarking (NQueens problems; status: %d; %d).\n",
+		printf("Finished benchmarking on NQueens problems (exit: %d; %d).\n",
 			WEXITSTATUS(stat), npid
 		);
 
 	if(spid != -1 && waitpid(spid, &stat, 0) == -1)
 		perror("waitpid"), exitCode = EXIT_FAILURE;
 	else
-		printf("Finished benchmarking (Sudoku puzzles; status: %d; %d).\n",
+		printf("Finished benchmarking on Sudoku puzzles (exit: %d; %d).\n",
 			WEXITSTATUS(stat), spid
 		);
 
-	return EXIT_SUCCESS;
+	return exitCode;
 }

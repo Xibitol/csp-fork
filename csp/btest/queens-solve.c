@@ -99,8 +99,8 @@ int queens_solve(size_t queenCount, const char* resultFile, bool silent) {
 		size_t index;
 
 		// Creates problem
-		/* num_domains is the number of queens here, also the number of columns
-		 * since each queen is in a different column. Each constraint
+		/** `num_domains` is the number of queens here, also the number of
+		 * columns since each queen is in a different column. Each constraint
 		 * corresponds to a pair of queens that need to be checked for
 		 * compatibility. The number of constraints corresponds to the number of
 		 * pairs of queens that need to be checked.
@@ -120,8 +120,8 @@ int queens_solve(size_t queenCount, const char* resultFile, bool silent) {
 		index = 0;
 		for (size_t i = 0; i < queenCount - 1; i++){
 			for (size_t j = i + 1; j < queenCount; j++){
-				// arity is 2 because we are checking compatibility between two
-				// queens.
+				// `arity` is 2 because we are checking compatibility between
+				// two queens.
 				csp_problem_set_constraint(problem, index,
 					csp_constraint_create(2, &queens_areComptatible)
 				);

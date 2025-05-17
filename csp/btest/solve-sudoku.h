@@ -1,5 +1,5 @@
 /**
-* @file solve-sudoku.h
+ * @file solve-sudoku.h
  * Sudoku solver using the CSP library to perform benchmarking.
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
@@ -12,4 +12,4 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-extern int solve_sudoku(size_t* starter_grid, const char* resultFile, bool silent);
+extern int sudoku_solve(size_t* sudoku, const char* resultFile, bool silent);

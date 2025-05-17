@@ -1,5 +1,5 @@
 /**
- * @file sudoku_generate.c
+ * @file sudoku-generate.c
  * Sudoku generator using a backtracking algorithm to generate test grids used
  * in benchmarking.
  *
@@ -8,7 +8,7 @@
  * @copyright GNU Lesser General Public License v3.0
  */
 
-#include "sudoku_generate.h"
+#include "sudoku-generate.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -132,22 +132,8 @@ static void sudoku_generateSolved(size_t grid[N][N]){
  * @param unknownCount amount of unknown cells in the Sudoku grid.
  * @return A pointer to an array of Sudoku grids, or NULL if an error occurred.
  */
-size_t** sudoku_generate(
-	const size_t count, const size_t unknownCount
-){
-	size_t ** sudokus;
-	size_t* data;
-
-	if((sudokus = malloc(count*__SIZEOF_POINTER__)) == NULL){
-		perror("calloc");
-		return NULL;
-	}
-
-	if((data = malloc(count*N*N*sizeof(size_t))) == NULL){
-		perror("calloc");
-		free(sudokus);
-		return NULL;
-	}
+size_t** sudoku_generate(const size_t count, const size_t unknownCount){
+	size_t** sudokus = malloc(__SIZEOF_POINTER__*count);
 
 	for(size_t i = 0; i < count; i++){
 		size_t grid[N][N] = {0};
@@ -155,7 +141,7 @@ size_t** sudoku_generate(
 		sudoku_generateSolved(grid);
 		sudoku_removeNumbers(grid, unknownCount);
 
-		sudokus[i] = &data[N*N*i];
+		sudokus[i] = malloc(sizeof(size_t)*N*N);
 		for(size_t k = 0; k < N; k++)
 			for(size_t j = 0; j < N; j++)
 				sudokus[i][k*N + j] = grid[k][j];
