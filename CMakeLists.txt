@@ -54,6 +54,10 @@ find_package(FlawFinder)
 message(STATUS "FLAWFINDER_EXECUTABLE=${FLAW_FINDER_EXECUTABLE}")
 enable_flaw_finder()
 
+find_package(ClangFormat)
+message(STATUS "CLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE}")
+enable_clang_format()
+
 # MACROS
 macro(add_valgrind_test SUBPROJECT_NAME NAME EXECUTABLE)
 	set(EXECUTABLE_PATH
