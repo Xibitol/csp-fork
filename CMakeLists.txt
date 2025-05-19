@@ -46,6 +46,10 @@ message(STATUS "DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}")
 find_package(Sphinx)
 message(STATUS "SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
 
+find_package(CppCheck)
+message(STATUS "CPPCHECK_EXECUTABLE=${CPPCHECK_EXECUTABLE}")
+enable_cppcheck()
+
 find_package(CcLint)
 message(STATUS "CCLINT_EXECUTABLE=${CCLINT_EXECUTABLE}")
 enable_cclint()
