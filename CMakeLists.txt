@@ -31,16 +31,28 @@ find_library(EFENCE_LIBRARY efence)
 message(STATUS "EFENCE_LIBRARY=${EFENCE_LIBRARY}")
 
 # EXTERNAL PACKAGES/PROGRAMS
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 message(STATUS "Detecting external programs...")
 
-find_program(VALGRIND_EXECUTABLE "valgrind")
+find_package(Valgrind)
 message(STATUS "VALGRIND_EXECUTABLE=${VALGRIND_EXECUTABLE}")
+
 find_package(Python3 COMPONENTS Interpreter)
 
 find_program(DOXYGEN_EXECUTABLE "doxygen")
 message(STATUS "DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}")
-find_program(SPHINX_EXECUTABLE "sphinx-build")
+
+find_package(Sphinx)
 message(STATUS "SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
+
+find_package(CcLint)
+message(STATUS "CCLINT_EXECUTABLE=${CCLINT_EXECUTABLE}")
+enable_cclint()
+
+find_package(FlawFinder)
+message(STATUS "FLAWFINDER_EXECUTABLE=${FLAW_FINDER_EXECUTABLE}")
+enable_flaw_finder()
 
 # MACROS
 macro(add_valgrind_test SUBPROJECT_NAME NAME EXECUTABLE)
