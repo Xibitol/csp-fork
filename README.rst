@@ -28,6 +28,8 @@ assignment and has its `Sphinx documentation`_.
 .. |license| image:: https://img.shields.io/badge/License-LGPL_v3-orange.svg
 	:alt: License: LGPL v3
 	:target: https://www.gnu.org/licenses/lgpl-3.0.md
+.. |cmake| image:: https://github.com/Xibitol/csp-fork/actions/workflows/cmake.yml/badge.svg
+   :target: https://github.com/Xibitol/csp-fork/actions
 .. _`Imperative Programming - Avancé`:
 	https://moodle.univ-lr.fr/2024/course/view.php?id=3202
 .. _`Constraint Satisfaction Problems (CSPs)`:
@@ -105,6 +107,3 @@ Developers
 .. _`Ryan Heuvel`: https://github.com/I-love-C
 .. _`Adrien Gueguen`: https://github.com/agueguen-LR
 .. _`LeGoblin`: https://github.com/Kefthe
-
-.. |cmake| image:: https://github.com/Xibitol/csp-fork/actions/workflows/cmake.yml/badge.svg
-   :target: https://github.com/Xibitol/csp-fork/actions
