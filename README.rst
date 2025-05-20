@@ -4,6 +4,7 @@
 ========================
 CSP Fork (PIA) |license|
 ========================
+|cmake|
 CSP is a library containing an implementation of a CSP solver whose content has
 been partially generated using copilot. The latter is a backtracking algorithm
 that solves a CSP by assigning values to variables from their domains and
@@ -103,3 +104,6 @@ Developers
 .. _`Ryan Heuvel`: https://github.com/I-love-C
 .. _`Adrien Gueguen`: https://github.com/agueguen-LR
 .. _`LeGoblin`: https://github.com/Kefthe
+
+.. |cmake| image:: https://github.com/agueguen-LR/Triomino/actions/workflows/cmake.yml/badge.svg
+   :target: https://github.com/agueguen-LR/Triomino/actions
