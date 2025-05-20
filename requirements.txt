@@ -1,5 +1,6 @@
 alabaster==1.0.0
 babel==2.17.0
+breathe>=4.35
 cclint==0.4
 certifi==2025.1.31
 charset-normalizer==3.4.1
@@ -21,6 +22,7 @@ pillow==11.2.1
 Pygments==2.19.1
 pyparsing==3.2.3
 python-dateutil==2.9.0.post0
+recommonmark>=0.7
 requests==2.32.3
 roman-numerals-py==3.1.0
 six==1.17.0
@@ -32,4 +34,5 @@ sphinxcontrib-htmlhelp==2.1.0
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==2.0.0
 sphinxcontrib-serializinghtml==2.0.0
+sphinx_rtd_theme>=3.0
 urllib3==2.3.0
