@@ -88,3 +88,4 @@ endmacro()
 
 # PROJECTS
 add_subdirectory(csp)
+add_subdirectory(docs)
