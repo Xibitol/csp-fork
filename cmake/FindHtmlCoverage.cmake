@@ -24,7 +24,6 @@ function(enable_html_coverage)
         )
         add_custom_command(TARGET html-coverage POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E echo "HTML coverage is in ${CMAKE_BINARY_DIR}/coverage"
-                COMMENT "HTML coverage is in ${CMAKE_BINARY_DIR}/coverage"
         )
     endif()
 endfunction(enable_html_coverage)
