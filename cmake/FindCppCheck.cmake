@@ -6,18 +6,7 @@ mark_as_advanced(RUN_CPPCHECK)
 
 function(enable_cppcheck)
     if(RUN_CPPCHECK)
-        set(CMAKE_C_CPPCHECK ${CPPCHECK_EXECUTABLE} PARENT_SCOPE)
+        set(CMAKE_C_CPPCHECK "${CMAKE_SOURCE_DIR}/bin/runCPPCheck.sh" ${CPPCHECK_EXECUTABLE} <SOURCE> ${CMAKE_SOURCE_DIR}/CppCheckSuppressions.txt PARENT_SCOPE)
         mark_as_advanced(CMAKE_C_CPPCHECK)
-        list(
-                APPEND CMAKE_C_CPPCHECK
-                "--language=c"
-                "--std=c11"
-                "--enable=all"
-                "--inconclusive"
-                "--force"
-                "--template='[{file}:{line}]: ({severity}) {id} {message}"
-                "--suppressions-list=${CMAKE_SOURCE_DIR}/CppCheckSuppressions.txt"
-                "--error-exitcode=1"
-        )
     endif(RUN_CPPCHECK)
 endfunction(enable_cppcheck)
