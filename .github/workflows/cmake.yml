@@ -4,9 +4,9 @@ name: CMake
 
 on:
   push:
-    branches: [ "master", "7-extra-additions" ]
+    branches: [ "master", "develop" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "develop" ]
 
 
 env:
