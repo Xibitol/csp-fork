@@ -5,8 +5,11 @@ Implementation of a CSP solver using a backtracking algorithm to solve constrain
 Uses forward checking and heuristics such as MRV and LCV to increase
 performance.
 
-.. doxygenfile:: csp.h
-.. doxygenfile:: core/csp-lib.h
-.. doxygenfile:: core/csp-constraint.h
-.. doxygenfile:: core/csp-problem.h
-.. doxygenfile:: solver/csp-solver.h
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+    CSP-Lib <lib>
+    CSP-Constraint <constraint>
+    CSP-Problem <problem>
+    CSP-Solver <solver>
