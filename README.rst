@@ -30,8 +30,8 @@ assignment and has its `Sphinx documentation`_.
 	:target: https://www.gnu.org/licenses/lgpl-3.0.md
 .. |cmake| image:: https://github.com/Xibitol/csp-fork/actions/workflows/cmake.yml/badge.svg
    :target: https://github.com/Xibitol/csp-fork/actions
-.. |Coveralls| image:: https://coveralls.io/repos/github/Xibitol/csp-fork/badge.svg?branch=7-extra-additions
-    :target: https://coveralls.io/github/Xibitol/csp-fork?branch=7-extra-additions
+.. |Coveralls| image:: https://coveralls.io/repos/github/Xibitol/csp-fork/badge.svg?branch=master
+    :target: https://coveralls.io/github/Xibitol/csp-fork?branch=master
 .. |Documentation Status| image:: https://readthedocs.org/projects/csp-fork/badge/?version=latest&style=flat
    :target: https://csp-fork.readthedocs.io/en/latest/
 .. _`Imperative Programming - Avancé`:
