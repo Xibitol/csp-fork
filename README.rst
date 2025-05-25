@@ -43,6 +43,14 @@ assignment and has its `Sphinx documentation`_.
 .. _`N-Queens`:
 	https://en.wikipedia.org/wiki/Eight_queens_puzzle
 
+************
+Performances
+************
+
+.. image:: Content/Screenshot/NQueens_Benchmark.png
+
+.. image:: Content/Screenshot/Sudoku_Benchmark.png
+
 *************
 Documentation
 *************
@@ -62,7 +70,13 @@ Technician installation guide
 
 Developer preparation guide
 ===========================
-*Soon ...*
+Clone the repository and run the following in your preferred CLI:
+```bash
+cmake -S . -B out
+```
+
+Next, move into `out` and should be about to build, test and btest our project.
+For more advanced checks, please refer to `cmake/` packages.
 
 *******
 License

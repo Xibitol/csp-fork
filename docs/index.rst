@@ -1,5 +1,3 @@
-Welcome to CSP-Fork's documentation!
-====================================
 .. include:: ../README.rst
 
 .. toctree::
@@ -10,8 +8,3 @@ Welcome to CSP-Fork's documentation!
     CSP-Constraint <constraint>
     CSP-Problem <problem>
     CSP-Solver <solver>
-
-Indices and tables
-==================
-
-* :ref:`genindex`
