@@ -13,6 +13,14 @@ set_target_properties(lib PROPERTIES
 	LIBRARY_OUTPUT_DIRECTORY ${SOURCE_DIR}/prod
 )
 
+find_package(Coverage)
+message(STATUS "COVERAGE_EXECUTABLE=${COVERAGE_EXECUTABLE}")
+enable_coverage()
+
+find_package(HtmlCoverage)
+message(STATUS "HTML_COVERAGE_EXECUTABLE=${HTML_COVERAGE_EXECUTABLE}")
+enable_html_coverage()
+
 if(CMAKE_BUILD_TYPE MATCHES "DEBUG")
 	target_link_libraries(lib ${EFENCE_LIBRARY})
 else()

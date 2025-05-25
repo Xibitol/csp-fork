@@ -17,7 +17,7 @@
 #include "csp.h"
 #include "util/unused.h"
 
-static size_t backtrack_counter;
+static size_t backtrack_counter = 0;
 
 /**
  * Merges the values of the unknowns with the starter grid to create a solved

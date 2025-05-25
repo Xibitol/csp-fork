@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 enable_testing()
 
 project(CSP
@@ -31,16 +31,30 @@ find_library(EFENCE_LIBRARY efence)
 message(STATUS "EFENCE_LIBRARY=${EFENCE_LIBRARY}")
 
 # EXTERNAL PACKAGES/PROGRAMS
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 message(STATUS "Detecting external programs...")
 
-find_program(VALGRIND_EXECUTABLE "valgrind")
+find_package(Valgrind)
 message(STATUS "VALGRIND_EXECUTABLE=${VALGRIND_EXECUTABLE}")
+
 find_package(Python3 COMPONENTS Interpreter)
 
-find_program(DOXYGEN_EXECUTABLE "doxygen")
-message(STATUS "DOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}")
-find_program(SPHINX_EXECUTABLE "sphinx-build")
-message(STATUS "SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
+find_package(CppCheck)
+message(STATUS "CPPCHECK_EXECUTABLE=${CPPCHECK_EXECUTABLE}")
+enable_cppcheck()
+
+find_package(CcLint)
+message(STATUS "CCLINT_EXECUTABLE=${CCLINT_EXECUTABLE}")
+enable_cclint()
+
+find_package(FlawFinder)
+message(STATUS "FLAWFINDER_EXECUTABLE=${FLAW_FINDER_EXECUTABLE}")
+enable_flaw_finder()
+
+find_package(ClangFormat)
+message(STATUS "CLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE}")
+enable_clang_format()
 
 # MACROS
 macro(add_valgrind_test SUBPROJECT_NAME NAME EXECUTABLE)
@@ -56,7 +70,7 @@ macro(add_valgrind_test SUBPROJECT_NAME NAME EXECUTABLE)
 		COMMAND ${EXECUTABLE_PATH} ${ARGN}
 		WORKING_DIRECTORY ${WORKING_TEST_DIR}
 	)
-	if(VALGRIND_EXECUTABLE)
+	if(VALGRIND_EXECUTABLE AND USE_VALGRIND)
 		add_test(
 			NAME "(${SUBPROJECT_NAME})[mem-check] ${NAME}"
 			COMMAND ${VALGRIND_EXECUTABLE}
@@ -68,3 +82,4 @@ endmacro()
 
 # PROJECTS
 add_subdirectory(csp)
+add_subdirectory(docs)
