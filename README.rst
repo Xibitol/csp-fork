@@ -61,7 +61,7 @@ Documentation
 
 .. _`Project guidelines`: Content/Document/PIA-Project_2024-2025.pdf
 .. _`GitHub repository`: https://github.com/Xibitol/csp-fork
-.. _`Sphinx documentation`: https://csp-fork.readthedocs.io/en/latest/
+.. _`ReadTheDocs documentation`: https://csp-fork.readthedocs.io/en/latest/
 .. _`Project report`: /#
 
 Technician installation guide
