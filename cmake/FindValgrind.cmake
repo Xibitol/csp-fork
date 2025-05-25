@@ -3,4 +3,3 @@ mark_as_advanced(VALGRIND_EXECUTABLE)
 include(CMakeDependentOption)
 cmake_dependent_option(USE_VALGRIND "Running tests using valgrind" OFF "VALGRIND_EXECUTABLE" OFF)
 mark_as_advanced(USE_VALGRIND)
-

@@ -1,5 +1,5 @@
 /**
-* @file solve-queens.h
+ * @file solve-queens.h
  * N_Queens problem solver using the CSP library to perform benchmarking.
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
@@ -7,7 +7,10 @@
  * @copyright GNU Lesser General Public License v3.0
  */
 
-
 #pragma once
 
-extern int solve_queens(int queen_count, const char* resultFile, bool silent);
+#include "csp.h"
+
+extern int solve_queens(int queen_count, const char* resultFile,
+	SolveType solve_type, bool silent
+);
