@@ -27,7 +27,8 @@ static size_t backtrack_counter = 0;
  * @param data starter grid of the sudoku, 0s are unknowns
  */
 static void merge_sudoku_values(size_t *output, const size_t *values,
-																const size_t *data) {
+	const size_t *data
+){
 	int value_index = 0;
 	for (int data_index = 0; data_index < 81; data_index++) {
 		if (data[data_index] == 0) {
@@ -39,7 +40,7 @@ static void merge_sudoku_values(size_t *output, const size_t *values,
 	}
 }
 
-static void print_sudoku_solution(const size_t *sudoku_grid) {
+static void print_sudoku_solution(const size_t *sudoku_grid){
 	printf("┌─────────┬─────────┬─────────┐\n");
 	for (size_t row = 0; row < 9; row++) {
 		printf("│");
@@ -88,7 +89,8 @@ static Location* locations;
  * unknowns
  */
 static void get_unknown_positions(const size_t *grid,
-																	Unknown *unknown_positions) {
+	Unknown *unknown_positions
+){
 	size_t index = 0;
 	for (size_t i = 0; i < 81; i++) {
 		if (grid[i] == 0) {
@@ -113,9 +115,9 @@ static void get_unknown_positions(const size_t *grid,
  * @return number of constraining unknowns found
  */
 static size_t get_constraining_unknowns(const Unknown *unknown_positions,
-																				const size_t index,
-																				const size_t total_unknowns,
-																				Unknown *constraining_unknowns) {
+	const size_t index, const size_t total_unknowns,
+	Unknown *constraining_unknowns
+){
 	size_t constraining_unknown_count = 0;
 	for (size_t i = index+1; i < total_unknowns; i++) {
 		size_t x = unknown_positions[i].x;
@@ -133,14 +135,16 @@ static size_t get_constraining_unknowns(const Unknown *unknown_positions,
 }
 
 void sudoku_unknown_checklist(const CSPProblem *csp, CSPConstraint **checklist,
-															size_t *amount, const size_t index,
-															FilledVariables *fv) {
+	size_t *amount, const size_t index, FilledVariables *fv
+){
 	size_t next = filled_variables_next_filled(fv, 0);
 	while (next != SIZE_MAX) {
 		if (next < index) {
 			for (size_t i = 0; i < locations[next].count; i++) {
 				size_t current_index = locations[next].index + i;
-				CSPConstraint *constraint = csp_problem_get_constraint(csp, current_index);
+				CSPConstraint *constraint = csp_problem_get_constraint(csp,
+					current_index
+				);
 				if (csp_constraint_get_variable(constraint, 1) == index) {
 					checklist[(*amount)++] = constraint;
 				}
@@ -148,7 +152,9 @@ void sudoku_unknown_checklist(const CSPProblem *csp, CSPConstraint **checklist,
 		} else if (next > index) {
 			for (size_t i = 0; i < locations[index].count; i++) {
 				size_t current_index = locations[index].index + i;
-				CSPConstraint *constraint = csp_problem_get_constraint(csp, current_index);
+				CSPConstraint *constraint = csp_problem_get_constraint(csp,
+					current_index
+				);
 				if (csp_constraint_get_variable(constraint, 1) == next) {
 					checklist[(*amount)++] = constraint;
 				}
@@ -159,7 +165,8 @@ void sudoku_unknown_checklist(const CSPProblem *csp, CSPConstraint **checklist,
 }
 
 void sudoku_data_checklist(const CSPProblem *csp, CSPConstraint **checklist,
-													 size_t *amount, const size_t index) {
+	size_t *amount, const size_t index
+){
 	*amount = 1;
 	checklist[0] = csp_problem_get_constraint(csp, index);
 }
@@ -176,8 +183,8 @@ bool data_checker(const CSPConstraint *constraint, const size_t *values,
 	// csp_constraint_get_variable(constraint, csp_constraint_get_arity()-1) is
 	// the coordinate of the unknown cell itself in the unknown list
 	// csp_constraint_get_variable(constraint, i) is the coordinate of a cell in
-	// the grid that is in the row, column or box of the unknown cell if it is <81
-	// if it is >=81, it corresponds to it's index with values
+	// the grid that is in the row, column or box of the unknown cell if it is
+	// <81 if it is >=81, it corresponds to it's index with values
 	size_t *grid = (size_t *)data;
 	const size_t arity = csp_constraint_get_arity(constraint);
 	const size_t current_unknown =
@@ -198,8 +205,8 @@ bool data_checker(const CSPConstraint *constraint, const size_t *values,
 }
 
 static CSPConstraint *create_data_constraint(size_t constraint_index,
-																						 const Unknown *unknown_positions,
-																						 const size_t *starter_grid) {
+	const Unknown *unknown_positions, const size_t *starter_grid
+){
 	size_t variables[21];
 	const size_t x = unknown_positions[constraint_index].x;
 	const size_t y = unknown_positions[constraint_index].y;
@@ -218,15 +225,18 @@ static CSPConstraint *create_data_constraint(size_t constraint_index,
 
 	for (size_t i = 0; i < 3; i++) {
 		for (size_t j = 0; j < 3; j++) {
-			if (!(x % 3 == i || y % 3 == j) /*not already added earlier*/
-					&& starter_grid[x - x % 3 + (y - y % 3) * 9 + i + j * 9] != 0) {
+			if(!(x % 3 == i || y % 3 == j) /*not already added earlier*/
+				&& starter_grid[x - x % 3 + (y - y % 3) * 9 + i + j * 9] != 0
+			){
 				variables[constraint_arity_index] = x - x % 3 + (y - y % 3) * 9 + i + j * 9;	// box
 				constraint_arity_index++;
 			}
 		}
 	}
 
-	CSPConstraint *constraint = csp_constraint_create(constraint_arity_index + 1, data_checker);
+	CSPConstraint *constraint = csp_constraint_create(
+		constraint_arity_index + 1, data_checker
+	);
 	for (size_t i = 0; i < constraint_arity_index; i++) {
 		csp_constraint_set_variable(constraint, i, variables[i]);
 	}
@@ -238,7 +248,8 @@ static CSPConstraint *create_data_constraint(size_t constraint_index,
 }
 
 int solve_sudoku(const size_t *starter_grid, const char *resultFile,
-								 SolveType solve_type, bool silent) {
+	SolveType solve_type, bool silent
+){
 	if (!silent) print_sudoku_solution(starter_grid);
 
 	size_t unknown_count = 0;
@@ -251,7 +262,8 @@ int solve_sudoku(const size_t *starter_grid, const char *resultFile,
 	// Initialise the library
 	csp_init();
 	{
-		// array to contain all the unknowns we'll be testing through in the solver
+		// array to contain all the unknowns we'll be testing through in the
+		// solver
 		size_t *unknowns = malloc(unknown_count * sizeof(size_t));
 		if (unknowns == NULL) {
 			perror("malloc");
@@ -290,28 +302,41 @@ int solve_sudoku(const size_t *starter_grid, const char *resultFile,
 		// for each unknown, create constraints with all other affected unknowns
 		for (size_t unknown_index = 0; unknown_index < unknown_count;
 				 unknown_index++) {
-			size_t constraining_unknown_count = get_constraining_unknowns(unknown_positions, unknown_index, unknown_count, constraining_unknowns);
+			size_t constraining_unknown_count = get_constraining_unknowns(
+				unknown_positions, unknown_index, unknown_count,
+				constraining_unknowns
+			);
 			locations[unknown_index].count = constraining_unknown_count;
 			locations[unknown_index].index = unknown_count + total_unknown_constraints;
 			total_unknown_constraints += constraining_unknown_count;
 
 			for (size_t i = 0; i < constraining_unknown_count; i++) {
-				CSPConstraint *constraint = csp_constraint_create(2, unknown_checker);
+				CSPConstraint *constraint = csp_constraint_create(2,
+					unknown_checker
+				);
 				csp_constraint_set_variable(constraint, 0, unknown_index);
-				csp_constraint_set_variable(constraint, 1, constraining_unknowns[i].index);
-				unknown_constraints[total_unknown_constraints - constraining_unknown_count + i] = constraint;
+				csp_constraint_set_variable(constraint, 1,
+					constraining_unknowns[i].index
+				);
+				unknown_constraints[
+					total_unknown_constraints - constraining_unknown_count + i
+				] = constraint;
 			}
 			constraining_unknown_count = 0;
 		}
 		free(constraining_unknowns);
 
-		CSPProblem *problem = csp_problem_create(unknown_count, unknown_count + total_unknown_constraints);
+		CSPProblem *problem = csp_problem_create(unknown_count,
+			unknown_count + total_unknown_constraints
+		);
 		for (size_t i = 0; i < unknown_count; i++) {
 			csp_problem_set_domain(problem, i, 9);
 			csp_problem_set_constraint(problem, i, data_constraints[i]);
 		}
 		for (size_t i = 0; i < total_unknown_constraints; i++) {
-			csp_problem_set_constraint(problem, unknown_count + i, unknown_constraints[i]);
+			csp_problem_set_constraint(problem, unknown_count + i,
+				unknown_constraints[i]
+			);
 		}
 
 		FILE *file = fopen(resultFile, "a");
@@ -320,9 +345,10 @@ int solve_sudoku(const size_t *starter_grid, const char *resultFile,
 		clock_t start_time = clock();
 
 		// Solve the CSP problem
-		bool result = csp_problem_solve(problem, unknowns, starter_grid, solve_type,
-																		sudoku_unknown_checklist,
-																		sudoku_data_checklist, &backtrack_counter);
+		bool result = csp_problem_solve(problem, unknowns,
+			starter_grid, solve_type,
+			sudoku_unknown_checklist, sudoku_data_checklist, &backtrack_counter
+		);
 
 		// Stop the timer
 		clock_t end_time = clock();

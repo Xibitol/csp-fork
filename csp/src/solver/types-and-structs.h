@@ -66,8 +66,8 @@ typedef struct {
  * @param fv The FilledVariables structure to track filled variables.
  */
 typedef void CSPValueChecklist(const CSPProblem* csp, CSPConstraint** checklist,
-															 size_t* amount, size_t index,
-															 FilledVariables* fv);
+	size_t* amount, size_t index, FilledVariables* fv
+);
 
 /**
  * Get the list of data constraints to verify for the current variable to know
@@ -78,7 +78,8 @@ typedef void CSPValueChecklist(const CSPProblem* csp, CSPConstraint** checklist,
  * @param index The index of the current variable.
  */
 typedef void CSPDataChecklist(const CSPProblem* csp, CSPConstraint** checklist,
-															size_t* amount, size_t index);
+	size_t* amount, size_t index
+);
 
 /**
  * Mark a variable as filled.
@@ -117,7 +118,8 @@ extern bool filled_variables_all_filled(const FilledVariables* fv);
  * filled.
  */
 extern size_t filled_variables_next_unfilled(const FilledVariables* fv,
-																						 size_t index);
+	size_t index
+);
 
 /**
  * Get the next filled variable.
@@ -127,7 +129,8 @@ extern size_t filled_variables_next_unfilled(const FilledVariables* fv,
  * unfilled.
  */
 extern size_t filled_variables_next_filled(const FilledVariables* fv,
-																						 size_t index);
+	size_t index
+);
 
 /**
  * Create a new FilledVariables structure.
@@ -188,8 +191,9 @@ extern void domain_change_stack_destroy(DomainChange* stack);
  * @param stop_point Pointer to the point to restore up to.
  * @param domains The array of domains to restore.
  */
-extern void domain_change_stack_restore(const DomainChange* stack, size_t* stack_top,
-																				const size_t* stop_point, Domain** domains);
+extern void domain_change_stack_restore(const DomainChange* stack,
+	size_t* stack_top, const size_t* stop_point, Domain** domains
+);
 
 /**
  * Add a change to the change stack.
@@ -199,4 +203,5 @@ extern void domain_change_stack_restore(const DomainChange* stack, size_t* stack
  * @param value The value that was removed from the domain.
  */
 extern void domain_change_stack_add(DomainChange* stack, size_t* stack_top,
-																		size_t domain_index, size_t value);
+	size_t domain_index, size_t value
+);

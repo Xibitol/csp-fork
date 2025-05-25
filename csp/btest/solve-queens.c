@@ -17,7 +17,8 @@
 
 // Check if the queens are compatible
 bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
-											 unsigned int *UNUSED_VAR(data)) {
+	unsigned int *UNUSED_VAR(data)
+){
 	// Get the variables
 	size_t x0 = csp_constraint_get_variable(constraint, 0);
 	size_t x1 = csp_constraint_get_variable(constraint, 1);
@@ -60,7 +61,8 @@ static void print_queens_solution(unsigned int number, const size_t *queens) {
 }
 
 void queens_checklist(const CSPProblem *csp, CSPConstraint **checklist,
-											size_t *amount, const size_t index, FilledVariables *fv) {
+	size_t *amount, const size_t index, FilledVariables *fv
+){
 	size_t num_queens = csp_problem_get_num_domains(csp);
 	*amount = 0;
 	size_t next = filled_variables_next_filled(fv, 0);
@@ -71,7 +73,7 @@ void queens_checklist(const CSPProblem *csp, CSPConstraint **checklist,
 		}
 		if (next > index) {
 			checklist[(*amount)++] = csp_problem_get_constraint(
-				csp,index * num_queens - index*(index+1)/2 + (next - index) - 1);
+				csp,index*num_queens - index*(index+1)/2 + (next - index) - 1);
 		}
 		next = filled_variables_next_filled(fv, next + 1);
 	}
@@ -93,31 +95,35 @@ int solve_queens(size_t queen_count, const char *resultFile,
 		size_t index;
 
 		// num_domains is the number of queens here, also the number of columns
-		// since each queen is in a different column Each constraint corresponds to
-		// a pair of queens that need to be checked for compatibility. The number of
-		// constraints corresponds to the number of pairs of queens that need to be
-		// checked This is equal to the combination C(n, 2) = n * (n - 1) / 2
-		CSPProblem *problem =
-				csp_problem_create(queen_count, queen_count * (queen_count - 1) / 2);
+		// since each queen is in a different column Each constraint corresponds
+		// to a pair of queens that need to be checked for compatibility. The
+		// number of constraints corresponds to the number of pairs of queens
+		// that need to be checked This is equal to the combination
+		// C(n, 2) = n * (n - 1) / 2
+		CSPProblem *problem = csp_problem_create(queen_count,
+			queen_count * (queen_count - 1) / 2
+		);
 		for (size_t i = 0; i < queen_count; i++) {
-			csp_problem_set_domain(problem, i,
-														 queen_count);	// Domain = number of possible row
-																						// positions for a queen
+			// Domain = number of possible row positions for a queen
+			csp_problem_set_domain(problem, i, queen_count);
 		}
 		index = 0;
-		// This way of creating the constraints ensures that each pair of queens is
-		// always from different columns Otherwise we would need n * n constraints
-		// to check all pairs of queens
+		// This way of creating the constraints ensures that each pair of queens
+		// is always from different columns Otherwise we would need n * n
+		// constraints to check all pairs of queens
 		for (size_t i = 0; i < queen_count - 1; i++) {
 			for (size_t j = i + 1; j < queen_count; j++) {
-				// arity is 2 because we are checking compatibility between two queens
-				csp_problem_set_constraint(
-						problem, index,
-						csp_constraint_create(2, (CSPChecker *)queen_compatibles));
-				csp_constraint_set_variable(csp_problem_get_constraint(problem, index),
-																		0, i);
-				csp_constraint_set_variable(csp_problem_get_constraint(problem, index),
-																		1, j);
+				// arity is 2 because we are checking compatibility between two
+				// queens
+				csp_problem_set_constraint(problem, index,
+					csp_constraint_create(2, (CSPChecker *)queen_compatibles)
+				);
+				csp_constraint_set_variable(
+					csp_problem_get_constraint(problem, index), 0, i
+				);
+				csp_constraint_set_variable(
+					csp_problem_get_constraint(problem, index), 1, j
+				);
 				index++;
 			}
 		}
@@ -129,7 +135,8 @@ int solve_queens(size_t queen_count, const char *resultFile,
 		clock_t start_time = clock();
 
 		bool result = csp_problem_solve(problem, queens, NULL, solve_type,
-																		queens_checklist, NULL, backtrack_counter);
+			queens_checklist, NULL, backtrack_counter
+		);
 
 		// Stop the timer
 		clock_t end_time = clock();

@@ -29,8 +29,8 @@
  * affected by the contents of data for the current variable.
  */
 extern void reduce_domains(const CSPProblem* csp, size_t* values,
-													 const void* data, Domain** domains,
-													 CSPDataChecklist dataChecklist);
+	const void* data, Domain** domains, CSPDataChecklist dataChecklist
+);
 
 /** Verify if the CSP problem is consistent at the specified index.
  * @param csp The CSP problem to verify.
@@ -44,9 +44,9 @@ extern void reduce_domains(const CSPProblem* csp, size_t* values,
  * @pre The csp library is initialised.
  */
 extern bool csp_problem_is_consistent(const CSPProblem* csp, const size_t* values,
-																			const void* data, size_t index,
-																			FilledVariables* fv,
-																			CSPValueChecklist* checklist);
+	const void* data, size_t index, FilledVariables* fv,
+	CSPValueChecklist* checklist
+);
 
 /** Solve the CSP problem using backtracking.
  * @param csp The CSP problem to solve.
@@ -64,7 +64,7 @@ extern bool csp_problem_is_consistent(const CSPProblem* csp, const size_t* value
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_solve(const CSPProblem* csp, size_t* values,
-															const void* data, SolveType solve_type,
-															CSPValueChecklist* checklist,
-															CSPDataChecklist* dataChecklist,
-															size_t* benchmark);
+	const void* data, SolveType solve_type,
+	CSPValueChecklist* checklist, CSPDataChecklist* dataChecklist,
+	size_t* benchmark
+);

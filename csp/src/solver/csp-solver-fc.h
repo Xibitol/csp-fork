@@ -1,5 +1,5 @@
 /**
-* @file csp-solver-fc.h
+ * @file csp-solver-fc.h
  * Library CSP forward checking
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
@@ -26,7 +26,8 @@
  * @param data The data to pass to the check function.
  * @param index The index of the current variable.
  * @param fv The filled variables structure to track filled variables.
- * @param checklist A pointer to function to get the list of necessary constraints for the current variable.
+ * @param checklist A pointer to function to get the list of necessary
+ * constraints for the current variable.
  * @param domains The domains of the variables.
  * @param change_stack The stack of changes made during forward checking.
  * @param stack_top The top of the change stack.
@@ -34,6 +35,7 @@
  * @pre The csp library is initialised.
  */
 extern bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
-	const void *data, size_t index, FilledVariables* fv, CSPValueChecklist *checklist, Domain **domains,
+	const void *data, size_t index,
+	FilledVariables* fv, CSPValueChecklist *checklist, Domain **domains,
 	DomainChange *change_stack, size_t *stack_top
 );

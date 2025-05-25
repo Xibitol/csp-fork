@@ -1,6 +1,7 @@
 /**
-* @file load-new-sudoku.c
- * Sudoku generator using a backtracking algorithm to generate test grids used in benchmarking.
+ * @file load-new-sudoku.c
+ * Sudoku generator using a backtracking algorithm to generate test grids used
+ * in benchmarking.
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
  * @date 2025

@@ -15,12 +15,18 @@ def read_results(file_name):
             if i % 2 == 0:
                 times_pair.append(time)
                 backtracks_pair.append(backtrack)
-                n_values_pair.append(len(n_values_pair) * 2 + 4)  # Assuming n starts from 4 and increments by 2
+                # Assuming n starts from 4 and increments by 2
+                n_values_pair.append(len(n_values_pair) * 2 + 4)
             else:
                 times_odd.append(time)
                 backtracks_odd.append(backtrack)
-                n_values_odd.append(len(n_values_odd) * 2 + 5)  # Assuming n starts from 5 and increments by 2
-    return n_values_pair, times_pair, backtracks_pair, n_values_odd, times_odd, backtracks_odd
+                # Assuming n starts from 5 and increments by 2
+                n_values_odd.append(len(n_values_odd) * 2 + 5)
+
+    return (
+        n_values_pair, times_pair, backtracks_pair,
+        n_values_odd, times_odd, backtracks_odd
+	)
 
 plt.figure(figsize=(10, 10))
 

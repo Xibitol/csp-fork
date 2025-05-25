@@ -21,14 +21,15 @@
 #include "solver/types-and-structs.h"
 
 bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
-															 const void *data, size_t index,
-															 FilledVariables *fv,
-															 CSPValueChecklist *checklist, Domain **domains,
-															 DomainChange *change_stack, size_t *stack_top) {
+	const void *data, size_t index,
+	FilledVariables *fv,
+	CSPValueChecklist *checklist, Domain **domains,
+	DomainChange *change_stack, size_t *stack_top
+){
 	assert(csp_initialised());
 
 	CSPConstraint **variable_checks =
-			malloc(sizeof(CSPConstraint *) * csp_problem_get_num_constraints(csp));
+		malloc(sizeof(CSPConstraint *) * csp_problem_get_num_constraints(csp));
 	if (variable_checks == NULL) {
 		perror("malloc");
 		return false;
@@ -55,21 +56,24 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 
 			size_t stack_start = *stack_top;
 
-			for (size_t j = 0; j < domains[i]->amount; /* no increment here */) {
+			for (size_t j = 0; j < domains[i]->amount;){
 				values[i] = domains[i]->values[j];
 
-				if (!csp_constraint_get_check(relevant_check)(relevant_check, values,
-																											data)) {
+				if (!csp_constraint_get_check(relevant_check)(
+					relevant_check, values, data
+				)){
 					// Record the change in the stack
 					domain_change_stack_add(change_stack, stack_top, i,
-																	domains[i]->values[j]);
+						domains[i]->values[j]
+					);
 
 					// Remove the value from the domain
 					domains[i]->amount--;
 					for (size_t k = j; k < domains[i]->amount; k++) {
 						domains[i]->values[k] = domains[i]->values[k + 1];
 					}
-					// Do not increment j, as the next value is now at the same index
+					// Do not increment j, as the next value is now at the same
+					// index
 				} else {
 					j++;	// Increment only if no value was removed
 				}
@@ -77,8 +81,9 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 
 			if (domains[i]->amount == 0) {
 				// Restore domains from the stack
-				domain_change_stack_restore(change_stack, stack_top, &stack_start,
-																		domains);
+				domain_change_stack_restore(change_stack,
+					stack_top, &stack_start, domains
+				);
 				free(variable_checks);
 				return false;
 			}

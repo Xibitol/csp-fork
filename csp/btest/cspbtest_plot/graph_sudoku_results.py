@@ -43,7 +43,9 @@ for fname in os.listdir(SUDOKU_RESULT_DIR):
 
 # times, nodes = read_sudoku_results(SUDOKU_RESULT_FILE, average_count)
 # fc_times, fc_nodes = read_sudoku_results(SUDOKU_FC_RESULT_FILE, average_count)
-# fc_ovars_times, fc_ovars_nodes = read_sudoku_results(SUDOKU_FC_OVARS_RESULT_FILE, average_count)
+# fc_ovars_times, fc_ovars_nodes = read_sudoku_results(
+# 	SUDOKU_FC_OVARS_RESULT_FILE, average_count
+# )
 
 # Plot the time taken
 plt.subplot(1, 2, 1)
