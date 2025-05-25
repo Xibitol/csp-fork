@@ -61,7 +61,7 @@ Documentation
 
 .. _`Project guidelines`: Content/Document/PIA-Project_2024-2025.pdf
 .. _`GitHub repository`: https://github.com/Xibitol/csp-fork
-.. _`ReadTheDocs documentation`: https://csp-fork.readthedocs.io/en/latest/
+.. _`Sphinx documentation`: https://csp-fork.readthedocs.io/en/latest/
 .. _`Project report`: /#
 
 Technician installation guide
@@ -76,8 +76,8 @@ Clone the repository and run the following in your preferred CLI:
 
 	cmake -S . -B out
 
-Next, move into `out` and should be about to build, test and btest our project.
-For more advanced checks, please refer to `cmake/` packages.
+Next, move into ``out`` and should be about to build, test and btest our
+project. For more advanced checks, please refer to ``cmake/`` packages.
 
 *******
 License
