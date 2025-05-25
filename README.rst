@@ -56,12 +56,12 @@ Documentation
 *************
 - `Project guidelines`_ given for this assignment.
 - `GitHub repository`_ hosting the source code.
-- *(Soon ...)* `Sphinx documentation`_ hosting library's documentation.
-- *(Soon ...)* `Project report`_ describing what we did.
+- `ReadTheDocs documentation`_ hosting library's documentation.
+- `Project report`_ describing what we did.
 
 .. _`Project guidelines`: Content/Document/PIA-Project_2024-2025.pdf
 .. _`GitHub repository`: https://github.com/Xibitol/csp-fork
-.. _`Sphinx documentation`: /#
+.. _`Sphinx documentation`: https://csp-fork.readthedocs.io/en/latest/
 .. _`Project report`: /#
 
 Technician installation guide
