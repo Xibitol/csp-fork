@@ -1,0 +1,2 @@
+import graph_queens_results
+import graph_sudoku_results

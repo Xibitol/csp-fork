@@ -19,33 +19,26 @@
 #include <core/csp-constraint.h>
 
 /**
- *
+ * Get the list of constraints to verify for the current variable to know if the CSPProblem is consistent.
+ * @note This function is used by #csp_problem_is_consistent.
+ * @param csp The CSP problem.
+ * @param checklist Array to store the list of constraints to verify.
+ * @param amount Pointer to size_t to store the number of constraints to verify.
+ * @param index The index of the current variable.
  */
-typedef bool CSPConsistent(const CSPProblem *csp, const size_t *values, const void *data, size_t index);
-
-// GETTERS
-/** Verify if the constraint can be checked.
- * @param constraint The constraint to verify.
- * @param index The index of the last variable.
- * @return true if the constraint can be checked, false otherwise.
- * @pre The csp library is initialised.
- * @pre constraint != NULL
- */
-extern bool csp_constraint_to_check(const CSPConstraint *constraint,
-	size_t index
-);
+typedef void CSPChecklist(const CSPProblem *csp, CSPConstraint** checklist, size_t* amount, size_t index);
 
 /** Verify if the CSP problem is consistent at the specified index.
- * @note This function is the default one used by #csp_problem_solve and #csp_problem_backtrack.
  * @param csp The CSP problem to verify.
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
  * @param index The index of the current variable.
+ * @param checklist A pointer to function to get the list of necessary constraints for the current variable.
  * @return true if the CSP problem is consistent, false otherwise.
  * @pre The csp library is initialised.
  */
 extern bool csp_problem_is_consistent(const CSPProblem *csp,
-	const size_t *values, const void *data, size_t index
+	size_t *values, const void *data, size_t index, CSPChecklist* checklist
 );
 
 // FUNCTIONS
@@ -54,26 +47,24 @@ extern bool csp_problem_is_consistent(const CSPProblem *csp,
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
  * @param index The index of the variable to set.
- * @param is_consistent A pointer to function to check if the CSP problem is consistent; if NULL, defaults to #csp_problem_is_consistent.
+ * @param checklist A pointer to function to get the list of necessary constraints for the current variable.
  * @return true if the CSP problem is solved, false otherwise.
  * @pre The csp library is initialised.
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_backtrack(const CSPProblem *csp,
 	size_t *values, const void *data, size_t index,
-	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index)
+	CSPChecklist* checklist
 );
 
 /** Solve the CSP problem using backtracking.
  * @param csp The CSP problem to solve.
  * @param values The values of the variables.
  * @param data The data to pass to the check function.
- * @param is_consistent A pointer to function to check if the CSP problem is consistent; See #csp_problem_backtrack.
+ * @param checklist A pointer to function to get the list of necessary constraints for the current variable.
  * @return true if the CSP problem is solved, false otherwise.
  * @pre The csp library is initialised.
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_solve(const CSPProblem *csp,
-	size_t *values, const void *data,
-	bool (*is_consistent)(const CSPProblem *csp, const size_t *values, const void *data, size_t index)
-);
+	size_t *values, const void *data, CSPChecklist* checklist);
