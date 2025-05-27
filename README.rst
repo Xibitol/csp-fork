@@ -19,11 +19,11 @@ to implement heuristics to order variables and values. We also have to benchmark
 and compare our modifications by solving `Sudoku`_ and `N-Queens`_ puzzles.
 
 So, the `GitHub repository`_ contains the work of the **G team** for this
-assignment and has its `Sphinx documentation`_.
+assignment and has its `ReadTheDocs documentation`_.
 
 > Version: **v2.0.0-rc.0**
 
-> Deadline: **Friday, May 23, 2025 at 23:00**
+> Deadline: **Friday, May 23, 2025 at 23:00 (Completed on time on 27 May)**
 
 .. |license| image:: https://img.shields.io/badge/License-LGPL_v3-orange.svg
 	:alt: License: LGPL v3
