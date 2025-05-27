@@ -1,56 +1,86 @@
-cmake_minimum_required(VERSION 3.5)
+set(SUBPROJECT_NAME csp)
+message(STATUS "Configuring ${SUBPROJECT_NAME} sub-project...")
 
-# Set the project name
-project(CSP)
+# INPUTS
+include_directories(AFTER ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_DIR})
 
-# Set the C standard
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED True)
+# OUTPUTS
+file(GLOB_RECURSE LIBRARY_FILES CONFIGURE_DEPENDS "${SOURCE_DIR}/*.c")
+add_library(lib SHARED ${LIBRARY_FILES})
+set_target_properties(lib PROPERTIES
+	COMPILE_FLAGS "-D CSP_COMPILATION"
+	OUTPUT_NAME csp
+	LIBRARY_OUTPUT_DIRECTORY ${SOURCE_DIR}/prod
+)
 
-# Support for test names
-if(POLICY CMP0110)
-  cmake_policy(SET CMP0110 NEW)
+find_package(Coverage)
+message(STATUS "COVERAGE_EXECUTABLE=${COVERAGE_EXECUTABLE}")
+enable_coverage()
+
+find_package(HtmlCoverage)
+message(STATUS "HTML_COVERAGE_EXECUTABLE=${HTML_COVERAGE_EXECUTABLE}")
+enable_html_coverage()
+
+if(CMAKE_BUILD_TYPE MATCHES "DEBUG")
+	target_link_libraries(lib ${EFENCE_LIBRARY})
+else()
+	get_target_property(LIB_COMPILE_FLAGS lib COMPILE_FLAGS)
+	set_target_properties(lib PROPERTIES
+		COMPILE_FLAGS "${LIB_COMPILE_FLAGS} -D NDEBUG"
+	)
 endif()
 
-# Add the executable
-add_executable(solve-queens solve-queens.c)
+# TESTS
+set(TEST_EXECUTABLE_NAME testCSP)
 
-# Add the library
-add_library(csp SHARED csp.c csp.h csp.inc)
+file(GLOB ABSOLUTE_TEST_DIR "${TEST_DIR}")
+file(GLOB_RECURSE TEST_FILES
+	RELATIVE "${ABSOLUTE_TEST_DIR}/.."
+	CONFIGURE_DEPENDS
+	"${TEST_DIR}/*.c"
+)
+create_test_sourcelist(tests "${TEST_EXECUTABLE_NAME}.c" ${TEST_FILES})
 
-# Link the library to the executable
-target_link_libraries(solve-queens csp)
+add_executable(testLib ${tests})
+add_dependencies(testLib lib)
+target_link_libraries(testLib PRIVATE lib)
+set_target_properties(testLib PROPERTIES
+	OUTPUT_NAME ${TEST_EXECUTABLE_NAME}
+	RUNTIME_OUTPUT_DIRECTORY ${TEST_DIR}
+)
 
-# Find test files
-file(GLOB FILES "${CMAKE_CURRENT_SOURCE_DIR}/test-*.c")
+get_target_property(EXECUTABLE_OUTPUT_PATH testLib RUNTIME_OUTPUT_DIRECTORY)
+foreach(FILENAME ${TEST_FILES})
+	string(REPLACE ".c" "" NAME ${FILENAME})
+	string(REPLACE "${TEST_DIR}/" "" SHORT_NAME ${NAME})
 
-enable_testing()
-
-find_program(VALGRIND valgrind)
-
-# Add tests
-foreach(FILENAME ${FILES})
-  get_filename_component(SRC ${FILENAME} NAME)
-  get_filename_component(TEST ${FILENAME} NAME_WE)
-  add_executable(${TEST} ${SRC} csp.h csp.inc)
-  add_dependencies(${TEST} csp)
-  target_link_libraries(${TEST} csp)
-#  target_link_libraries(${TEST} efence)
-  # Add the test
-  add_test(${TEST} ./${TEST})
-  if(VALGRIND)
-    # Add the valgrind test
-    add_test(
-      "${TEST}[valgrind]" ${VALGRIND} --leak-check=full --quiet --error-exitcode=1 ./${TEST}
-    )
-  endif()
+	add_valgrind_test(${SUBPROJECT_NAME} ${SHORT_NAME}
+		"${EXECUTABLE_OUTPUT_PATH}/${TEST_EXECUTABLE_NAME}" ${NAME}
+	)
 endforeach()
 
-# Add CPack
-set(CPACK_SOURCE_GENERATOR "ZIP")
-set(CPACK_PACKAGE_NAME "CSP")
-set(CPACK_PACKAGE_VERSION "1.0.0")
-set(CPACK_PACKAGE_VERSION_MAJOR "1")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-include(CPack)
+# BENCHMARK TEST
+set(BTEST_EXECUTABLE_NAME btestCSP)
+set(BTEST_PYTHON_MOD_NAME cspbtest_plot)
+
+file(GLOB_RECURSE BTEST_FILES CONFIGURE_DEPENDS "${BTEST_DIR}/*.c")
+
+add_executable(btestLib ${BTEST_FILES})
+target_link_libraries(btestLib PRIVATE lib)
+set_target_properties(btestLib PROPERTIES
+	COMPILE_FLAGS "-D NDEBUG"
+	OUTPUT_NAME ${BTEST_EXECUTABLE_NAME}
+	RUNTIME_OUTPUT_DIRECTORY ${BTEST_DIR}
+)
+
+get_target_property(EXECUTABLE_OUTPUT_PATH btestLib RUNTIME_OUTPUT_DIRECTORY)
+add_custom_target(btest
+	COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_OUTPUT_PATH}/${BTEST_EXECUTABLE_NAME}"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
+	COMMENT "Running benchmarking test"
+)
+add_custom_command(TARGET btest POST_BUILD
+	COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/${BTEST_DIR}/${BTEST_PYTHON_MOD_NAME}"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tmp/${SUBPROJECT_NAME}
+	COMMENT "Plotting results..."
+)

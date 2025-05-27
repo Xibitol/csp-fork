@@ -1,0 +1,154 @@
+/**
+ * @file test-fc.c
+ * Minimal tests for CSP solver with forward checking
+ *
+ * @author vgegaden
+ * @date 2024
+ */
+
+ /**
+ * @file test-fc.c
+ * Minimal tests for CSP solver with forward checking
+ *
+ * @author vgegaden
+ * @date 2024
+ */
+
+#include <stdio.h>
+#include <assert.h>
+#include <stdbool.h>
+
+#include "csp.h"
+#include "solver/csp-solver-fc.h"
+#include "test-utils.h"
+
+static size_t backtracking_steps = 0;
+static size_t fc_steps = 0;
+
+// Callback pour le backtracking simple
+static bool bt_consistent_counter(const CSPProblem *csp,
+                                const size_t *values,
+                                const void *data,
+                                size_t index) {
+    backtracking_steps++;
+    return csp_problem_is_consistent(csp, values, data, index);
+}
+
+// Callback pour le Forward Checking
+static bool fc_consistent_counter(const CSPProblem *csp,
+                                const size_t *values,
+                                const void *data,
+                                size_t index,
+                                bool **domains) {
+    fc_steps++;
+    return csp_problem_is_consistent(csp, values, data, index);
+}
+
+// test pour comparer le nombre d'appel entre avant et apres le fc
+void test_fc_vs_backtracking() {
+    printf("\n=== Comparaison FC vs Backtracking simple ===\n");
+
+    // Création d'un problème CSP simple mais non trivial
+    CSPProblem *problem = csp_problem_create(4, 3); // 4 variables, 3 contraintes
+    for (size_t i = 0; i < 4; i++) {
+		// Domaine de taille 3 pour chaque variable
+        csp_problem_set_domain(problem, i, 3);
+    }
+
+    // Ajout de contraintes
+    CSPConstraint *c1 = csp_constraint_create(2, constraint_diff); // X0 != X1
+    csp_constraint_set_variable(c1, 0, 0);
+    csp_constraint_set_variable(c1, 1, 1);
+
+    CSPConstraint *c2 = csp_constraint_create(2, constraint_equal); // X1 == X2
+    csp_constraint_set_variable(c2, 0, 1);
+    csp_constraint_set_variable(c2, 1, 2);
+
+    CSPConstraint *c3 = csp_constraint_create(2, constraint_diff); // X2 != X3
+    csp_constraint_set_variable(c3, 0, 2);
+    csp_constraint_set_variable(c3, 1, 3);
+
+    csp_problem_set_constraint(problem, 0, c1);
+    csp_problem_set_constraint(problem, 1, c2);
+    csp_problem_set_constraint(problem, 2, c3);
+
+    size_t solution[4] = {0};
+
+    // 1. Exécution avec Backtracking simple
+    backtracking_steps = 0;
+    bool bt_result = csp_problem_solve(problem, solution, NULL, bt_consistent_counter);
+    printf("Backtracking simple : %zu appels de vérification\n", backtracking_steps);
+
+    // 2. Exécution avec Forward Checking
+    fc_steps = 0;
+    bool fc_result = csp_problem_solve_fc(problem, solution, NULL, fc_consistent_counter);
+    printf("Forward Checking : %zu appels de vérification\n", fc_steps);
+
+    // Vérifications
+    assert(bt_result == fc_result);
+    if (bt_result && fc_result) {
+        assert(solution[0] != solution[1]);
+        assert(solution[1] == solution[2]);
+        assert(solution[2] != solution[3]);
+    }
+    assert(fc_steps < backtracking_steps);
+
+    // Nettoyage
+    csp_constraint_destroy(c1);
+    csp_constraint_destroy(c2);
+    csp_constraint_destroy(c3);
+    csp_problem_destroy(problem);
+
+    printf("Test réussi : FC a réduit l'espace de recherche de %.1f%%\n",
+          (1 - (double)fc_steps/backtracking_steps)*100);
+}
+
+// Test constraint: X0 != X1
+static bool test_constraint_diff(const CSPConstraint *constraint,
+                               const size_t *values,
+                               const void *data) {
+    (void)data;
+    size_t x0 = values[csp_constraint_get_variable(constraint, 0)];
+    size_t x1 = values[csp_constraint_get_variable(constraint, 1)];
+    return x0 != x1;
+}
+
+bool test_solver_test_fc(void) {
+    printf("Running FC solver test...\n");
+
+    assert(csp_init());
+    CSPProblem *problem = csp_problem_create(2, 1);
+    assert(problem != NULL);
+
+    csp_problem_set_domain(problem, 0, 2);
+    csp_problem_set_domain(problem, 1, 2);
+
+    CSPConstraint *constraint = csp_constraint_create(2, test_constraint_diff);
+    csp_constraint_set_variable(constraint, 0, 0);
+    csp_constraint_set_variable(constraint, 1, 1);
+    csp_problem_set_constraint(problem, 0, constraint);
+
+    size_t solution[2] = {0};
+    bool solved = csp_problem_solve_fc(problem, solution, NULL, NULL);
+
+    assert(solved);
+    assert(solution[0] != solution[1]);
+
+    csp_constraint_destroy(constraint);
+    csp_problem_destroy(problem);
+    assert(csp_finish());
+
+    printf("FC solver test passed!\n");
+    return true;
+}
+
+// Point d'entrée principal des tests
+int main(void) {
+    csp_init();
+
+    test_solver_test_fc();
+    test_fc_vs_backtracking();
+
+    csp_finish();
+    return 0;
+}

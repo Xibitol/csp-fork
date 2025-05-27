@@ -1,0 +1,12 @@
+find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
+mark_as_advanced(CPPCHECK_EXECUTABLE)
+include(CMakeDependentOption)
+cmake_dependent_option(RUN_CPPCHECK "Enabling coverage support" OFF "CPPCHECK_EXECUTABLE" OFF)
+mark_as_advanced(RUN_CPPCHECK)
+
+function(enable_cppcheck)
+    if(RUN_CPPCHECK)
+        set(CMAKE_C_CPPCHECK "${CMAKE_SOURCE_DIR}/bin/runCPPCheck.sh" ${CPPCHECK_EXECUTABLE} <SOURCE> ${CMAKE_SOURCE_DIR}/CppCheckSuppressions.txt PARENT_SCOPE)
+        mark_as_advanced(CMAKE_C_CPPCHECK)
+    endif(RUN_CPPCHECK)
+endfunction(enable_cppcheck)
