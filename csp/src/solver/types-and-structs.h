@@ -19,6 +19,7 @@
 
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
+#include "solver/filled-variables.h"
 
 typedef enum {
 	FC = 1,
@@ -45,15 +46,6 @@ typedef struct {
 	size_t domain_index;
 	size_t value;
 } DomainChange;
-
-/**
- * Structure to track filled variables in a CSP problem.
- * It uses a bitset to efficiently track which variables are filled.
- */
-typedef struct {
-	size_t size;			// Number of variables
-	uint8_t* bitset;	// Bitset to track filled variables
-} FilledVariables;
 
 /**
  * Get the list of value constraints to verify for the current variable to know
