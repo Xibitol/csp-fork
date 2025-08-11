@@ -20,6 +20,7 @@
 #include "core/csp-problem.h"
 #include "solver/csp-solver-fc.h"
 #include "solver/csp-solver-ovars.h"
+#include "solver/filled-variables.h"
 #include "solver/types-and-structs.h"
 
 int backtrack_counter = 0;

@@ -17,9 +17,9 @@
 #include "util/unused.h"
 
 // Dummy check function
-bool _test_constraint(
-		const CSPConstraint *UNUSED_VAR(constraint),
-		const size_t *UNUSED_VAR(values), const void *UNUSED_VAR(data)) {
+bool _test_constraint(const CSPConstraint *UNUSED_VAR(constraint),
+											const size_t *UNUSED_VAR(values),
+											const void *UNUSED_VAR(data)) {
 	return true;
 }
 
@@ -45,16 +45,16 @@ int test_core_problem(void) {
 		for (size_t index = 0; index < 28; index++) {
 			assert(csp_problem_get_constraint(problem, index) == NULL);
 		}
-    
-    csp_problem_set_domain(problem, 0, 2);
 
-    CSPConstraint* test_constraint = csp_constraint_create(2, _test_constraint);
-    csp_problem_set_constraint(problem, 0, test_constraint);
+		csp_problem_set_domain(problem, 0, 2);
 
-    assert(csp_problem_get_constraint(problem, 0) == test_constraint);
-    assert(csp_problem_get_domain(problem, 0) == 2);
+		CSPConstraint *test_constraint = csp_constraint_create(2, _test_constraint);
+		csp_problem_set_constraint(problem, 0, test_constraint);
 
-    csp_constraint_destroy(test_constraint);
+		assert(csp_problem_get_constraint(problem, 0) == test_constraint);
+		assert(csp_problem_get_domain(problem, 0) == 2);
+
+		csp_constraint_destroy(test_constraint);
 		// Destroy the problem
 		csp_problem_destroy(problem);
 	}

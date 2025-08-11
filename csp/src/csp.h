@@ -37,5 +37,6 @@ COPYING.LESSER). If not, see https://www.gnu.org/licenses/.
 // #include "solver/csp-solver-ovals.h"
 
 #include "solver/types-and-structs.h"
+#include "solver/filled-variables.h"
 
 #undef _CSP_H_INSIDE

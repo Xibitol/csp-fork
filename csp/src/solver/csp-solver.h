@@ -14,10 +14,12 @@
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
-#include <core/csp-problem.h>
-#include <solver/types-and-structs.h>
+#include "core/csp-problem.h"
+#include "solver/types-and-structs.h"
 #include <stdbool.h>
 #include <stddef.h>
+
+#include "solver/filled-variables.h"
 
 /**
  * Reduce the domains of the variables based on the data provided.

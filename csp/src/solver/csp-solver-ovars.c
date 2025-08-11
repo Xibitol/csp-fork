@@ -14,6 +14,7 @@
 
 #include "core/csp-lib.h"
 #include "core/csp-problem.h"
+#include "solver/filled-variables.h"
 #include "solver/types-and-structs.h"
 
 size_t csp_problem_choose_min_domain(const CSPProblem *csp,

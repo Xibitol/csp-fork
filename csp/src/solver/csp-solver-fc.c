@@ -18,6 +18,7 @@
 #include "core/csp-constraint.h"
 #include "core/csp-lib.h"
 #include "core/csp-problem.h"
+#include "solver/filled-variables.h"
 #include "solver/types-and-structs.h"
 
 bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
@@ -34,7 +35,7 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 		return false;
 	}
 
-	for (size_t i = 0; i < fv->size; i++) {
+	for (size_t i = 0; i < filled_variables_get_size(fv); i++) {
 		if (!filled_variables_is_filled(fv, i)) {
 			size_t v_amount = 0;
 			checklist(csp, variable_checks, &v_amount, i, fv);

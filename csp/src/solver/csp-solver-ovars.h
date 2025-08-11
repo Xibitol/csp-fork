@@ -16,6 +16,7 @@
 #include <stddef.h>
 
 #include "core/csp-problem.h"
+#include "solver/filled-variables.h"
 #include "solver/types-and-structs.h"
 
 /**
