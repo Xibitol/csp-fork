@@ -12,13 +12,13 @@
 #include <assert.h>
 #include <stddef.h>
 
-#include "core/csp-problem.h"
 #include "core/csp-lib.h"
+#include "core/csp-problem.h"
 #include "solver/types-and-structs.h"
 
 size_t csp_problem_choose_min_domain(const CSPProblem *csp,
-	const FilledVariables *fv, Domain **domains
-){
+																		 const FilledVariables *fv,
+																		 Domain **domains) {
 	assert(csp_initialised());
 
 	size_t index = 0;
@@ -41,7 +41,8 @@ size_t csp_problem_choose_min_domain(const CSPProblem *csp,
 }
 
 size_t csp_problem_choose_max_domain(const CSPProblem *csp,
-	const FilledVariables *fv, Domain **domains){
+																		 const FilledVariables *fv,
+																		 Domain **domains) {
 	assert(csp_initialised());
 
 	size_t index = 0;

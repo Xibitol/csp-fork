@@ -29,7 +29,8 @@
  * @return The index of the chosen variable.
  */
 extern size_t csp_problem_choose_min_domain(const CSPProblem *csp,
-	const FilledVariables *fv, Domain **domains);
+																						const FilledVariables *fv,
+																						Domain **domains);
 
 /**
  * Choose the next variable to assign in the CSP problem.
@@ -42,4 +43,5 @@ extern size_t csp_problem_choose_min_domain(const CSPProblem *csp,
  * @return
  */
 extern size_t csp_problem_choose_max_domain(const CSPProblem *csp,
-	const FilledVariables *fv, Domain **domains);
+																						const FilledVariables *fv,
+																						Domain **domains);

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if !defined (_CSP_H_INSIDE) && !defined (CSP_COMPILATION)
+#if !defined(_CSP_H_INSIDE) && !defined(CSP_COMPILATION)
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
@@ -34,8 +34,7 @@
  * @return true if the CSP problem is consistent, false otherwise.
  * @pre The csp library is initialised.
  */
-extern bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
-	const void *data, size_t index,
-	FilledVariables* fv, CSPValueChecklist *checklist, Domain **domains,
-	DomainChange *change_stack, size_t *stack_top
-);
+extern bool csp_problem_forward_check(
+		const CSPProblem *csp, size_t *values, const void *data, size_t index,
+		FilledVariables *fv, CSPValueChecklist *checklist, Domain **domains,
+		DomainChange *change_stack, size_t *stack_top);

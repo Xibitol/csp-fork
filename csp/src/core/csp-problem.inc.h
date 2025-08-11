@@ -23,4 +23,4 @@ struct _CSPProblem {
 	size_t *domains;
 	size_t num_constraints;
 	CSPConstraint **constraints;
-  };
+};

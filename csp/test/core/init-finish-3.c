@@ -6,16 +6,16 @@
  */
 
 #ifdef NDEBUG
-	#undef NDEBUG
+#undef NDEBUG
 #endif
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include "csp.h"
 
-int test_core_init_finish_3(void){
+int test_core_init_finish_3(void) {
 	assert(csp_init());
 	assert(csp_init());
 	assert(csp_init());

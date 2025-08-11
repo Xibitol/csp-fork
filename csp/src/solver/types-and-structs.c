@@ -1,5 +1,5 @@
 /**
-* @file types-and-structs.c
+ * @file types-and-structs.c
  * File containing the definition of the types and structures used in the CSP
  * And the functions to manipulate them.
  *
@@ -70,8 +70,7 @@ bool filled_variables_all_filled(const FilledVariables* fv) {
 }
 
 size_t filled_variables_next_unfilled(const FilledVariables* fv,
-	size_t start_index
-){
+																			size_t start_index) {
 	if (start_index >= fv->size) {
 		return SIZE_MAX;	// Invalid index
 	}
@@ -91,7 +90,7 @@ size_t filled_variables_next_unfilled(const FilledVariables* fv,
 		}
 		start_byte++;
 		if (start_byte * 8 >= fv->size) {
-			return SIZE_MAX; // Invalid index
+			return SIZE_MAX;	// Invalid index
 		}
 	}
 
@@ -124,17 +123,16 @@ size_t filled_variables_next_unfilled(const FilledVariables* fv,
 }
 
 size_t filled_variables_next_filled(const FilledVariables* fv,
-	size_t start_index
-){
+																		size_t start_index) {
 	if (start_index >= fv->size) {
-		return SIZE_MAX; // Invalid index
+		return SIZE_MAX;	// Invalid index
 	}
 	size_t start_byte = start_index / 8;
 	size_t start_bit = start_index % 8;
 
 	// Check the first byte from the start bit
 	if (start_bit > 0) {
-		uint8_t mask = 0xFF << start_bit; // Mask for bits from start_bit onward
+		uint8_t mask = 0xFF << start_bit;	 // Mask for bits from start_bit onward
 		if (fv->bitset[start_byte] & mask) {
 			for (size_t bit = start_bit; bit < 8; bit++) {
 				if (fv->bitset[start_byte] & (1 << bit)) {
@@ -144,7 +142,7 @@ size_t filled_variables_next_filled(const FilledVariables* fv,
 		}
 		start_byte++;
 		if (start_byte * 8 >= fv->size) {
-			return SIZE_MAX; // Invalid index
+			return SIZE_MAX;	// Invalid index
 		}
 	}
 
@@ -162,7 +160,7 @@ size_t filled_variables_next_filled(const FilledVariables* fv,
 	// Check the last byte if there are remaining bits
 	size_t remaining_bits = fv->size % 8;
 	if (remaining_bits > 0) {
-		uint8_t mask = (1 << remaining_bits) - 1; // Mask for the valid bits
+		uint8_t mask = (1 << remaining_bits) - 1;	 // Mask for the valid bits
 		if (fv->bitset[fv->size / 8] & mask) {
 			for (size_t bit = 0; bit < remaining_bits; bit++) {
 				if (fv->bitset[fv->size / 8] & (1 << bit)) {
@@ -203,7 +201,7 @@ void print_domain(const Domain* domain) {
 	printf("\n");
 }
 
-void print_domains(const Domain **domains, const size_t num_domains) {
+void print_domains(const Domain** domains, const size_t num_domains) {
 	for (size_t i = 0; i < num_domains; i++) {
 		print_domain(domains[i]);
 	}

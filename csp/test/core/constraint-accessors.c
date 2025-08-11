@@ -6,26 +6,24 @@
  */
 
 #ifdef NDEBUG
-	#undef NDEBUG
+#undef NDEBUG
 #endif
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include "csp.h"
 #include "util/unused.h"
 
 // Dummy check function
 bool test_core_constraint_accessors__dummy_check(
-	const CSPConstraint *UNUSED_VAR(constraint),
-	const size_t *UNUSED_VAR(values),
-	const void *UNUSED_VAR(data)
-){
+		const CSPConstraint *UNUSED_VAR(constraint),
+		const size_t *UNUSED_VAR(values), const void *UNUSED_VAR(data)) {
 	return true;
 }
 
-int test_core_constraint_accessors(void){
+int test_core_constraint_accessors(void) {
 	CSPChecker *dummy_check = &test_core_constraint_accessors__dummy_check;
 
 	// Initialise the library

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#if !defined (_CSP_H_INSIDE) && !defined (CSP_COMPILATION)
+#if !defined(_CSP_H_INSIDE) && !defined(CSP_COMPILATION)
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
@@ -82,8 +82,7 @@ extern CSPChecker *csp_constraint_get_check(const CSPConstraint *constraint);
  * @pre index < constraint->arity
  */
 extern size_t csp_constraint_get_variable(const CSPConstraint *constraint,
-	size_t index
-);
+																					size_t index);
 
 // SETTERS
 /**
@@ -94,6 +93,5 @@ extern size_t csp_constraint_get_variable(const CSPConstraint *constraint,
  * @pre The csp library is initialised.
  * @pre index < constraint->arity
  */
-extern void csp_constraint_set_variable(CSPConstraint *constraint,
-	size_t index, size_t variable
-);
+extern void csp_constraint_set_variable(CSPConstraint *constraint, size_t index,
+																				size_t variable);

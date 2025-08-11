@@ -18,7 +18,7 @@
  * @var variables The variables of the constraint.
  */
 struct _CSPConstraint {
-  CSPChecker *check;
-  size_t arity;
-  size_t variables[];
+	CSPChecker *check;
+	size_t arity;
+	size_t variables[];
 };

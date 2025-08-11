@@ -17,8 +17,7 @@
 
 // Check if the queens are compatible
 bool queen_compatibles(CSPConstraint *constraint, const size_t *values,
-	unsigned int *UNUSED_VAR(data)
-){
+											 unsigned int *UNUSED_VAR(data)) {
 	// Get the variables
 	size_t x0 = csp_constraint_get_variable(constraint, 0);
 	size_t x1 = csp_constraint_get_variable(constraint, 1);
@@ -61,19 +60,19 @@ static void print_queens_solution(unsigned int number, const size_t *queens) {
 }
 
 void queens_checklist(const CSPProblem *csp, CSPConstraint **checklist,
-	size_t *amount, const size_t index, FilledVariables *fv
-){
+											size_t *amount, const size_t index, FilledVariables *fv) {
 	size_t num_queens = csp_problem_get_num_domains(csp);
 	*amount = 0;
 	size_t next = filled_variables_next_filled(fv, 0);
 	while (next != SIZE_MAX) {
 		if (next < index) {
 			checklist[(*amount)++] = csp_problem_get_constraint(
-				csp,next * num_queens - next*(next+1)/2 + (index - next) - 1);
+					csp, next * num_queens - next * (next + 1) / 2 + (index - next) - 1);
 		}
 		if (next > index) {
 			checklist[(*amount)++] = csp_problem_get_constraint(
-				csp,index*num_queens - index*(index+1)/2 + (next - index) - 1);
+					csp,
+					index * num_queens - index * (index + 1) / 2 + (next - index) - 1);
 		}
 		next = filled_variables_next_filled(fv, next + 1);
 	}
@@ -100,9 +99,8 @@ int solve_queens(size_t queen_count, const char *resultFile,
 		// number of constraints corresponds to the number of pairs of queens
 		// that need to be checked This is equal to the combination
 		// C(n, 2) = n * (n - 1) / 2
-		CSPProblem *problem = csp_problem_create(queen_count,
-			queen_count * (queen_count - 1) / 2
-		);
+		CSPProblem *problem =
+				csp_problem_create(queen_count, queen_count * (queen_count - 1) / 2);
 		for (size_t i = 0; i < queen_count; i++) {
 			// Domain = number of possible row positions for a queen
 			csp_problem_set_domain(problem, i, queen_count);
@@ -115,28 +113,25 @@ int solve_queens(size_t queen_count, const char *resultFile,
 			for (size_t j = i + 1; j < queen_count; j++) {
 				// arity is 2 because we are checking compatibility between two
 				// queens
-				csp_problem_set_constraint(problem, index,
-					csp_constraint_create(2, (CSPChecker *)queen_compatibles)
-				);
-				csp_constraint_set_variable(
-					csp_problem_get_constraint(problem, index), 0, i
-				);
-				csp_constraint_set_variable(
-					csp_problem_get_constraint(problem, index), 1, j
-				);
+				csp_problem_set_constraint(
+						problem, index,
+						csp_constraint_create(2, (CSPChecker *)queen_compatibles));
+				csp_constraint_set_variable(csp_problem_get_constraint(problem, index),
+																		0, i);
+				csp_constraint_set_variable(csp_problem_get_constraint(problem, index),
+																		1, j);
 				index++;
 			}
 		}
 
 		FILE *file = fopen(resultFile, "a");
-		size_t* backtrack_counter = malloc(sizeof(size_t));
+		size_t *backtrack_counter = malloc(sizeof(size_t));
 
 		// Start the timer
 		clock_t start_time = clock();
 
 		bool result = csp_problem_solve(problem, queens, NULL, solve_type,
-			queens_checklist, NULL, backtrack_counter
-		);
+																		queens_checklist, NULL, backtrack_counter);
 
 		// Stop the timer
 		clock_t end_time = clock();

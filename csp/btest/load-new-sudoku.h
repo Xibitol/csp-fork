@@ -18,6 +18,5 @@
  * @param sudoku_count number of Sudoku grids to generate.
  * @return A pointer to an array of Sudoku grids, or NULL if an error occurred.
  */
-extern size_t** load_new_sudoku(
-	const int unknown_count, const int sudoku_count
-);
+extern size_t** load_new_sudoku(const int unknown_count,
+																const int sudoku_count);

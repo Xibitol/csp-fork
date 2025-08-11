@@ -6,16 +6,16 @@
  */
 
 #ifdef NDEBUG
-	#undef NDEBUG
+#undef NDEBUG
 #endif
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include "csp.h"
 
-int test_core_problem(void){
+int test_core_problem(void) {
 	// Initialise the library
 	csp_init();
 	{
@@ -30,11 +30,11 @@ int test_core_problem(void){
 		assert(csp_problem_get_num_domains(problem) == 8);
 		assert(csp_problem_get_num_constraints(problem) == 28);
 
-		for(size_t index = 0; index < 8; index++){
+		for (size_t index = 0; index < 8; index++) {
 			assert(csp_problem_get_domain(problem, index) == 0);
 		}
 
-		for(size_t index = 0; index < 28; index++){
+		for (size_t index = 0; index < 28; index++) {
 			assert(csp_problem_get_constraint(problem, index) == NULL);
 		}
 
