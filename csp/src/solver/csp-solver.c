@@ -115,8 +115,6 @@ bool csp_problem_backtrack(const CSPProblem *csp, size_t *values,
 		// Assign the value to the variable
 		values[index] = domain_get_value(domains[index], i);
 
-		// print_domains(domains, csp_problem_get_num_domains(csp)); //DEBUG
-
 		bool result;
 		if (solve_type & FC) {
 			result =

@@ -46,20 +46,6 @@ void domain_remove_value(Domain* domain, size_t index) {
 	}
 }
 
-void print_domain(const Domain* domain) {
-	for (size_t i = 0; i < domain->amount; i++) {
-		printf("%zu ", domain->values[i]);
-	}
-	printf("\n");
-}
-
-void print_domains(const Domain** domains, const size_t num_domains) {
-	for (size_t i = 0; i < num_domains; i++) {
-		print_domain(domains[i]);
-	}
-	printf("\n");
-}
-
 DomainChange* domain_change_stack_create(const size_t size) {
 	DomainChange* stack = malloc(size * sizeof(DomainChange));
 	if (stack == NULL) {
