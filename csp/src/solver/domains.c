@@ -21,10 +21,10 @@
 Domain* domain_create(size_t size) {
 	Domain* domain = malloc(sizeof(Domain) + size * sizeof(size_t));
 	if (domain != NULL) {
-    domain->amount = size;
-    for (size_t i = 0; i < size; i++) {
-      domain->values[i] = i;
-    }
+		domain->amount = size;
+		for (size_t i = 0; i < size; i++) {
+			domain->values[i] = i;
+		}
 	}
 	return domain;
 }

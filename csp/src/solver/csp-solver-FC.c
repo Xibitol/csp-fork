@@ -1,5 +1,5 @@
 /**
- * @file csp-solver-fc.c
+ * @file csp-solver-FC.c
  * Library CSP forward checking
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
@@ -7,7 +7,7 @@
  * @copyright GNU Lesser General Public License v3.0
  */
 
-#include "solver/csp-solver-fc.h"
+#include "solver/csp-solver-FC.h"
 
 #include <assert.h>
 #include <stdbool.h>

@@ -1,5 +1,5 @@
 /**
- * @file csp-solver-fc.h
+ * @file csp-solver-FC.h
  * Library CSP forward checking
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>

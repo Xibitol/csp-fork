@@ -18,8 +18,8 @@
 
 #include "core/csp-constraint.h"
 #include "core/csp-problem.h"
-#include "solver/csp-solver-fc.h"
-#include "solver/csp-solver-ovars.h"
+#include "solver/csp-solver-FC.h"
+#include "solver/csp-solver-MRV.h"
 #include "solver/domains.h"
 #include "solver/filled-variables.h"
 
@@ -100,10 +100,8 @@ bool csp_problem_backtrack(const CSPProblem *csp, size_t *values,
 		stack_start = *stack_top;
 	}
 
-	if (solve_type & OVARS_MIN) {
+	if (solve_type & MRV) {
 		index = csp_problem_choose_min_domain(csp, fv, domains);
-	} else if (solve_type & OVARS_MAX) {
-		index = csp_problem_choose_max_domain(csp, fv, domains);
 	} else {
 		index = filled_variables_next_unfilled(fv, 0);
 	}

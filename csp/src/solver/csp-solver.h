@@ -21,11 +21,19 @@
 #include "solver/domains.h"
 #include "solver/filled-variables.h"
 
+/**
+ * Which methods should be used to solve the CSP
+ * FC = forward-checking
+ * MRV = Most remaining values
+ * LCV = Least constraining value
+ *
+ * Use bitwise operations to select/combine the methods to use
+ * Example for FC + LCV: SolveType solveType = FC | LCV;
+ */
 typedef enum {
 	FC = 1,
-	OVARS_MIN = 2,
-	OVARS_MAX = 4,
-	OVALS = 8,
+	MRV = 2,
+	LCV = 4,
 } SolveType;
 
 /**
