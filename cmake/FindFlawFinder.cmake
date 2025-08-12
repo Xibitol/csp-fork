@@ -6,7 +6,7 @@ function(enable_flaw_finder)
         add_custom_target(flawfinder
 			COMMAND
 			${FLAW_FINDER_EXECUTABLE}
-			"${CMAKE_SOURCE_DIR}/src/"
+			"${CMAKE_SOURCE_DIR}/csp/src/"
 			COMMENT "Check flaw finder."
         )
     endif(FLAW_FINDER_EXECUTABLE)
