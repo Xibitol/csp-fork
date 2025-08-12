@@ -1,22 +1,22 @@
 /**
- * @file types-and-structs.c
- * File containing the definition of the types and structures used in the CSP
- * And the functions to manipulate them.
+ * @file domains.c
+ * Functions to manipulate domain related structures
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
  * @date 2025
  * @copyright GNU Lesser General Public License v3.0
  */
 
-#include "solver/types-and-structs.h"
+#include "domains.h"
 
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "solver/filled-variables.h"
 
+#include "domains.inc.h"
+#include "filled-variables.h"
 
 Domain* domain_create(size_t size) {
 	Domain* domain = malloc(sizeof(Domain) + size * sizeof(size_t));
@@ -32,6 +32,19 @@ Domain* domain_create(size_t size) {
 }
 
 void domain_destroy(Domain* domain) { free(domain); }
+
+size_t domain_get_value(Domain* domain, size_t index) {
+	return domain->values[index];
+}
+
+size_t domain_get_amount(Domain* domain) { return domain->amount; }
+
+void domain_remove_value(Domain* domain, size_t index) {
+	domain->amount--;
+	for (size_t k = index; k < domain->amount; k++) {
+		domain->values[k] = domain->values[k + 1];
+	}
+}
 
 void print_domain(const Domain* domain) {
 	for (size_t i = 0; i < domain->amount; i++) {
