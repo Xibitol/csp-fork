@@ -21,17 +21,14 @@
 // Initialize the structure
 FilledVariables* filled_variables_create(size_t num_variables) {
 	FilledVariables* fv = malloc(sizeof(FilledVariables));
-	if (fv == NULL) {
-		perror("malloc");
-		return NULL;
-	}
-	fv->size = num_variables;
-	size_t num_bytes = (num_variables + 7) / 8;	 // Round up to the nearest byte
-	fv->bitset = calloc(num_bytes, sizeof(uint8_t));
-	if (fv->bitset == NULL) {
-		perror("calloc");
-		free(fv);
-		return NULL;
+	if (fv != NULL) {
+    fv->size = num_variables;
+    size_t num_bytes = (num_variables + 7) / 8;	 // Round up to the nearest byte
+    fv->bitset = calloc(num_bytes, sizeof(uint8_t));
+    if (fv->bitset == NULL) {
+      free(fv);
+      return NULL;
+    }
 	}
 	return fv;
 }
