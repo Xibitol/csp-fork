@@ -17,8 +17,9 @@
 #include <stddef.h>
 
 #include "core/csp-problem.h"
+#include "solver/csp-solver.h"
+#include "solver/domains.h"
 #include "solver/filled-variables.h"
-#include "solver/types-and-structs.h"
 
 /**
  * Forward check the CSP problem. Updates the domains of the variables

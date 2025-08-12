@@ -18,7 +18,7 @@
  * Structure to track filled variables in a CSP problem.
  * It uses a bitset to efficiently track which variables are filled.
  */
-struct _FilledVariables{
+struct _FilledVariables {
 	size_t size;			// Number of variables
 	uint8_t* bitset;	// Bitset to track filled variables
 };

@@ -16,8 +16,8 @@
 #include <stddef.h>
 
 #include "core/csp-problem.h"
+#include "solver/domains.h"
 #include "solver/filled-variables.h"
-#include "solver/types-and-structs.h"
 
 /**
  * Choose the next variable to assign in the CSP problem.

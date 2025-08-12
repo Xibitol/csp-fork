@@ -1,6 +1,6 @@
 /**
  * @file filled-variables.c
- * Functions to manipulate bitset structure
+ * Functions to manipulate the bitset structure
  * to track variables that have been filled during solving
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
@@ -9,13 +9,14 @@
  */
 
 #include "filled-variables.h"
-#include "filled-variables.inc.h"
 
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "filled-variables.inc.h"
 
 // Initialize the structure
 FilledVariables* filled_variables_create(size_t num_variables) {
@@ -180,7 +181,4 @@ void filled_variables_destroy(FilledVariables* fv) {
 	free(fv);
 }
 
-size_t filled_variables_get_size(FilledVariables* fv) {
-  return fv->size;
-}
-
+size_t filled_variables_get_size(FilledVariables* fv) { return fv->size; }

@@ -20,8 +20,8 @@
 #include "core/csp-problem.h"
 #include "solver/csp-solver-fc.h"
 #include "solver/csp-solver-ovars.h"
+#include "solver/domains.h"
 #include "solver/filled-variables.h"
-#include "solver/types-and-structs.h"
 
 int backtrack_counter = 0;
 
@@ -31,13 +31,14 @@ void reduce_domains(const CSPProblem *csp, size_t *values, const void *data,
 		return;
 	}
 	for (size_t i = 0; i < csp_problem_get_num_domains(csp); i++) {
-		for (size_t j = 0; j < domains[i]->amount; /* no increment here */) {
+		for (size_t j = 0; j < domain_get_amount(domains[i]);
+				 /* no increment here */) {
 			CSPConstraint *checks[csp_problem_get_num_constraints(csp)];
 			size_t amount = 0;
 
 			dataChecklist(csp, checks, &amount, i);
 
-			values[i] = domains[i]->values[j];
+			values[i] = domain_get_value(domains[i], j);
 			bool consistent = true;
 			for (size_t k = 0; k < amount; k++) {
 				if (!csp_constraint_get_check(checks[k])(checks[k], values, data)) {
@@ -46,11 +47,7 @@ void reduce_domains(const CSPProblem *csp, size_t *values, const void *data,
 				}
 			}
 			if (!consistent) {
-				// Remove the value from the domain
-				domains[i]->amount--;
-				for (size_t k = j; k < domains[i]->amount; k++) {
-					domains[i]->values[k] = domains[i]->values[k + 1];
-				}
+				domain_remove_value(domains[i], j);
 				// Do not increment j, as the next value is now at the same
 				// index
 			} else {
@@ -114,9 +111,9 @@ bool csp_problem_backtrack(const CSPProblem *csp, size_t *values,
 	filled_variables_mark_filled(fv, index);
 
 	// Try all values in the domain of the current variable
-	for (size_t i = 0; i < domains[index]->amount; i++) {
+	for (size_t i = 0; i < domain_get_amount(domains[index]); i++) {
 		// Assign the value to the variable
-		values[index] = domains[index]->values[i];
+		values[index] = domain_get_value(domains[index], i);
 
 		// print_domains(domains, csp_problem_get_num_domains(csp)); //DEBUG
 

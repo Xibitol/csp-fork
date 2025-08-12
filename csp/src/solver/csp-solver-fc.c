@@ -18,8 +18,8 @@
 #include "core/csp-constraint.h"
 #include "core/csp-lib.h"
 #include "core/csp-problem.h"
+#include "solver/domains.h"
 #include "solver/filled-variables.h"
-#include "solver/types-and-structs.h"
 
 bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 															 const void *data, size_t index,
@@ -56,20 +56,16 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 
 			size_t stack_start = *stack_top;
 
-			for (size_t j = 0; j < domains[i]->amount;) {
-				values[i] = domains[i]->values[j];
+			for (size_t j = 0; j < domain_get_amount(domains[i]);) {
+				values[i] = domain_get_value(domains[i], j);
 
 				if (!csp_constraint_get_check(relevant_check)(relevant_check, values,
 																											data)) {
 					// Record the change in the stack
 					domain_change_stack_add(change_stack, stack_top, i,
-																	domains[i]->values[j]);
+																	domain_get_value(domains[i], j));
 
-					// Remove the value from the domain
-					domains[i]->amount--;
-					for (size_t k = j; k < domains[i]->amount; k++) {
-						domains[i]->values[k] = domains[i]->values[k + 1];
-					}
+					domain_remove_value(domains[i], j);
 					// Do not increment j, as the next value is now at the same
 					// index
 				} else {
@@ -77,7 +73,7 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 				}
 			}
 
-			if (domains[i]->amount == 0) {
+			if (domain_get_amount(domains[i]) == 0) {
 				// Restore domains from the stack
 				domain_change_stack_restore(change_stack, stack_top, &stack_start,
 																		domains);

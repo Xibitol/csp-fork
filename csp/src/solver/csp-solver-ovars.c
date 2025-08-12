@@ -11,11 +11,12 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "core/csp-lib.h"
 #include "core/csp-problem.h"
+#include "solver/domains.h"
 #include "solver/filled-variables.h"
-#include "solver/types-and-structs.h"
 
 size_t csp_problem_choose_min_domain(const CSPProblem *csp,
 																		 const FilledVariables *fv,
@@ -27,7 +28,7 @@ size_t csp_problem_choose_min_domain(const CSPProblem *csp,
 
 	for (size_t i = 0; i < csp_problem_get_num_domains(csp); i++) {
 		if (!filled_variables_is_filled(fv, i)) {
-			size_t domain_size = domains[i]->amount;
+			size_t domain_size = domain_get_amount(domains[i]);
 			if (domain_size < min_domain_size) {
 				min_domain_size = domain_size;
 				index = i;
@@ -51,7 +52,7 @@ size_t csp_problem_choose_max_domain(const CSPProblem *csp,
 
 	for (size_t i = 0; i < csp_problem_get_num_domains(csp); i++) {
 		if (!filled_variables_is_filled(fv, i)) {
-			size_t domain_size = domains[i]->amount;
+			size_t domain_size = domain_get_amount(domains[i]);
 			if (domain_size > max_domain_size) {
 				max_domain_size = domain_size;
 				index = i;

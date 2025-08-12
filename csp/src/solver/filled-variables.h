@@ -14,9 +14,12 @@
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
 
+/**
+ * The FilledVariables structure
+ */
 typedef struct _FilledVariables FilledVariables;
 
 /**
@@ -82,8 +85,7 @@ extern FilledVariables* filled_variables_create(size_t num_variables);
 extern void filled_variables_destroy(FilledVariables* fv);
 
 /**
-* Get size of the filled variables bitset
-* @param fv The FilledVaraibles structure
-*/
+ * Get size of the filled variables bitset
+ * @param fv The FilledVaraibles structure
+ */
 extern size_t filled_variables_get_size(FilledVariables* fv);
-
