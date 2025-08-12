@@ -20,13 +20,11 @@
 
 Domain* domain_create(size_t size) {
 	Domain* domain = malloc(sizeof(Domain) + size * sizeof(size_t));
-	if (domain == NULL) {
-		perror("malloc");
-		return NULL;
-	}
-	domain->amount = size;
-	for (size_t i = 0; i < size; i++) {
-		domain->values[i] = i;
+	if (domain != NULL) {
+    domain->amount = size;
+    for (size_t i = 0; i < size; i++) {
+      domain->values[i] = i;
+    }
 	}
 	return domain;
 }
@@ -48,10 +46,6 @@ void domain_remove_value(Domain* domain, size_t index) {
 
 DomainChange* domain_change_stack_create(const size_t size) {
 	DomainChange* stack = malloc(size * sizeof(DomainChange));
-	if (stack == NULL) {
-		perror("malloc");
-		return NULL;
-	}
 	return stack;
 }
 
