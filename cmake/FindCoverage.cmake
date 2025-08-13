@@ -25,7 +25,8 @@ function(enable_coverage)
         add_custom_command(TARGET coverage POST_BUILD
 			COMMAND
 			${COVERAGE_EXECUTABLE}
-			--remove ${CMAKE_CURRENT_BINARY_DIR}/coverage.info "${CMAKE_SOURCE_DIR}/csp/test/*" "${CMAKE_CURRENT_BINARY_DIR}/testCSP.c" "${CMAKE_SOURCE_DIR}/usr/*" --output-file ${CMAKE_CURRENT_BINARY_DIR}/coverage.info.cleaned
+			--remove ${CMAKE_CURRENT_BINARY_DIR}/coverage.info "${CMAKE_SOURCE_DIR}/csp/test/*" "${CMAKE_CURRENT_BINARY_DIR}/testCSP.c" "*stdio2.h" "*string_fortified.h"
+      --output-file ${CMAKE_CURRENT_BINARY_DIR}/coverage.info.cleaned
 			--quiet
 			--ignore-errors unused
 			COMMAND

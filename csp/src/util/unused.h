@@ -6,7 +6,7 @@
  */
 
 #ifdef __GNUC__
-	#define UNUSED_VAR(x) UNUSED_##x __attribute__((__unused__))
+#define UNUSED_VAR(x) UNUSED_##x __attribute__((__unused__))
 #else
-	#define UNUSED_VAR(x) UNUSED_##x
+#define UNUSED_VAR(x) UNUSED_##x
 #endif

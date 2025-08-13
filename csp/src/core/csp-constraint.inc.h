@@ -13,12 +13,12 @@
 
 /**
  * @brief The constraint of a CSP problem.
- * @var check The check function of the constraint.
- * @var arity The arity of the constraint.
- * @var variables The variables of the constraint.
+ * @param check The check function of the constraint.
+ * @param arity The arity of the constraint.
+ * @param variables The variables of the constraint.
  */
 struct _CSPConstraint {
-  CSPChecker *check;
-  size_t arity;
-  size_t variables[];
+	CSPChecker *check;
+	size_t arity;
+	size_t variables[];
 };

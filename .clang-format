@@ -3,3 +3,4 @@ UseTab: Always
 TabWidth: 2
 IndentWidth: 2
 ColumnLimit: 80
+InsertNewlineAtEOF: true

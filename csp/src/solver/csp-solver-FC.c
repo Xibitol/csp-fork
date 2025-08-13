@@ -1,5 +1,5 @@
 /**
- * @file csp-solver-fc.c
+ * @file csp-solver-FC.c
  * Library CSP forward checking
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
@@ -7,7 +7,7 @@
  * @copyright GNU Lesser General Public License v3.0
  */
 
-#include "solver/csp-solver-fc.h"
+#include "solver/csp-solver-FC.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -16,26 +16,26 @@
 #include <stdlib.h>
 
 #include "core/csp-constraint.h"
-#include "core/csp-problem.h"
 #include "core/csp-lib.h"
-#include "solver/types-and-structs.h"
+#include "core/csp-problem.h"
+#include "solver/domains.h"
+#include "solver/filled-variables.h"
 
 bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
-	const void *data, size_t index,
-	FilledVariables *fv,
-	CSPValueChecklist *checklist, Domain **domains,
-	DomainChange *change_stack, size_t *stack_top
-){
+															 const void *data, size_t index,
+															 FilledVariables *fv,
+															 CSPValueChecklist *checklist, Domain **domains,
+															 DomainChange *change_stack, size_t *stack_top) {
 	assert(csp_initialised());
 
 	CSPConstraint **variable_checks =
-		malloc(sizeof(CSPConstraint *) * csp_problem_get_num_constraints(csp));
+			malloc(sizeof(CSPConstraint *) * csp_problem_get_num_constraints(csp));
 	if (variable_checks == NULL) {
 		perror("malloc");
 		return false;
 	}
 
-	for (size_t i = 0; i < fv->size; i++) {
+	for (size_t i = 0; i < filled_variables_get_size(fv); i++) {
 		if (!filled_variables_is_filled(fv, i)) {
 			size_t v_amount = 0;
 			checklist(csp, variable_checks, &v_amount, i, fv);
@@ -56,22 +56,16 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 
 			size_t stack_start = *stack_top;
 
-			for (size_t j = 0; j < domains[i]->amount;){
-				values[i] = domains[i]->values[j];
+			for (size_t j = 0; j < domain_get_amount(domains[i]);) {
+				values[i] = domain_get_value(domains[i], j);
 
-				if (!csp_constraint_get_check(relevant_check)(
-					relevant_check, values, data
-				)){
+				if (!csp_constraint_get_check(relevant_check)(relevant_check, values,
+																											data)) {
 					// Record the change in the stack
 					domain_change_stack_add(change_stack, stack_top, i,
-						domains[i]->values[j]
-					);
+																	domain_get_value(domains[i], j));
 
-					// Remove the value from the domain
-					domains[i]->amount--;
-					for (size_t k = j; k < domains[i]->amount; k++) {
-						domains[i]->values[k] = domains[i]->values[k + 1];
-					}
+					domain_remove_value(domains[i], j);
 					// Do not increment j, as the next value is now at the same
 					// index
 				} else {
@@ -79,11 +73,10 @@ bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
 				}
 			}
 
-			if (domains[i]->amount == 0) {
+			if (domain_get_amount(domains[i]) == 0) {
 				// Restore domains from the stack
-				domain_change_stack_restore(change_stack,
-					stack_top, &stack_start, domains
-				);
+				domain_change_stack_restore(change_stack, stack_top, &stack_start,
+																		domains);
 				free(variable_checks);
 				return false;
 			}

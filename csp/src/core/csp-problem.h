@@ -8,7 +8,7 @@
 
 #pragma once
 
-#if !defined (_CSP_H_INSIDE) && !defined (CSP_COMPILATION)
+#if !defined(_CSP_H_INSIDE) && !defined(CSP_COMPILATION)
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
@@ -40,9 +40,8 @@ typedef struct _CSPProblem CSPProblem;
  * @post The CSP problem number of constraints is set to the specified number of
  * constraints.
  */
-extern CSPProblem *csp_problem_create(
-	size_t num_domains, size_t num_constraints
-);
+extern CSPProblem *csp_problem_create(size_t num_domains,
+																			size_t num_constraints);
 
 // DESTRUCTORS
 /**
@@ -71,8 +70,7 @@ extern size_t csp_problem_get_num_constraints(const CSPProblem *csp);
  * @pre The csp library is initialised.
  */
 extern CSPConstraint *csp_problem_get_constraint(const CSPProblem *csp,
-	size_t index
-);
+																								 size_t index);
 /**
  * @brief Get the number of domains of the CSP problem.
  * @param csp The CSP problem to get the number of domains.
@@ -100,9 +98,8 @@ extern size_t csp_problem_get_domain(const CSPProblem *csp, size_t index);
  * @pre index < csp->num_constraints
  * @pre constraint != NULL
  */
-extern void csp_problem_set_constraint(CSPProblem *csp,
-	size_t index, CSPConstraint *constraint
-);
+extern void csp_problem_set_constraint(CSPProblem *csp, size_t index,
+																			 CSPConstraint *constraint);
 /**
  * @brief Set the domain of the CSP problem at the specified index.
  * @param csp The CSP problem to set the domain.
@@ -111,6 +108,5 @@ extern void csp_problem_set_constraint(CSPProblem *csp,
  * @pre The csp library is initialised.
  * @pre index < csp->num_domains
  */
-extern void csp_problem_set_domain(CSPProblem *csp,
-	size_t index, size_t domain
-);
+extern void csp_problem_set_domain(CSPProblem *csp, size_t index,
+																	 size_t domain);

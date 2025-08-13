@@ -13,14 +13,14 @@
 
 /**
  * @brief The CSP problem.
- * @var num_domains The number of variables.
- * @var domains The domains of the variables.
- * @var num_constraints The number of constraints.
- * @var constraints The constraints of the problem.
+ * @param num_domains The number of variables.
+ * @param domains The domains of the variables.
+ * @param num_constraints The number of constraints.
+ * @param constraints The constraints of the problem.
  */
 struct _CSPProblem {
 	size_t num_domains;
 	size_t *domains;
 	size_t num_constraints;
 	CSPConstraint **constraints;
-  };
+};

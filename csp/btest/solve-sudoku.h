@@ -14,5 +14,4 @@
 #include "csp.h"
 
 extern int solve_sudoku(size_t* starter_grid, const char* resultFile,
-	SolveType solve_type, bool silent
-);
+												SolveType solve_type, bool silent);

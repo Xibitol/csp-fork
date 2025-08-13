@@ -6,16 +6,24 @@
  */
 
 #ifdef NDEBUG
-	#undef NDEBUG
+#undef NDEBUG
 #endif
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include "csp.h"
+#include "util/unused.h"
 
-int test_core_problem(void){
+// Dummy check function
+bool _test_constraint(const CSPConstraint *UNUSED_VAR(constraint),
+											const size_t *UNUSED_VAR(values),
+											const void *UNUSED_VAR(data)) {
+	return true;
+}
+
+int test_core_problem(void) {
 	// Initialise the library
 	csp_init();
 	{
@@ -30,14 +38,23 @@ int test_core_problem(void){
 		assert(csp_problem_get_num_domains(problem) == 8);
 		assert(csp_problem_get_num_constraints(problem) == 28);
 
-		for(size_t index = 0; index < 8; index++){
+		for (size_t index = 0; index < 8; index++) {
 			assert(csp_problem_get_domain(problem, index) == 0);
 		}
 
-		for(size_t index = 0; index < 28; index++){
+		for (size_t index = 0; index < 28; index++) {
 			assert(csp_problem_get_constraint(problem, index) == NULL);
 		}
 
+		csp_problem_set_domain(problem, 0, 2);
+
+		CSPConstraint *test_constraint = csp_constraint_create(2, _test_constraint);
+		csp_problem_set_constraint(problem, 0, test_constraint);
+
+		assert(csp_problem_get_constraint(problem, 0) == test_constraint);
+		assert(csp_problem_get_domain(problem, 0) == 2);
+
+		csp_constraint_destroy(test_constraint);
 		// Destroy the problem
 		csp_problem_destroy(problem);
 	}

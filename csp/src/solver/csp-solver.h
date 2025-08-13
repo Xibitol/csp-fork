@@ -14,10 +14,52 @@
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
-#include <core/csp-problem.h>
-#include <solver/types-and-structs.h>
 #include <stdbool.h>
 #include <stddef.h>
+
+#include "core/csp-problem.h"
+#include "solver/domains.h"
+#include "solver/filled-variables.h"
+
+/**
+ * Which methods should be used to solve the CSP
+ * FC = forward-checking
+ * MRV = Most remaining values
+ * LCV = Least constraining value
+ *
+ * Use bitwise operations to select/combine the methods to use
+ * Example for FC + LCV: SolveType solveType = FC | LCV;
+ */
+typedef enum {
+	FC = 1,
+	MRV = 2,
+	LCV = 4,
+} SolveType;
+
+/**
+ * Get the list of value constraints to verify for the current variable to know
+ * if the CSPProblem is consistent.
+ * @note This function is used by #csp_problem_is_consistent.
+ * @param csp The CSP problem.
+ * @param checklist Array to store the list of constraints to verify.
+ * @param amount Pointer to size_t to store the number of constraints to verify.
+ * @param index The index of the current variable.
+ * @param fv The FilledVariables structure to track filled variables.
+ */
+typedef void CSPValueChecklist(const CSPProblem* csp, CSPConstraint** checklist,
+															 size_t* amount, size_t index,
+															 FilledVariables* fv);
+
+/**
+ * Get the list of data constraints to verify for the current variable to know
+ * if the CSPProblem is consistent.
+ * @param csp The CSP problem.
+ * @param checklist Array to store the list of constraints to verify.
+ * @param amount Pointer to size_t to store the number of constraints to verify.
+ * @param index The index of the current variable.
+ */
+typedef void CSPDataChecklist(const CSPProblem* csp, CSPConstraint** checklist,
+															size_t* amount, size_t index);
 
 /**
  * Reduce the domains of the variables based on the data provided.
@@ -29,8 +71,8 @@
  * affected by the contents of data for the current variable.
  */
 extern void reduce_domains(const CSPProblem* csp, size_t* values,
-	const void* data, Domain** domains, CSPDataChecklist dataChecklist
-);
+													 const void* data, Domain** domains,
+													 CSPDataChecklist dataChecklist);
 
 /** Verify if the CSP problem is consistent at the specified index.
  * @param csp The CSP problem to verify.
@@ -43,10 +85,10 @@ extern void reduce_domains(const CSPProblem* csp, size_t* values,
  * @return true if the CSP problem is consistent, false otherwise.
  * @pre The csp library is initialised.
  */
-extern bool csp_problem_is_consistent(const CSPProblem* csp, const size_t* values,
-	const void* data, size_t index, FilledVariables* fv,
-	CSPValueChecklist* checklist
-);
+extern bool csp_problem_is_consistent(const CSPProblem* csp,
+																			const size_t* values, const void* data,
+																			size_t index, FilledVariables* fv,
+																			CSPValueChecklist* checklist);
 
 /** Solve the CSP problem using backtracking.
  * @param csp The CSP problem to solve.
@@ -64,7 +106,7 @@ extern bool csp_problem_is_consistent(const CSPProblem* csp, const size_t* value
  * @post The values are assigned to the solution.
  */
 extern bool csp_problem_solve(const CSPProblem* csp, size_t* values,
-	const void* data, SolveType solve_type,
-	CSPValueChecklist* checklist, CSPDataChecklist* dataChecklist,
-	size_t* benchmark
-);
+															const void* data, SolveType solve_type,
+															CSPValueChecklist* checklist,
+															CSPDataChecklist* dataChecklist,
+															size_t* benchmark);
