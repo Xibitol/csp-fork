@@ -1,5 +1,5 @@
 /**
- * @file filled_variables.inc.h
+ * @file filled-variables.inc.h
  * Bitset structure to track variables that have been filled during solving
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>

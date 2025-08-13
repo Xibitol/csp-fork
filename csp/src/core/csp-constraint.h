@@ -30,7 +30,8 @@ typedef struct _CSPConstraint CSPConstraint;
  * @pre constraint != NULL
  * @pre values != NULL
  */
-typedef bool CSPChecker(const CSPConstraint *, const size_t *, const void *);
+typedef bool CSPChecker(const CSPConstraint *constraint, const size_t *values,
+												const void *data);
 
 // CONSTRUCTORS
 /**

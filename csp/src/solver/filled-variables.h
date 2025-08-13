@@ -1,5 +1,5 @@
 /**
- * @file filled_variables.h
+ * @file filled-variables.h
  * Functions to manipulate bitset structure
  * to track variables that have been filled during solving
  *
