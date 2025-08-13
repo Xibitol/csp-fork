@@ -47,15 +47,10 @@ CSPProblem *csp_problem_create(size_t num_domains, size_t num_constraints) {
 			} else {
 				free(csp->domains);
 				free(csp);
-				csp = NULL;
 			}
 		} else {
 			free(csp);
-			csp = NULL;
 		}
-	} else {
-		free(csp);
-		csp = NULL;
 	}
 
 	return csp;
