@@ -1,5 +1,5 @@
 /**
- * @file csp-solver-fc.h
+ * @file csp-solver-FC.h
  * Library CSP forward checking
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if !defined (_CSP_H_INSIDE) && !defined (CSP_COMPILATION)
+#if !defined(_CSP_H_INSIDE) && !defined(CSP_COMPILATION)
 #error "Only <csp/csp.h> can be included directly."
 #endif
 
@@ -17,7 +17,9 @@
 #include <stddef.h>
 
 #include "core/csp-problem.h"
-#include "solver/types-and-structs.h"
+#include "solver/csp-solver.h"
+#include "solver/domains.h"
+#include "solver/filled-variables.h"
 
 /**
  * Forward check the CSP problem. Updates the domains of the variables
@@ -34,8 +36,7 @@
  * @return true if the CSP problem is consistent, false otherwise.
  * @pre The csp library is initialised.
  */
-extern bool csp_problem_forward_check(const CSPProblem *csp, size_t *values,
-	const void *data, size_t index,
-	FilledVariables* fv, CSPValueChecklist *checklist, Domain **domains,
-	DomainChange *change_stack, size_t *stack_top
-);
+extern bool csp_problem_forward_check(
+		const CSPProblem *csp, size_t *values, const void *data, size_t index,
+		FilledVariables *fv, CSPValueChecklist *checklist, Domain **domains,
+		DomainChange *change_stack, size_t *stack_top);

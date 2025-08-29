@@ -12,5 +12,4 @@
 #include "csp.h"
 
 extern int solve_queens(int queen_count, const char* resultFile,
-	SolveType solve_type, bool silent
-);
+												SolveType solve_type, bool silent);

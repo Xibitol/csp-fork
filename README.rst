@@ -14,7 +14,7 @@ checking if the assignment is consistent.
 For the course `Imperative Programming - Avancé`_, after all lessons and exams,
 we're assigned to fork this library made by our teacher that solves `Constraint
 Satisfaction Problems (CSPs)`_. The goal of this project, in teams of up to 6
-students, is to upgrade the backtracking algorithm with a forward checking and
+students, is to upgrade the backtracking algorithm with forward checking and
 to implement heuristics to order variables and values. We also have to benchmark
 and compare our modifications by solving `Sudoku`_ and `N-Queens`_ puzzles.
 
@@ -44,7 +44,7 @@ assignment and has its `ReadTheDocs documentation`_.
 	https://en.wikipedia.org/wiki/Eight_queens_puzzle
 
 ************
-Performances
+Performance
 ************
 
 .. image:: Content/Screenshot/NQueens_Benchmark.png
@@ -54,11 +54,13 @@ Performances
 *************
 Documentation
 *************
+- `Sphinx documentation`_ on ReadTheDocs
 - `Project guidelines`_ given for this assignment.
 - `GitHub repository`_ hosting the source code.
 - `ReadTheDocs documentation`_ hosting library's documentation.
 - `Project report`_ describing what we did.
 
+.. _`Sphinx documentation`: https://csp-fork.readthedocs.io/en/latest/
 .. _`Project guidelines`: Content/Document/PIA-Project_2024-2025.pdf
 .. _`GitHub repository`: https://github.com/Xibitol/csp-fork
 .. _`ReadTheDocs documentation`: https://csp-fork.readthedocs.io/en/latest/
@@ -76,14 +78,38 @@ Clone the repository and run the following in your preferred CLI:
 
 	cmake -S . -B out
 
-Next, move into ``out`` and should be about to build, test and btest our
-project. For more advanced checks, please refer to ``cmake/`` packages.
+Next, move into ``out`` and you can build, install and test our project.
+
+.. code-block:: bash
+
+  make
+  make install
+  make test
+
+In a python environment, you can also install the requirements to build the docs,
+run cclint, and run the benchmark tests:
+
+.. code-block:: bash
+
+   pip install -r requirements.txt
+   make docs
+   make cclint
+   make btest
+
+Finally, if installed, you can use lcov, flawfinder and clang-format with:
+
+.. code-block:: bash
+
+  make coverage
+  make html-coverage
+  make flawfinder
+  make clang-format
 
 *******
 License
 *******
 | PIA CSP (Library and benchmarking program)
-Copyright :raw-html:`&copy;` 2025 - **G team**
+| Copyright :raw-html:`&copy;` 2025 - **G team**
 
 These programs is free software: you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the Free

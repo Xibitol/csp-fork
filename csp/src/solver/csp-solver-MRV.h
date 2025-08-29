@@ -1,5 +1,5 @@
 /**
- * @file csp-solver-ovars.h
+ * @file csp-solver-MRV.h
  * Library CSP variable heuristics
  *
  * @author agueguen-LR <adrien.gueguen@etudiant.univ-lr.fr>
@@ -16,7 +16,8 @@
 #include <stddef.h>
 
 #include "core/csp-problem.h"
-#include "solver/types-and-structs.h"
+#include "solver/domains.h"
+#include "solver/filled-variables.h"
 
 /**
  * Choose the next variable to assign in the CSP problem.
@@ -29,17 +30,5 @@
  * @return The index of the chosen variable.
  */
 extern size_t csp_problem_choose_min_domain(const CSPProblem *csp,
-	const FilledVariables *fv, Domain **domains);
-
-/**
- * Choose the next variable to assign in the CSP problem.
- * This function selects the variable with the largest domain size
- * (Maximum Remaining Values heuristic).
- *
- * @param csp
- * @param fv
- * @param domains
- * @return
- */
-extern size_t csp_problem_choose_max_domain(const CSPProblem *csp,
-	const FilledVariables *fv, Domain **domains);
+																						const FilledVariables *fv,
+																						Domain **domains);

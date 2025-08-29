@@ -12,3 +12,8 @@ build/
 # Temporary files
 __pycache__/
 tmp/
+.cache/
+
+# NixOS
+shell.nix
+
