@@ -20,6 +20,7 @@
 #include "core/csp-problem.h"
 #include "solver/csp-solver-FC.h"
 #include "solver/csp-solver-MRV.h"
+#include "solver/csp-solver-LCV.h"
 #include "solver/domains.h"
 #include "solver/filled-variables.h"
 
@@ -107,6 +108,14 @@ bool csp_problem_backtrack(const CSPProblem *csp, size_t *values,
 	}
 
 	filled_variables_mark_filled(fv, index);
+
+  if (solve_type & LCV){
+
+    for (size_t i = 0; i < domain_get_amount(domains[index]); i++) {
+      values[index] = domain_get_value(domains[index], i);
+      get_constraint_count(csp, values, data, index, fv, checklist, domains);
+    }
+  }
 
 	// Try all values in the domain of the current variable
 	for (size_t i = 0; i < domain_get_amount(domains[index]); i++) {
